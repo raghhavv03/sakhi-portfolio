@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Design tokens as CSS variables (mirror of tailwind.config.js).
+   Components should use Tailwind token classes; these exist for raw CSS needs
+   (e.g. the cursor) so no ad-hoc hex appears anywhere.
+--------------------------------------------------------------------------- */
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-muted: #6b6b6b;
+  --border: #e6e6e2;
+
+  --dark-bg: #121212;
+  --dark-surface: #1c1c1e;
+  --dark-text: #ededed;
+  --dark-muted: #a1a1a1;
+  --dark-border: #2a2a2c;
+
+  --accent: #a7c7e7;
+  --accent-hover: #8fb8de;
+
+  --cursor: #2563eb;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui,
+      sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Headings default to Semibold; sentence case is a content rule, not CSS. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  /* Off-black focus ring — pastel blue is too low-contrast on the canvas. */
+  :focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Custom cursor gating.
+   Only hide the native cursor on fine-pointer (desktop) devices. On touch /
+   coarse pointers the native cursor stays and the custom one never renders.
+--------------------------------------------------------------------------- */
+@media (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
