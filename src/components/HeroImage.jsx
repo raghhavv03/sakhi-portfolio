@@ -27,7 +27,7 @@ export default function HeroImage({
         width="1100"
         height="619"
         loading={priority ? 'eager' : 'lazy'}
-        fetchpriority={priority ? 'high' : 'auto'}
+        fetchPriority={priority ? 'high' : 'auto'}
         decoding="async"
         className={className}
       />
