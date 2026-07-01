@@ -1,13 +1,7 @@
-// Responsive hero illustration. Serves AVIF with a WebP fallback across three
-// widths via srcset; the browser picks the smallest sufficient file. Explicit
-// width/height (the source's 2752×1536 ratio, expressed at 1100×614) reserve
-// the aspect box so there's no layout shift while it loads. Every variant is
-// under ~150KB; the transparent background is baked in by scripts/optimize-hero.mjs.
-//
-// On the home hero this is the LCP element — pass `priority` there to load it
-// eagerly with high fetch priority; elsewhere it lazy-loads.
+// Responsive hero illustration — AVIF with WebP fallback via srcset.
+// Pass `priority` on the home hero (LCP); elsewhere it lazy-loads.
 const ALT =
-  'Line illustration of a woman working at a laptop, surrounded by the things she loves — crochet and yarn, a sleeping cat, a dog, potted plants, a camera, jingle bells, and a kathak dancer.'
+  'Line illustration of a woman working at a laptop with her dog and cat nearby, surrounded by UX design motifs — wireframe screens, a lightbulb, a magnifier, charts, and a cursor.'
 
 export default function HeroImage({
   className = '',
@@ -31,7 +25,7 @@ export default function HeroImage({
         src="/hero-illustration-850.webp"
         alt={alt}
         width="1100"
-        height="614"
+        height="619"
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
         decoding="async"

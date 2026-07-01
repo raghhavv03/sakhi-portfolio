@@ -1,30 +1,15 @@
-// One-off: turn the source illustration (which ships with a baked-in
-// checkerboard "transparency" background) into a clean transparent PNG, then
-// emit responsive, optimized AVIF + WebP at three widths.
+// Source illustration → transparent PNG → responsive AVIF + WebP at three widths.
+// Background removal: flood-fill from image borders through light/neutral pixels.
 //
-// Background removal: clear every "light" pixel (the white + light-grey
-// checkerboard tiles, plus the artwork's own white interior fills) to alpha 0
-// globally. Only the black strokes and the pastel-blue fills are kept. Doing
-// this globally — rather than flood-filling from the edges — also removes
-// background pockets fully enclosed by line art (e.g. behind the laptop or
-// under the desk). The artwork's interior whites that also clear simply become
-// the off-white page colour behind them, which is visually identical, so the
-// result reads as a clean transparent line illustration.
-//
-// Run: node scripts/optimize-hero.mjs [sourcePath]
+// Run: npm run optimize:hero
 import sharp from 'sharp'
 
-// Default source is the cleaned, transparent master committed to the repo.
-// (The background-clearing pass below is idempotent, so re-running on the
-// already-transparent master is harmless.)
 const SRC =
   process.argv[2] || new URL('../assets/hero-illustration.png', import.meta.url).pathname
 const OUT = new URL('../public/', import.meta.url).pathname
 const WIDTHS = [600, 850, 1100]
 
-// A pixel counts as removable background when it's bright and near-neutral
-// (white tile ~255 or grey tile ~226). Pastel blue (min channel ~181) and the
-// dark strokes both fail this test, so they're preserved.
+// Bright, near-neutral pixels (backdrop + white) are cleared; saturated fills and strokes stay.
 function isBg(r, g, b) {
   const min = Math.min(r, g, b)
   const max = Math.max(r, g, b)
@@ -39,19 +24,59 @@ const { data, info } = await sharp(SRC)
 const { width: W, height: H, channels: C } = info
 console.log(`source: ${W}x${H} channels=${C}`)
 
-let cleared = 0
-for (let p = 0; p < W * H; p++) {
+const visited = new Uint8Array(W * H)
+const queue = new Int32Array(W * H)
+let qlen = 0
+
+function seed(x, y) {
+  const p = y * W + x
+  if (visited[p]) return
   const i = p * C
   if (isBg(data[i], data[i + 1], data[i + 2])) {
-    data[i + 3] = 0 // make transparent
-    cleared++
+    visited[p] = 1
+    queue[qlen++] = p
+  }
+}
+
+for (let x = 0; x < W; x++) {
+  seed(x, 0)
+  seed(x, H - 1)
+}
+for (let y = 0; y < H; y++) {
+  seed(0, y)
+  seed(W - 1, y)
+}
+
+let cleared = 0
+while (qlen > 0) {
+  const p = queue[--qlen]
+  const x = p % W
+  const y = (p - x) / W
+  data[p * C + 3] = 0
+  cleared++
+  const neighbours = [
+    x > 0 ? p - 1 : -1,
+    x < W - 1 ? p + 1 : -1,
+    y > 0 ? p - W : -1,
+    y < H - 1 ? p + W : -1,
+  ]
+  for (const np of neighbours) {
+    if (np < 0 || visited[np]) continue
+    const i = np * C
+    if (isBg(data[i], data[i + 1], data[i + 2])) {
+      visited[np] = 1
+      queue[qlen++] = np
+    }
   }
 }
 console.log(`cleared ${(cleared / (W * H) * 100).toFixed(1)}% of pixels to transparent`)
 
 // Rebuild a clean transparent master, then export responsive variants.
-const master = sharp(data, { raw: { width: W, height: H, channels: C } }).png()
-const masterBuf = await master.toBuffer()
+const masterBuf = await sharp(data, {
+  raw: { width: W, height: H, channels: C },
+})
+  .png()
+  .toBuffer()
 
 for (const w of WIDTHS) {
   const base = sharp(masterBuf).resize({ width: w, withoutEnlargement: true })
