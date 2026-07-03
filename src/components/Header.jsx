@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { site, nav, links } from '../data/portfolio'
+import { nav, links } from '../data/portfolio'
 import Button from './Button'
 import { useReducedMotion } from '../lib/hooks'
 
@@ -10,12 +10,65 @@ import { useReducedMotion } from '../lib/hooks'
 // panel below 768px.
 export default function Header() {
   const location = useLocation()
+  const navigate = useNavigate()
   const reducedMotion = useReducedMotion()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   const isHome = location.pathname === '/'
   const transparent = isHome && !scrolled
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' })
+  }
+
+  const blurTarget = (e) => {
+    e.currentTarget.blur()
+  }
+
+  const goToPage = (path) => (e) => {
+    setMenuOpen(false)
+    if (location.pathname === path) {
+      e.preventDefault()
+      scrollToTop()
+    }
+    blurTarget(e)
+  }
+
+  const goHome = (e) => {
+    setMenuOpen(false)
+    if (isHome) {
+      e.preventDefault()
+      scrollToTop()
+    }
+    blurTarget(e)
+  }
+
+  // "Work" isn't its own route — it scrolls to the #work section on the home
+  // page. Already home → scroll directly; elsewhere → navigate to "/#work"
+  // and Home's own mount effect finishes the scroll once it renders.
+  const goToWork = () => {
+    if (isHome) {
+      document
+        .getElementById('work')
+        ?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' })
+    } else {
+      navigate('/#work')
+    }
+    setMenuOpen(false)
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
+  }
+
+  // Insert a "Work" item right after "Home" in the shared nav data, without
+  // mutating it (Footer reads the same array and must be unaffected).
+  const homeIndex = nav.findIndex((item) => item.to === '/')
+  const navWithWork = [
+    ...nav.slice(0, homeIndex + 1),
+    { label: 'Work', isWork: true },
+    ...nav.slice(homeIndex + 1),
+  ]
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -30,7 +83,14 @@ export default function Header() {
   }, [location.pathname])
 
   const navLinkClass = ({ isActive }) =>
-    `rounded-full px-4 py-2 text-sm transition-colors duration-200 min-h-[44px] inline-flex items-center ${
+    `rounded-full px-4 py-2 text-sm transition-colors duration-200 min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
+      isActive
+        ? 'font-semibold text-text'
+        : 'font-normal text-text-muted hover:text-text'
+    }`
+
+  const mobileNavLinkClass = ({ isActive }) =>
+    `flex min-h-[44px] items-center rounded-xl px-4 text-base transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
       isActive
         ? 'font-semibold text-text'
         : 'font-normal text-text-muted hover:text-text'
@@ -45,22 +105,48 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-content items-center justify-between px-6 py-4">
-        {/* Name / logo */}
+        {/* Logo — accessible name lives on the link itself; the image is
+            decorative (alt="") so it isn't announced a second time. */}
         <Link
           to="/"
-          className="inline-flex min-h-[44px] items-center text-lg font-semibold tracking-tight"
-          aria-label={`${site.name} — home`}
+          onClick={goHome}
+          className="inline-flex min-h-[44px] items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
+          aria-label="Sakhi Rana — home"
         >
-          {site.name}
+          <img
+            src="/logo.png"
+            alt=""
+            aria-hidden="true"
+            width="261"
+            height="67"
+            className="h-8 w-auto"
+          />
         </Link>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
-          {nav.map((item) => (
-            <NavLink key={item.to} to={item.to} end className={navLinkClass}>
-              {item.label}
-            </NavLink>
-          ))}
+          {navWithWork.map((item) =>
+            item.isWork ? (
+              <button
+                key="work"
+                type="button"
+                onClick={goToWork}
+                className={navLinkClass({ isActive: false })}
+              >
+                {item.label}
+              </button>
+            ) : (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end
+                className={navLinkClass}
+                onClick={goToPage(item.to)}
+              >
+                {item.label}
+              </NavLink>
+            )
+          )}
         </nav>
 
         {/* Desktop right-side actions */}
@@ -125,22 +211,28 @@ export default function Header() {
               className="mx-auto flex max-w-content flex-col gap-1 px-6 py-4"
               aria-label="Mobile"
             >
-              {nav.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end
-                  className={({ isActive }) =>
-                    `flex min-h-[44px] items-center rounded-xl px-4 text-base transition-colors ${
-                      isActive
-                        ? 'font-semibold text-text'
-                        : 'font-normal text-text-muted hover:text-text'
-                    }`
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+              {navWithWork.map((item) =>
+                item.isWork ? (
+                  <button
+                    key="work"
+                    type="button"
+                    onClick={goToWork}
+                    className={mobileNavLinkClass({ isActive: false })}
+                  >
+                    {item.label}
+                  </button>
+                ) : (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end
+                    className={mobileNavLinkClass}
+                    onClick={goToPage(item.to)}
+                  >
+                    {item.label}
+                  </NavLink>
+                )
+              )}
               <a
                 href={links.resume}
                 target="_blank"

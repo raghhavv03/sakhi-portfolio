@@ -2,6 +2,62 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useFinePointer, useReducedMotion } from '../lib/hooks'
 
+const ICON_SIZE = 24
+
+function CursorIcon({ type }) {
+  if (!type) return null
+
+  const common = {
+    width: ICON_SIZE,
+    height: ICON_SIZE,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    xmlns: 'http://www.w3.org/2000/svg',
+    className: 'shrink-0',
+    'aria-hidden': true,
+  }
+
+  if (type === 'down') {
+    return (
+      <svg {...common}>
+        <path
+          d="M12 5v14M12 19l-6-6M12 19l6-6"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  return (
+    <svg {...common}>
+      <path
+        d="M5 12h14M19 12l-6-6M19 12l-6 6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function parseCursorLabel(label) {
+  if (!label) return { text: '', icon: null }
+
+  if (label.includes('↓')) {
+    return { text: label.replace(/\s*↓\s*/, '').trim(), icon: 'down' }
+  }
+
+  if (label === 'Coming soon') {
+    return { text: label, icon: null }
+  }
+
+  return { text: label, icon: 'right' }
+}
+
 // Custom cursor — desktop (fine pointer) only.
 //   • 10px vivid-blue dot that tracks the pointer 1:1
 //   • 30px ring that lags slightly via spring (disabled under reduced-motion)
@@ -37,41 +93,67 @@ export default function Cursor() {
   }, [finePointer])
 
   const labelRef = useRef(null)
+  const pointerRef = useRef({ x: -100, y: -100 })
 
   useEffect(() => {
     if (!finePointer) return
 
-    const onMove = (e) => {
-      x.set(e.clientX)
-      y.set(e.clientY)
-      if (!visible) setVisible(true)
+    const readCursorLabel = (clientX, clientY) => {
+      let el = document.elementFromPoint(clientX, clientY)
+      if (!(el instanceof Element)) return null
 
-      // Resolve the nearest [data-cursor] ancestor for the label.
-      const target =
-        e.target instanceof Element ? e.target.closest('[data-cursor]') : null
-      const next = target ? target.getAttribute('data-cursor') : null
+      while (el) {
+        if (el.hasAttribute('data-cursor')) {
+          const value = el.getAttribute('data-cursor')
+          // Empty string explicitly suppresses a parent label (e.g. hero CTA).
+          return value === '' ? null : value
+        }
+        el = el.parentElement
+      }
+      return null
+    }
+
+    const applyLabelAt = (clientX, clientY) => {
+      const next = readCursorLabel(clientX, clientY)
       if (next !== labelRef.current) {
         labelRef.current = next
         setLabel(next)
       }
     }
 
+    const onMove = (e) => {
+      pointerRef.current = { x: e.clientX, y: e.clientY }
+      x.set(e.clientX)
+      y.set(e.clientY)
+      setVisible(true)
+      applyLabelAt(e.clientX, e.clientY)
+    }
+
+    const onScroll = () => {
+      const { x: px, y: py } = pointerRef.current
+      if (px < 0 || py < 0) return
+      applyLabelAt(px, py)
+    }
+
     const onLeave = () => setVisible(false)
     const onEnter = () => setVisible(true)
 
     window.addEventListener('pointermove', onMove)
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true })
     document.addEventListener('pointerleave', onLeave)
     document.addEventListener('pointerenter', onEnter)
     return () => {
       window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('scroll', onScroll, { capture: true })
       document.removeEventListener('pointerleave', onLeave)
       document.removeEventListener('pointerenter', onEnter)
     }
-  }, [finePointer, visible, x, y])
+  }, [finePointer, x, y])
 
   if (!finePointer) return null
 
   const expanded = Boolean(label)
+  const { text, icon } = parseCursorLabel(label)
 
   return (
     <div
@@ -87,7 +169,7 @@ export default function Cursor() {
           className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full"
           animate={
             expanded
-              ? { width: 'auto', height: 28, backgroundColor: '#2563EB' }
+              ? { width: 'auto', height: 'auto', backgroundColor: '#2563EB' }
               : { width: 30, height: 30, backgroundColor: 'rgba(37,99,235,0)' }
           }
           transition={
@@ -102,9 +184,10 @@ export default function Cursor() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: reducedMotion ? 0 : 0.15 }}
-              className="whitespace-nowrap px-3 text-xs font-semibold text-white"
+              className="flex items-center gap-2 whitespace-nowrap px-8 py-4 text-[20px] font-semibold leading-none text-white"
             >
-              {label}
+              {text}
+              <CursorIcon type={icon} />
             </motion.span>
           )}
         </motion.div>

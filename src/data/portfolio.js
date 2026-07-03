@@ -12,7 +12,6 @@ export const site = {
 
 export const contact = {
   email: '[you@email.com]',
-  phone: '[+00 00000 00000]', // optional
   invite: '[A short line inviting people to reach out.]',
 }
 

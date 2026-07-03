@@ -5,8 +5,8 @@ import { useReveal } from '../lib/hooks'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 
-// Contact — short and direct: headline + invite, a minimal (UI-only) form,
-// a "Hire me now" CTA, and direct email / phone / LinkedIn details.
+// Contact — short and direct: headline + invite, direct email / LinkedIn,
+// and a minimal (UI-only) form.
 export default function Contact() {
   const reveal = useReveal()
   const [sent, setSent] = useState(false)
@@ -19,7 +19,7 @@ export default function Contact() {
 
   return (
     <section className="mx-auto max-w-content px-6 py-section-sm md:py-section-md lg:py-section">
-      <div className="grid gap-12 md:grid-cols-[1fr_1fr] md:gap-16">
+      <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:items-start md:gap-14 lg:gap-16">
         {/* Left: headline, invite, direct details */}
         <motion.div {...reveal}>
           <Badge>Contact</Badge>
@@ -30,22 +30,10 @@ export default function Contact() {
             {contact.invite}
           </p>
 
-          <div className="mt-8">
-            <Button
-              href={`mailto:${contact.email}?subject=${encodeURIComponent(
-                "Let's work together"
-              )}`}
-              variant="primary"
-            >
-              Hire me now
-            </Button>
-          </div>
-
-          {/* Direct details */}
-          <dl className="mt-12 space-y-5 border-t border-border pt-8">
+          <dl className="mt-10 space-y-6 border-t border-border pt-8">
             <div>
               <dt className="text-xs font-normal text-text-muted">Email</dt>
-              <dd className="mt-1">
+              <dd className="mt-1.5">
                 <a
                   href={`mailto:${contact.email}`}
                   data-cursor="Email me"
@@ -55,20 +43,6 @@ export default function Contact() {
                 </a>
               </dd>
             </div>
-
-            {contact.phone && (
-              <div>
-                <dt className="text-xs font-normal text-text-muted">Phone</dt>
-                <dd className="mt-1">
-                  <a
-                    href={`tel:${contact.phone.replace(/\s+/g, '')}`}
-                    className="inline-flex min-h-[44px] items-center text-lg font-normal"
-                  >
-                    {contact.phone}
-                  </a>
-                </dd>
-              </div>
-            )}
 
             <div>
               <dt className="text-xs font-normal text-text-muted">LinkedIn</dt>
@@ -92,8 +66,20 @@ export default function Contact() {
             onSubmit={onSubmit}
             className="rounded-2xl border border-border bg-surface p-6 sm:p-8"
           >
-            <Field id="name" label="Name" type="text" autoComplete="name" />
-            <Field id="email" label="Email" type="email" autoComplete="email" />
+            <Field
+              id="name"
+              label="Name"
+              type="text"
+              autoComplete="name"
+              placeholder="Your name"
+            />
+            <Field
+              id="email"
+              label="Email"
+              type="email"
+              autoComplete="email"
+              placeholder="Your email"
+            />
 
             <div className="mt-5">
               <label
@@ -107,7 +93,7 @@ export default function Contact() {
                 name="message"
                 rows={5}
                 required
-                placeholder="[Tell me about your project…]"
+                placeholder="Tell me about your project…"
                 className="mt-2 w-full resize-y rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text placeholder:text-text-muted/70 focus:border-text focus:outline-none"
               />
             </div>
@@ -141,7 +127,7 @@ export default function Contact() {
 }
 
 // Single labelled input row.
-function Field({ id, label, type, autoComplete }) {
+function Field({ id, label, type, autoComplete, placeholder }) {
   return (
     <div className="mt-5 first:mt-0">
       <label htmlFor={id} className="block text-sm font-normal text-text-muted">
@@ -153,7 +139,8 @@ function Field({ id, label, type, autoComplete }) {
         type={type}
         required
         autoComplete={autoComplete}
-        className="mt-2 w-full rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text focus:border-text focus:outline-none"
+        placeholder={placeholder}
+        className="mt-2 w-full rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text placeholder:text-text-muted/70 focus:border-text focus:outline-none"
       />
     </div>
   )
