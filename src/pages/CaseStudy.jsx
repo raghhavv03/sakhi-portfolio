@@ -4,6 +4,8 @@ import { projects } from '../data/portfolio'
 import { useReveal } from '../lib/hooks'
 import Badge from '../components/Badge'
 import SectionHeader from '../components/SectionHeader'
+import Button from '../components/Button'
+import Magnetic from '../components/Magnetic'
 
 // Thin reading-progress bar pinned above the header. Case studies are the
 // only long-form pages, so this is the one place a progress indicator earns
@@ -167,19 +169,18 @@ export default function CaseStudy() {
 // carries no custom-cursor pill.
 function BackHome() {
   return (
-    <Link
-      to="/"
-      className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold transition-colors duration-200 hover:border-accent hover:bg-accent hover:text-text"
-    >
-      {/* Arrow nudges 2px left on hover — points where you'll go. */}
-      <span
-        aria-hidden="true"
-        className="transition-transform duration-200 group-hover:-translate-x-0.5 motion-reduce:group-hover:translate-x-0"
-      >
-        ←
-      </span>
-      Back to home
-    </Link>
+    <Magnetic className="inline-flex">
+      <Button variant="secondary" to="/" className="group">
+        {/* Arrow nudges 2px left on hover — points where you'll go. */}
+        <span
+          aria-hidden="true"
+          className="transition-transform duration-200 group-hover:-translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+        >
+          ←
+        </span>
+        Back to home
+      </Button>
+    </Magnetic>
   )
 }
 

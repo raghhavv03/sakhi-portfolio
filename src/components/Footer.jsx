@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { site, contact, links, socials, nav } from '../data/portfolio'
+import Button from './Button'
+import Magnetic from './Magnetic'
 
 // Global footer — dark band. Repeats every nav action so visitors never have
 // to scroll back up, plus a back-to-home button (hidden on home itself), bio,
@@ -28,19 +30,18 @@ export default function Footer() {
               {site.bio}
             </p>
             {!isHome && (
-              <Link
-                to="/"
-                className="group mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full border border-dark-border px-5 py-2.5 text-sm font-semibold text-dark-text transition-colors hover:border-accent hover:bg-accent hover:text-text"
-              >
-                {/* Arrow nudges 2px left on hover — points where you'll go. */}
-                <span
-                  aria-hidden="true"
-                  className="transition-transform duration-200 group-hover:-translate-x-0.5 motion-reduce:group-hover:translate-x-0"
-                >
-                  ←
-                </span>
-                Back to home
-              </Link>
+              <Magnetic className="mt-6 inline-flex">
+                <Button variant="dark" to="/" className="group">
+                  {/* Arrow nudges 2px left on hover — points where you'll go. */}
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform duration-200 group-hover:-translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+                  >
+                    ←
+                  </span>
+                  Back to home
+                </Button>
+              </Magnetic>
             )}
           </div>
 

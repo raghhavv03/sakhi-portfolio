@@ -69,21 +69,17 @@
   }
 }
 
-/* ---------------------------------------------------------------------------
-   Custom cursor gating.
-   Only hide the native cursor on fine-pointer (desktop) devices. On touch /
-   coarse pointers the native cursor stays and the custom one never renders.
---------------------------------------------------------------------------- */
-@media (pointer: fine) {
-  html.has-custom-cursor,
-  html.has-custom-cursor * {
-    cursor: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* Show only one cursor at a time: native by default, custom pill on labels. */
+@media (pointer: fine) {
+  html.has-label-cursor,
+  html.has-label-cursor * {
+    cursor: none;
   }
 }
 

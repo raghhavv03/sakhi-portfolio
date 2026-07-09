@@ -5,6 +5,7 @@ import { useReducedMotion, useReveal } from '../lib/hooks'
 import { successHaptic } from '../lib/haptics'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
+import Magnetic from '../components/Magnetic'
 
 // Contact — short and direct: headline + invite, direct email / LinkedIn,
 // and a minimal (UI-only) form.
@@ -62,14 +63,16 @@ export default function Contact() {
             <div>
               <dt className="text-xs font-normal text-text-muted">LinkedIn</dt>
               <dd className="mt-2">
-                <Button
-                  variant="secondary"
-                  href={links.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Open LinkedIn
-                </Button>
+                <Magnetic>
+                  <Button
+                    variant="secondary"
+                    href={links.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open LinkedIn
+                  </Button>
+                </Magnetic>
               </dd>
             </div>
           </dl>

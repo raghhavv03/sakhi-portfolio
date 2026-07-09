@@ -120,7 +120,7 @@ export default function Header() {
           aria-label="Sakhi Rana — home"
         >
           <img
-            src="/logo.png"
+            src="/logo-wordmark.png"
             alt=""
             aria-hidden="true"
             width="261"

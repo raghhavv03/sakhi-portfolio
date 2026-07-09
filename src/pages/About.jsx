@@ -5,7 +5,6 @@ import SectionHeader from '../components/SectionHeader'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 import Doodle from '../components/Doodle'
-import HeroImage from '../components/HeroImage'
 
 // About — intro, schooling, Crochet Curio passion project, personal interests.
 // Intentionally excludes services, an experience timeline, and testimonials.
@@ -41,11 +40,15 @@ function Intro() {
         </p>
       </div>
 
-      {/* Companion illustration (lazy — below the fold on smaller screens). */}
+      {/* Use a distinct portrait on About to avoid repeating the Home hero image. */}
       <motion.div {...reveal}>
-        <HeroImage
-          sizes="(min-width: 768px) 38vw, 90vw"
-          className="mx-auto h-auto w-full max-w-lg"
+        <img
+          src="/about-sakhi-saree.png"
+          alt="Sakhi smiling in a saree"
+          width="892"
+          height="1152"
+          loading="lazy"
+          className="mx-auto h-auto w-full max-w-xs rounded-2xl object-cover md:max-w-[17rem] lg:max-w-sm"
         />
       </motion.div>
     </section>

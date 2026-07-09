@@ -2,10 +2,10 @@
 
 Build a personal portfolio website for a UI/UX / Product Designer. Multi-page, minimal, editorial. Production-quality, responsive, accessible, and fast.
 
-Everything in `[SQUARE BRACKETS]` is placeholder content to be filled in. The hero illustration is supplied separately as `hero-illustration.png` — leave a responsive image slot for it.
+Everything in `[SQUARE BRACKETS]` is placeholder content to be filled in. The home hero illustration is supplied separately as `hero-illustration.png` — leave a responsive image slot for it. Use a separate portrait image in About (`about-sakhi-saree.png`) so the same visual is not repeated across Home and About.
 
 ## Tech
-React + Tailwind CSS + Framer Motion (for scroll reveals and the custom cursor) + React Router for client-side routing. A short home page (hero, brand strip, projects), with About, Contact, and each case study as their own routes. Each project's case study is its own route (e.g. `/work/[project-slug]`) so clicking a thumbnail opens it instantly with no full page reload. If you can't use Framer Motion, use CSS transitions and a small vanilla JS cursor — but keep all motion subtle.
+React + Tailwind CSS + Framer Motion (for scroll reveals, magnetic hover, and the custom cursor labels) + React Router for client-side routing. A short home page (hero, projects), with About, Contact, and each case study as their own routes. Each project's case study is its own route (e.g. `/work/[project-slug]`) so clicking a thumbnail opens it instantly with no full page reload. If you can't use Framer Motion, use CSS transitions and a small vanilla JS cursor label system — but keep all motion subtle.
 
 ## Design system (use exactly these tokens)
 Light is the primary theme; the contact/footer section is a dark band (like a premium footer).
@@ -43,7 +43,7 @@ Light is the primary theme; the contact/footer section is a dark band (like a pr
 **Motion** — subtle only. Content fades and rises slightly on scroll into view. Cards lift gently on hover. One auto-scrolling marquee (see brand strip). Respect `prefers-reduced-motion`: when set, disable reveals, marquee, and cursor trailing.
 
 ## Custom cursor (desktop only — this is important)
-Replace the native cursor on pointer devices with a small custom cursor: a `10px` filled dot in a **vivid blue `#2563EB`** (chosen to stand out and catch the eye — it's the bold sibling of the site's pastel-blue accent), trailed by a thin `30px` ring in the same blue that lags slightly (spring). On hover over any element marked as interactive-important, the cursor expands into a pill — vivid blue `#2563EB` fill with white text — that displays a short guiding label next to/around the pointer, animated with a soft spring. Use a `data-cursor` attribute to set each label. The vivid blue reads clearly on both the off-white canvas and the `#121212` dark band, so the same color is used throughout.
+Keep the native OS cursor (arrow/pointer) by default. Show a custom cursor **label pill only** when hovering elements marked with `data-cursor`, and hide the native cursor only while that label pill is visible (so only one cursor appears at a time). Label pill style: background `var(--accent-hover)` (`#8FB8DE`), text color `#1A1A1A`, regular weight, compact size (not oversized). Use a `data-cursor` attribute to set each label.
 
 Apply these labels:
 - Hero area (the illustration + opening line), for a first-time visitor → `Scroll ↓` — gently nudges them to scroll down to the projects
@@ -58,14 +58,14 @@ Apply these labels:
 - External company/brand logos (if linked) → `Visit`
 
 Hard requirements for the cursor:
-- On touch devices / when no fine pointer is present, do NOT hide the native cursor and do NOT render the custom one. Detect with `(pointer: fine)`.
+- On touch devices / when no fine pointer is present, do NOT hide the native cursor and do NOT render custom label pills. Detect with `(pointer: fine)`.
 - The cursor label is decorative. Every element it labels MUST also carry a real, visible affordance for keyboard and screen-reader users: proper link text and/or an `aria-label` (e.g. the coming-soon project has `aria-label="FitnessPal — coming soon"` and is not a dead link). Never rely on the cursor label alone to convey meaning.
-- Disable the trailing ring under `prefers-reduced-motion`.
+- Under `prefers-reduced-motion`, keep cursor behavior static (no decorative trailing effects).
 
 ## Site structure — a multi-page site (keep each page short; avoid long scrolling)
 Routes: `/` (home), `/about`, `/contact`, and `/work/[slug]` (one per case study). Use client-side routing so every page opens instantly. The header and footer below appear on **every** page.
 
-**Global header (every page)** — name/logo `[YOUR NAME]` on the left, linking to home. Center or right: nav buttons `Home`, `About`, `Contact` that route to those pages (the current page's button is shown as active). Far right: a `Resume` button that **opens your résumé PDF in a new browser tab for viewing** (browser's built-in PDF viewer — not a download), and a `LinkedIn` button that opens your profile in a new tab (`[linkedin URL]`). Transparent over the home hero, solid subtle background elsewhere and on scroll.
+**Global header (every page)** — brand logo on the left (`logo-wordmark.png`), linking to home. Center or right: nav buttons `Home`, `About`, `Contact` that route to those pages (the current page's button is shown as active). Far right: a `Resume` button that **opens your résumé PDF in a new browser tab for viewing** (browser's built-in PDF viewer — not a download), and a `LinkedIn` button that opens your profile in a new tab (`[linkedin URL]`). These right-side buttons use the shared magnetic + button hover interaction. Header is transparent over the home hero, solid subtle background elsewhere and on scroll.
 
 **Global footer (every page, dark band `#121212`)** — light text. Contains the full set of buttons again so the visitor never has to scroll back up: `Home`, `About`, `Contact`, `Resume` (view), `LinkedIn`, and `[Email]` (with the `Email me` cursor) plus social icons. Include a clear **back-to-home button** (e.g. `← Back to home`) that always returns to `/`. Left side: name/logo + one-line bio. Bottom line: `© 2026 [NAME] · all rights reserved`.
 
@@ -81,7 +81,7 @@ That's the whole home page — hero and projects. Keep it tight.
 ---
 
 ### About page (`/about`)
-**A1. Intro** — pill badge "About Me"; large statement heading `[Design has always been more than just a job — it's my passion.]`; a short supporting paragraph about who you are `[short paragraph]`. Optionally pair with a photo or the hero illustration.
+**A1. Intro** — pill badge "About Me"; large statement heading `[Design has always been more than just a job — it's my passion.]`; a short supporting paragraph about who you are `[short paragraph]`. Pair with a portrait photo (`about-sakhi-saree.png`) sized moderately so it supports the copy without overpowering it.
 
 **A2. Schooling / education** — pill badge "Education"; a clean, compact list or short timeline of your schooling and studies. Each entry: institution, what you studied/qualification, and years. Keep it brief — a few lines, not a long scroll. `[School / degree / field / years]`
 
@@ -100,6 +100,9 @@ That's the whole home page — hero and projects. Keep it tight.
 
 ### Case-study page (`/work/[slug]`) — opens when a live thumbnail is clicked
 A prominent `← Back to home` button at the top-left (in addition to the global header). Structure each case study around four parts: the challenge (problem + constraints), your specific contribution, key design decisions and the reasoning behind them, and measurable outcomes. Lead with the problem and the result before the process. Alternate full-width process visuals with outcome screens; readable on mobile. `[Per project: title, role, challenge, contribution, decisions, outcomes, images]`
+
+## Interaction consistency note
+Use the same magnetic + shared button motion pattern for major CTA-style controls across pages (e.g., header `Resume`/`LinkedIn`, contact `Open LinkedIn`, and `Back to home` controls). Keep submit/form actions stable unless deliberately changed.
 
 ## Performance & accessibility (required)
 - Lazy-load all images below the fold; set explicit width/height on every image to prevent layout shift (target CLS < 0.1).
