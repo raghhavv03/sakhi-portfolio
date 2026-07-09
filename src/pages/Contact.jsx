@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { contact, links } from '../data/portfolio'
-import { useReveal } from '../lib/hooks'
+import { useReducedMotion, useReveal } from '../lib/hooks'
+import { successHaptic } from '../lib/haptics'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 
@@ -9,12 +10,26 @@ import Button from '../components/Button'
 // and a minimal (UI-only) form.
 export default function Contact() {
   const reveal = useReveal()
-  const [sent, setSent] = useState(false)
+  const reducedMotion = useReducedMotion()
 
-  // No backend yet — the form is UI-only. Acknowledge locally on submit.
+  // Submit state machine: idle → sending → sent. The form is UI-only, so
+  // "sending" is a brief acknowledgement beat, not a network wait; under
+  // reduced motion we jump straight to the confirmation.
+  const [status, setStatus] = useState('idle')
+  const sent = status === 'sent'
+  const timeoutRef = useRef(null)
+  useEffect(() => () => clearTimeout(timeoutRef.current), [])
+
   const onSubmit = (e) => {
     e.preventDefault()
-    setSent(true)
+    if (status !== 'idle') return
+    successHaptic()
+    if (reducedMotion) {
+      setStatus('sent')
+      return
+    }
+    setStatus('sending')
+    timeoutRef.current = setTimeout(() => setStatus('sent'), 650)
   }
 
   return (
@@ -94,16 +109,59 @@ export default function Contact() {
                 rows={5}
                 required
                 placeholder="Tell me about your project…"
-                className="mt-2 w-full resize-y rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text placeholder:text-text-muted/70 focus:border-text focus:outline-none"
+                className="mt-2 w-full resize-y rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgba(26,26,26,0.07)] focus:outline-none focus:placeholder:opacity-50"
               />
             </div>
 
             <div className="mt-6">
+              {/* Submit swaps label → spinner → check, fading 4px between
+                  states. Disabled while in flight so it can't double-fire. */}
               <button
                 type="submit"
-                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-text px-6 py-3 text-sm font-semibold text-bg transition-colors duration-200 hover:bg-accent hover:text-text"
+                disabled={status !== 'idle'}
+                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-text px-6 py-3 text-sm font-semibold text-bg transition-colors duration-200 hover:bg-accent hover:text-text disabled:hover:bg-text disabled:hover:text-bg"
               >
-                Send message
+                {/* Keyed enter-only swap — the old label unmounts instantly,
+                    the new one fades up. No exit animation, so the swap can
+                    never stall on a busy main thread. */}
+                <motion.span
+                  key={status}
+                  initial={reducedMotion ? false : { opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="inline-flex items-center gap-2"
+                >
+                    {status === 'idle' && 'Send message'}
+                    {status === 'sending' && (
+                      <>
+                        <span
+                          aria-hidden="true"
+                          className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent"
+                        />
+                        Sending…
+                      </>
+                    )}
+                    {status === 'sent' && (
+                      <>
+                        <svg
+                          aria-hidden="true"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                        >
+                          <path
+                            d="M2.5 7.5 5.5 10.5 11.5 3.5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Thanks!
+                      </>
+                    )}
+                </motion.span>
               </button>
             </div>
 
@@ -140,7 +198,7 @@ function Field({ id, label, type, autoComplete, placeholder }) {
         required
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="mt-2 w-full rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text placeholder:text-text-muted/70 focus:border-text focus:outline-none"
+        className="mt-2 w-full rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgba(26,26,26,0.07)] focus:outline-none focus:placeholder:opacity-50"
       />
     </div>
   )

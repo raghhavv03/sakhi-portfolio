@@ -1,14 +1,12 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { hero, projects } from '../data/portfolio'
-import Button from '../components/Button'
 import HeroImage from '../components/HeroImage'
-import BrandStrip from '../components/BrandStrip'
 import SectionHeader from '../components/SectionHeader'
 import ProjectCard from '../components/ProjectCard'
 import { useReducedMotion } from '../lib/hooks'
 
-// Home — deliberately short: hero, one brand row, projects. Nothing else.
+// Home — deliberately short: hero and projects. Nothing else.
 export default function Home() {
   const location = useLocation()
   const reducedMotion = useReducedMotion()
@@ -43,13 +41,6 @@ export default function Home() {
             <p className="mt-6 max-w-md text-lg font-normal leading-body text-text-muted sm:text-xl">
               {hero.opening}
             </p>
-            <div className="mt-8">
-              {/* Empty data-cursor overrides the section's "Scroll ↓" so the
-                  CTA shows the plain cursor, not a misleading scroll hint. */}
-              <Button variant="primary" to="/contact" data-cursor="">
-                {hero.ctaLabel}
-              </Button>
-            </div>
           </div>
 
           {/* Responsive illustration slot (stacks below the name on mobile). */}
@@ -63,10 +54,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. Brand / tools strip — one row. */}
-      <BrandStrip />
-
-      {/* 3. Portfolio grid. id="work" is the scroll target for the header's
+      {/* 2. Portfolio grid. id="work" is the scroll target for the header's
           "Work" nav item; scroll-mt-20 keeps it clear of the fixed header. */}
       <section
         id="work"
@@ -74,8 +62,10 @@ export default function Home() {
       >
         <SectionHeader badge="Work" heading="[Explore my work]" />
         <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+          {/* Same-row cards enter viewport together — a small per-card delay
+              turns that into a gentle left-to-right stagger. */}
+          {projects.map((project, i) => (
+            <ProjectCard key={project.slug} project={project} delay={i * 0.07} />
           ))}
         </div>
       </section>

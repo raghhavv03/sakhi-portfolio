@@ -86,3 +86,33 @@
     scroll-behavior: auto;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Card shine — a faint highlight that sweeps across a project thumbnail once
+   on hover (~500ms). Transform-only (GPU), clipped by the card's own
+   overflow-hidden + rounded corners, and removed under reduced motion.
+--------------------------------------------------------------------------- */
+.card-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 60%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.5s ease;
+  pointer-events: none;
+}
+
+.group:hover .card-shine::after {
+  transform: translateX(130%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-shine::after {
+    display: none;
+  }
+}

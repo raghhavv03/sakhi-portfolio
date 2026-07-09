@@ -1,9 +1,23 @@
 import { useParams, Navigate, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useScroll } from 'framer-motion'
 import { projects } from '../data/portfolio'
 import { useReveal } from '../lib/hooks'
 import Badge from '../components/Badge'
 import SectionHeader from '../components/SectionHeader'
+
+// Thin reading-progress bar pinned above the header. Case studies are the
+// only long-form pages, so this is the one place a progress indicator earns
+// its keep. Scroll-linked scaleX — no animation loop, no layout work.
+function ReadingProgress() {
+  const { scrollYProgress } = useScroll()
+  return (
+    <motion.div
+      aria-hidden="true"
+      className="fixed inset-x-0 top-0 z-[60] h-0.5 origin-left bg-text"
+      style={{ scaleX: scrollYProgress }}
+    />
+  )
+}
 
 // Case-study template (/work/:slug). Leads with the problem and the result,
 // then walks the process: contribution → key decisions → outcomes. Alternates
@@ -21,6 +35,7 @@ export default function CaseStudy() {
 
   return (
     <article className="mx-auto max-w-content px-6 py-section-sm md:py-section-md lg:py-section">
+      <ReadingProgress />
       <BackHome />
 
       {/* Title block */}
@@ -154,9 +169,16 @@ function BackHome() {
   return (
     <Link
       to="/"
-      className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold transition-colors duration-200 hover:border-accent hover:bg-accent hover:text-text"
+      className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-semibold transition-colors duration-200 hover:border-accent hover:bg-accent hover:text-text"
     >
-      ← Back to home
+      {/* Arrow nudges 2px left on hover — points where you'll go. */}
+      <span
+        aria-hidden="true"
+        className="transition-transform duration-200 group-hover:-translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+      >
+        ←
+      </span>
+      Back to home
     </Link>
   )
 }

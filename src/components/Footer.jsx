@@ -6,8 +6,10 @@ import { site, contact, links, socials, nav } from '../data/portfolio'
 // and copyright.
 export default function Footer() {
   const isHome = useLocation().pathname === '/'
+  // Text links brighten and slide 2px right on hover — transform + color
+  // only, so it stays GPU-cheap and reads as responsiveness, not decoration.
   const linkClass =
-    'inline-flex min-h-[44px] items-center text-sm font-normal text-dark-muted transition-colors hover:text-dark-text'
+    'inline-flex min-h-[44px] items-center text-sm font-normal text-dark-muted transition-[color,transform] duration-200 hover:translate-x-0.5 hover:text-dark-text motion-reduce:hover:translate-x-0'
 
   return (
     <footer className="bg-dark-bg text-dark-text">
@@ -28,9 +30,16 @@ export default function Footer() {
             {!isHome && (
               <Link
                 to="/"
-                className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full border border-dark-border px-5 py-2.5 text-sm font-semibold text-dark-text transition-colors hover:border-accent hover:bg-accent hover:text-text"
+                className="group mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full border border-dark-border px-5 py-2.5 text-sm font-semibold text-dark-text transition-colors hover:border-accent hover:bg-accent hover:text-text"
               >
-                ← Back to home
+                {/* Arrow nudges 2px left on hover — points where you'll go. */}
+                <span
+                  aria-hidden="true"
+                  className="transition-transform duration-200 group-hover:-translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+                >
+                  ←
+                </span>
+                Back to home
               </Link>
             )}
           </div>

@@ -149,9 +149,11 @@ function Interests() {
     <section className="mt-section-sm md:mt-section-md lg:mt-section">
       <SectionHeader badge="Beyond design" heading="[The things that define me]" />
       <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {about.interests.map((interest) => (
+        {/* Gentle left-to-right stagger for cards that share a row. */}
+        {about.interests.map((interest, i) => (
           <motion.div
             {...reveal}
+            transition={{ ...reveal.transition, delay: (i % 3) * 0.07 }}
             key={interest.title}
             className="rounded-2xl border border-border bg-surface p-6"
           >

@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import { motion } from 'framer-motion'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Cursor from './components/Cursor'
@@ -7,6 +8,8 @@ import Home from './pages/Home'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import CaseStudy from './pages/CaseStudy'
+import { useReducedMotion } from './lib/hooks'
+import { EASE, DUR } from './lib/animations'
 
 // Blank placeholder pages — the shell, tokens, and cursor are what we're
 // confirming here. Real pages come next.
@@ -33,6 +36,33 @@ function ScrollToTop() {
   return null
 }
 
+// Cross-route fade: the incoming page fades in and rises 8px. Enter-only —
+// exit animations (AnimatePresence mode="wait") can block navigation when the
+// main thread is busy, so the swap itself stays instant and only the arrival
+// is softened. Keyed by pathname; the first paint of a session is untouched
+// because Framer runs `initial` → `animate` on mount immediately.
+function AnimatedRoutes() {
+  const location = useLocation()
+  const reducedMotion = useReducedMotion()
+
+  return (
+    <motion.div
+      key={location.pathname}
+      initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: DUR.page, ease: EASE }}
+    >
+      <Routes location={location}>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/work/:slug" element={<CaseStudy />} />
+        <Route path="*" element={<Placeholder name="Not found" />} />
+      </Routes>
+    </motion.div>
+  )
+}
+
 export default function App() {
   return (
     <div className="flex min-h-screen flex-col bg-bg text-text">
@@ -40,13 +70,7 @@ export default function App() {
       <ScrollToTop />
       <Header />
       <main className="flex-1 pt-20">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/work/:slug" element={<CaseStudy />} />
-          <Route path="*" element={<Placeholder name="Not found" />} />
-        </Routes>
+        <AnimatedRoutes />
       </main>
       <Footer />
     </div>

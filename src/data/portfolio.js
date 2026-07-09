@@ -37,13 +37,6 @@ export const hero = {
   name: '[YOUR NAME]',
   opening:
     "[Hi, I'm [NAME] — a product designer solving complex problems through smart, human experiences.]",
-  ctaLabel: '[Get in touch]',
-}
-
-// Brand / tools strip — one row, honest label.
-export const brandStrip = {
-  label: '[tools I work with]',
-  items: ['[Figma]', '[Sketch]', '[Framer]', '[Notion]', '[Webflow]', '[Adobe XD]'],
 }
 
 // Projects. `status: 'live'` opens /work/:slug; `status: 'coming-soon'` is

@@ -3,7 +3,10 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { nav, links } from '../data/portfolio'
 import Button from './Button'
+import Magnetic from './Magnetic'
 import { useReducedMotion } from '../lib/hooks'
+import { EASE, DUR } from '../lib/animations'
+import { tapHaptic } from '../lib/haptics'
 
 // Global header. Transparent over the home hero; gains a subtle solid
 // background elsewhere and once the page is scrolled. Collapses to a hamburger
@@ -27,6 +30,7 @@ export default function Header() {
   }
 
   const goToPage = (path) => (e) => {
+    tapHaptic()
     setMenuOpen(false)
     if (location.pathname === path) {
       e.preventDefault()
@@ -36,6 +40,7 @@ export default function Header() {
   }
 
   const goHome = (e) => {
+    tapHaptic()
     setMenuOpen(false)
     if (isHome) {
       e.preventDefault()
@@ -48,6 +53,7 @@ export default function Header() {
   // page. Already home → scroll directly; elsewhere → navigate to "/#work"
   // and Home's own mount effect finishes the scroll once it renders.
   const goToWork = () => {
+    tapHaptic()
     if (isHome) {
       document
         .getElementById('work')
@@ -83,7 +89,7 @@ export default function Header() {
   }, [location.pathname])
 
   const navLinkClass = ({ isActive }) =>
-    `rounded-full px-4 py-2 text-sm transition-colors duration-200 min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
+    `relative rounded-full px-4 py-2 text-sm transition-colors duration-200 min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
       isActive
         ? 'font-semibold text-text'
         : 'font-normal text-text-muted hover:text-text'
@@ -143,30 +149,53 @@ export default function Header() {
                 className={navLinkClass}
                 onClick={goToPage(item.to)}
               >
-                {item.label}
+                {({ isActive }) => (
+                  <>
+                    {item.label}
+                    {/* Active-page indicator — one shared layoutId, so the
+                        underline slides between items on route change. */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-underline"
+                        aria-hidden="true"
+                        className="absolute inset-x-4 bottom-1.5 h-0.5 rounded-full bg-text"
+                        transition={
+                          reducedMotion
+                            ? { duration: 0 }
+                            : { duration: DUR.page, ease: EASE }
+                        }
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
             )
           )}
         </nav>
 
-        {/* Desktop right-side actions */}
+        {/* Desktop right-side actions — Magnetic adds a ≤3px cursor-aware
+            drift; the Button itself carries hover lift + tap press. */}
         <div className="hidden items-center gap-2 md:flex">
-          <Button
-            variant="secondary"
-            href={links.resume}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Resume
-          </Button>
-          <Button
-            variant="primary"
-            href={links.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LinkedIn
-          </Button>
+          <Magnetic>
+            <Button
+              variant="secondary"
+              href={links.resume}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Resume
+            </Button>
+          </Magnetic>
+          <Magnetic>
+            <Button
+              variant="primary"
+              href={links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </Button>
+          </Magnetic>
         </div>
 
         {/* Mobile hamburger */}
