@@ -57,9 +57,13 @@ function Intro() {
 
 function Education() {
   const reveal = useReveal()
+  // No entries yet → no section. An "Education" heading over an empty rule
+  // reads as a bug, not as a section awaiting content.
+  if (!about.education.length) return null
+
   return (
     <section className="mt-section-sm md:mt-section-md lg:mt-section">
-      <SectionHeader badge="Education" heading="[Where I studied]" />
+      <SectionHeader badge="Education" heading={about.educationHeading} />
       <ul className="mt-8 max-w-3xl divide-y divide-border border-t border-border">
         {about.education.map((entry, i) => (
           <motion.li
@@ -88,13 +92,19 @@ function Education() {
 function CrochetCurio() {
   const reveal = useReveal()
   const { heading, paragraph, images, link } = about.crochetCurio
-  // Up to four image slots; fall back to placeholder tiles when none supplied.
-  const gallery = images && images.length ? images : [0, 1, 2]
+  // No photos yet → the copy takes the full width rather than sitting beside a
+  // row of empty tiles. The gallery returns the moment there are images.
+  const gallery = images ?? []
+  const hasGallery = gallery.length > 0
 
   return (
     <section className="mt-section-sm md:mt-section-md lg:mt-section">
       <SectionHeader badge="Passion Project" heading={heading} />
-      <div className="mt-8 grid gap-10 md:grid-cols-2 md:items-start md:gap-14">
+      <div
+        className={`mt-8 grid gap-10 md:items-start md:gap-14 ${
+          hasGallery ? 'md:grid-cols-2' : ''
+        }`}
+      >
         <motion.div {...reveal}>
           <p className="max-w-xl text-base font-normal leading-body text-text-muted">
             {paragraph}
@@ -113,12 +123,12 @@ function CrochetCurio() {
           )}
         </motion.div>
 
-        {/* Image / small gallery slot. */}
-        <motion.div {...reveal} className="grid grid-cols-2 gap-4">
-          {gallery.map((src, i) =>
-            typeof src === 'string' ? (
+        {/* Image / small gallery slot — first image spans both columns. */}
+        {hasGallery && (
+          <motion.div {...reveal} className="grid grid-cols-2 gap-4">
+            {gallery.map((src, i) => (
               <img
-                key={i}
+                key={src}
                 src={src}
                 alt={`Crochet Curio work ${i + 1}`}
                 width="400"
@@ -128,19 +138,9 @@ function CrochetCurio() {
                   i === 0 ? 'col-span-2' : ''
                 }`}
               />
-            ) : (
-              <div
-                key={i}
-                aria-hidden="true"
-                className={`flex aspect-square w-full items-center justify-center rounded-2xl border border-border bg-gradient-to-br from-border to-surface text-xs font-normal text-text-muted ${
-                  i === 0 ? 'col-span-2' : ''
-                }`}
-              >
-                [image]
-              </div>
-            )
-          )}
-        </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
     </section>
   )
@@ -150,7 +150,7 @@ function Interests() {
   const reveal = useReveal()
   return (
     <section className="mt-section-sm md:mt-section-md lg:mt-section">
-      <SectionHeader badge="Beyond design" heading="[The things that define me]" />
+      <SectionHeader badge="Beyond design" heading={about.interestsHeading} />
       <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Gentle left-to-right stagger for cards that share a row. */}
         {about.interests.map((interest, i) => (

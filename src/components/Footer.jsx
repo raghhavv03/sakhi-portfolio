@@ -59,51 +59,63 @@ export default function Footer() {
               ))}
             </nav>
 
-            <div className="flex flex-col gap-1">
-              <span className="mb-1 text-xs font-normal uppercase tracking-wide text-dark-muted/70">
-                Connect
-              </span>
-              <a
-                href={links.resume}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={linkClass}
-              >
-                Resume
-              </a>
-              <a
-                href={links.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={linkClass}
-              >
-                LinkedIn
-              </a>
-              <a
-                href={`mailto:${contact.email}`}
-                data-cursor="Email me"
-                className={linkClass}
-              >
-                {contact.email}
-              </a>
-            </div>
+            {/* Each column disappears entirely when it has nothing real to
+                link to — better an absent column than a dead link. */}
+            {(links.resume || links.linkedin || contact.email) && (
+              <div className="flex flex-col gap-1">
+                <span className="mb-1 text-xs font-normal uppercase tracking-wide text-dark-muted/70">
+                  Connect
+                </span>
+                {links.resume && (
+                  <a
+                    href={links.resume}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass}
+                  >
+                    Resume
+                  </a>
+                )}
+                {links.linkedin && (
+                  <a
+                    href={links.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass}
+                  >
+                    LinkedIn
+                  </a>
+                )}
+                {contact.email && (
+                  <a
+                    href={`mailto:${contact.email}`}
+                    data-cursor="Email me"
+                    className={linkClass}
+                  >
+                    {contact.email}
+                  </a>
+                )}
+              </div>
+            )}
 
-            <div className="flex flex-col gap-1">
-              <span className="mb-1 text-xs font-normal uppercase tracking-wide text-dark-muted/70">
-                Social
-              </span>
-              {socials.map((s) => (
-                <a
-                  key={s.platform}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={linkClass}
-                >
-                  {s.platform}
-                </a>
-              ))}
-            </div>
+            {socials.length > 0 && (
+              <div className="flex flex-col gap-1">
+                <span className="mb-1 text-xs font-normal uppercase tracking-wide text-dark-muted/70">
+                  Social
+                </span>
+                {socials.map((s) => (
+                  <a
+                    key={s.platform}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass}
+                  >
+                    {s.platform}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { hero, projects } from '../data/portfolio'
+import { hero, projects, work } from '../data/portfolio'
 import HeroImage from '../components/HeroImage'
 import SectionHeader from '../components/SectionHeader'
 import ProjectCard from '../components/ProjectCard'
@@ -60,8 +60,10 @@ export default function Home() {
         id="work"
         className="mx-auto max-w-content scroll-mt-20 px-6 py-section-sm md:py-section-md lg:py-section"
       >
-        <SectionHeader badge="Work" heading="[Explore my work]" />
-        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <SectionHeader badge={work.badge} heading={work.heading} />
+        {/* Two projects, so two per row at every width above mobile — the
+            cards get the extra space rather than a third empty column. */}
+        <div className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-8">
           {/* Same-row cards enter viewport together — a small per-card delay
               turns that into a gentle left-to-right stagger. */}
           {projects.map((project, i) => (

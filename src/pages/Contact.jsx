@@ -46,36 +46,46 @@ export default function Contact() {
             {contact.invite}
           </p>
 
-          <dl className="mt-10 space-y-6 border-t border-border pt-8">
-            <div>
-              <dt className="text-xs font-normal text-text-muted">Email</dt>
-              <dd className="mt-1.5">
-                <a
-                  href={`mailto:${contact.email}`}
-                  data-cursor="Email me"
-                  className="inline-flex min-h-[44px] items-center text-lg font-semibold underline decoration-border underline-offset-4 transition-colors hover:decoration-text"
-                >
-                  {contact.email}
-                </a>
-              </dd>
-            </div>
+          {/* Direct details only when they exist — until then the form is the
+              route in, and an empty rule/heading would just look broken. */}
+          {(contact.email || links.linkedin) && (
+            <dl className="mt-10 space-y-6 border-t border-border pt-8">
+              {contact.email && (
+                <div>
+                  <dt className="text-xs font-normal text-text-muted">Email</dt>
+                  <dd className="mt-1.5">
+                    <a
+                      href={`mailto:${contact.email}`}
+                      data-cursor="Email me"
+                      className="inline-flex min-h-[44px] items-center text-lg font-semibold underline decoration-border underline-offset-4 transition-colors hover:decoration-text"
+                    >
+                      {contact.email}
+                    </a>
+                  </dd>
+                </div>
+              )}
 
-            <div>
-              <dt className="text-xs font-normal text-text-muted">LinkedIn</dt>
-              <dd className="mt-2">
-                <Magnetic>
-                  <Button
-                    variant="secondary"
-                    href={links.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open LinkedIn
-                  </Button>
-                </Magnetic>
-              </dd>
-            </div>
-          </dl>
+              {links.linkedin && (
+                <div>
+                  <dt className="text-xs font-normal text-text-muted">
+                    LinkedIn
+                  </dt>
+                  <dd className="mt-2">
+                    <Magnetic>
+                      <Button
+                        variant="secondary"
+                        href={links.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Open LinkedIn
+                      </Button>
+                    </Magnetic>
+                  </dd>
+                </div>
+              )}
+            </dl>
+          )}
         </motion.div>
 
         {/* Right: minimal contact form (UI-only) */}

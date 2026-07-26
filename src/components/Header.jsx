@@ -176,26 +176,30 @@ export default function Header() {
         {/* Desktop right-side actions — Magnetic adds a ≤3px cursor-aware
             drift; the Button itself carries hover lift + tap press. */}
         <div className="hidden items-center gap-2 md:flex">
-          <Magnetic>
-            <Button
-              variant="secondary"
-              href={links.resume}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Resume
-            </Button>
-          </Magnetic>
-          <Magnetic>
-            <Button
-              variant="primary"
-              href={links.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              LinkedIn
-            </Button>
-          </Magnetic>
+          {links.resume && (
+            <Magnetic>
+              <Button
+                variant="secondary"
+                href={links.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Resume
+              </Button>
+            </Magnetic>
+          )}
+          {links.linkedin && (
+            <Magnetic>
+              <Button
+                variant="primary"
+                href={links.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn
+              </Button>
+            </Magnetic>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -262,22 +266,26 @@ export default function Header() {
                   </NavLink>
                 )
               )}
-              <a
-                href={links.resume}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex min-h-[44px] items-center rounded-xl px-4 text-base font-normal text-text-muted hover:text-text"
-              >
-                Resume
-              </a>
-              <a
-                href={links.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex min-h-[44px] items-center rounded-xl px-4 text-base font-normal text-text-muted hover:text-text"
-              >
-                LinkedIn
-              </a>
+              {links.resume && (
+                <a
+                  href={links.resume}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex min-h-[44px] items-center rounded-xl px-4 text-base font-normal text-text-muted hover:text-text"
+                >
+                  Resume
+                </a>
+              )}
+              {links.linkedin && (
+                <a
+                  href={links.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex min-h-[44px] items-center rounded-xl px-4 text-base font-normal text-text-muted hover:text-text"
+                >
+                  LinkedIn
+                </a>
+              )}
             </nav>
           </motion.div>
         )}

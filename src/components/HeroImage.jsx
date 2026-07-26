@@ -27,7 +27,11 @@ export default function HeroImage({
         width="1100"
         height="619"
         loading={priority ? 'eager' : 'lazy'}
-        fetchPriority={priority ? 'high' : 'auto'}
+        // Lowercase: React 18 passes unknown lowercase attributes straight
+        // through, but warns on the camelCase `fetchPriority` spelling it only
+        // learned to handle in 19. Spread so it's absent rather than "auto"
+        // when the image isn't the LCP candidate.
+        {...(priority ? { fetchpriority: 'high' } : {})}
         decoding="async"
         className={className}
       />
