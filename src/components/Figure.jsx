@@ -1,29 +1,35 @@
 import { motion } from 'framer-motion'
-import { useReveal, useReducedMotion } from '../lib/hooks'
-import { EASE, DUR } from '../lib/animations'
+import { useReveal } from '../lib/hooks'
 
-// A case-study visual: the artwork on a hairline-bordered surface with its
-// caption underneath. Clicking opens the Lightbox — the prototype screens are
-// dense enough that reading them in place isn't always possible, so every
-// figure carries a real "Enlarge" affordance (button + aria-label + cursor
-// label) rather than relying on the custom cursor alone.
-export default function Figure({ figure, onOpen, className = '', padded = true }) {
+// A case-study visual. Every figure on this page is exported from the Figma
+// frame with its own surface already on it — the teardown boards and the
+// prototype boards each carry the frame's #fafafa card, #e7e7e7 hairline and
+// 10px radius baked into the image — so this adds no card of its own. Adding
+// one would double the border.
+//
+// Clicking opens the Lightbox: the boards are dense enough that reading them
+// in place isn't always possible, so every figure carries a real "Enlarge"
+// affordance (button + aria-label + cursor label) rather than relying on the
+// custom cursor alone.
+//
+// `caption` renders the frame's own 12/20 caption underneath, centred, at
+// 16px clear — the only figures that have one are the two discovery boards.
+export default function Figure({ figure, onOpen, caption, className = '' }) {
   const reveal = useReveal()
-  const reducedMotion = useReducedMotion()
   if (!figure?.src) return null
 
   return (
-    <motion.figure {...reveal} className={className}>
-      <motion.button
+    <motion.figure
+      {...reveal}
+      className={`flex w-full flex-col items-center justify-center gap-4 ${className}`}
+    >
+      <button
         type="button"
         onClick={() => onOpen(figure)}
         data-cursor="Enlarge"
         aria-label={`Enlarge: ${figure.alt}`}
-        whileHover={reducedMotion ? undefined : { y: -3 }}
-        transition={{ duration: DUR.hover, ease: EASE }}
-        className={`block w-full overflow-hidden rounded-2xl border border-border bg-surface transition-[border-color,box-shadow] duration-300 hover:border-text/20 hover:shadow-[0_18px_36px_-20px_rgba(26,26,26,0.22)] focus-visible:outline-offset-4 ${
-          padded ? 'p-3 sm:p-5' : ''
-        }`}
+        className="block w-full overflow-hidden rounded-[10px] outline-none focus-visible:ring-2 focus-visible:ring-mfp-blue/40"
+        style={{ maxWidth: figure.width }}
       >
         <img
           src={figure.src}
@@ -32,12 +38,12 @@ export default function Figure({ figure, onOpen, className = '', padded = true }
           height={figure.height}
           loading="lazy"
           decoding="async"
-          className="h-auto w-full rounded-xl"
+          className="block h-auto w-full"
         />
-      </motion.button>
-      {figure.caption && (
-        <figcaption className="mt-3 text-sm font-normal leading-body text-text-muted">
-          {figure.caption}
+      </button>
+      {caption && (
+        <figcaption className="font-cs text-cs-caption font-normal text-cs-copy">
+          {caption}
         </figcaption>
       )}
     </motion.figure>

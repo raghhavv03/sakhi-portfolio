@@ -2,46 +2,41 @@ import { useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
 import { motion, useScroll } from 'framer-motion'
 import { projects } from '../data/portfolio'
-import { useReveal, useActiveSection } from '../lib/hooks'
-import Badge from '../components/Badge'
+import { useReveal } from '../lib/hooks'
 import Button from '../components/Button'
 import Magnetic from '../components/Magnetic'
 import Figure from '../components/Figure'
 import Lightbox from '../components/Lightbox'
-import RichText, { Rich } from '../components/RichText'
-import SentimentPanel from '../components/charts/SentimentPanel'
-import FrictionChart from '../components/charts/FrictionChart'
+import ScaleToFit from '../components/casestudy/ScaleToFit'
+import SentimentPanel, { SENTIMENT_WIDTH } from '../components/charts/SentimentPanel'
+import FrictionChart, { FRICTION_WIDTH } from '../components/charts/FrictionChart'
 import {
-  Section,
-  PairCards,
-  InfoCards,
-  Question,
-  Note,
-  StatRow,
-  CompareColumns,
-  Subheading,
+  CSSection,
+  CSLabel,
+  CSHeading,
+  CSSubheading,
+  CSBody,
+  CSList,
+  CSRich,
+  CSCallout,
+  CSQuote,
+  CSLiteratureCards,
+  CSSignalCards,
+  CSResultCards,
+  CSCompareColumns,
 } from '../components/casestudy/Blocks'
 
-// The contents rail, in reading order. Ids are duplicated on the sections
-// below; keeping the list here (rather than deriving it) means the rail can be
-// reordered without touching the narrative.
-const CONTENTS = [
-  { id: 'background', label: 'Background' },
-  { id: 'problem', label: 'Problem' },
-  { id: 'challenge', label: 'Challenge' },
-  { id: 'solution', label: 'Solution' },
-  { id: 'discovery', label: 'Discovery' },
-  { id: 'research', label: 'Research' },
-  { id: 'today-screen', label: 'Today screen' },
-  { id: 'repeat-logging', label: 'Repeat logging' },
-  { id: 'testing', label: 'Testing' },
-]
-
-// Case-study template (/work/:slug). Leads with the problem and the result,
-// then walks the argument: background → problem → challenge → solution →
-// discovery → research → the two design solutions → testing. Every string comes
-// from portfolio.js, so the same template renders any project written to that
-// shape; sections whose data is absent simply don't render.
+// The case-study page (/work/:slug), rebuilt from the MyFitnessPal Figma
+// frame — the same eighteen sections in the same order, each on its own
+// measure centred on the frame's 1440 canvas, with the frame's 104px section
+// rhythm and 24px internal rhythm. Type, colour and radii come from the
+// `cs-*` tokens, which are that frame's variables. Every string still lives in
+// portfolio.js.
+//
+// The design is a 1440 desktop frame, so it is reproduced exactly at that
+// width and above. Below it, each section keeps its own measure and stacks;
+// the two research panels, which are drawn geometry rather than reflowable
+// layout, scale as a unit (see ScaleToFit).
 export default function CaseStudy() {
   const { slug } = useParams()
   const [lightbox, setLightbox] = useState(null)
@@ -51,400 +46,328 @@ export default function CaseStudy() {
   if (!project || !project.caseStudy) return <Navigate to="/" replace />
 
   const cs = project.caseStudy
-  const openFigure = (figure) => setLightbox(figure)
+  const open = (figure) => setLightbox(figure)
 
   return (
-    <article className="mx-auto max-w-content px-6 py-section-sm md:py-section-md lg:py-section">
+    <>
       <ReadingProgress />
-      <BackHome />
+      <CaseStudyHero hero={cs.hero} title={cs.title} tagline={cs.tagline} />
 
-      {/* Title block */}
-      <header className="mt-8 max-w-4xl">
-        <Badge>Case study</Badge>
-        {cs.appIcon?.src ? (
-          <div className="mt-5 flex items-center gap-4 sm:gap-5">
-            <AppIcon icon={cs.appIcon} />
-            <h1 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-              {cs.title}
-            </h1>
-          </div>
-        ) : (
-          <h1 className="mt-5 text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-            {cs.title}
-          </h1>
-        )}
-        {cs.tagline && (
-          <p className="mt-5 max-w-3xl text-lg font-normal leading-body text-text-muted sm:text-xl">
-            {cs.tagline}
-          </p>
-        )}
-        {cs.meta?.length > 0 && (
-          <dl className="mt-10 grid gap-6 border-t border-border pt-6 sm:grid-cols-3">
-            {cs.meta.map((m) => (
-              <div key={m.label}>
-                <dt className="text-xs font-normal text-text-muted">{m.label}</dt>
-                <dd className="mt-1.5 text-sm font-semibold leading-snug">
-                  {m.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        )}
-      </header>
-
-      {/* Lead: problem + result side by side, before any process detail. */}
-      <Reveal className="mt-12 grid gap-8 rounded-2xl border border-border bg-surface p-6 sm:p-8 md:grid-cols-2 md:gap-12">
-        <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-text-muted">
-            The challenge
-          </h2>
-          <p className="mt-3 text-lg font-normal leading-body">{cs.challenge}</p>
+      <article className="w-full px-6 pb-cs-gap pt-cs-gap">
+        <div className="mx-auto max-w-cs-1182">
+          <BackHome />
         </div>
-        <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-text-muted">
-            The result
-          </h2>
-          <p className="mt-3 text-lg font-normal leading-body">{cs.result}</p>
-        </div>
-      </Reveal>
 
-      {/* Headline metrics */}
-      {cs.metrics?.length > 0 && (
-        <Reveal className="mt-5 grid grid-cols-2 gap-5 lg:grid-cols-4">
-          {cs.metrics.map((metric) => (
-            <div
-              key={metric.label}
-              className="rounded-2xl border border-border bg-surface p-6"
-            >
-              <div className="text-3xl font-semibold leading-none sm:text-4xl">
-                {metric.value}
-              </div>
-              <div className="mt-2 text-sm font-normal leading-body text-text-muted">
-                {metric.label}
-              </div>
-            </div>
-          ))}
-        </Reveal>
-      )}
-
-      {/* Narrative + contents rail */}
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_170px] lg:gap-14">
-        <div className="min-w-0">
-          {/* 1 — Background */}
+        <div className="mt-cs-gap flex flex-col gap-cs-gap">
+          {/* 1 — Background, with the fact-sheet rail beside it */}
           {cs.background && (
-            <Section
-              id="background"
-              badge={cs.background.badge}
-              heading={cs.background.heading}
-            >
-              <RichText
-                paragraphs={cs.background.body}
-                className="mt-6 max-w-3xl"
-              />
-              {cs.background.pullQuote && (
-                <Reveal className="mt-8 max-w-3xl border-l-2 border-text pl-6">
-                  <p className="text-xl font-semibold leading-tight sm:text-2xl">
-                    {cs.background.pullQuote}
-                  </p>
-                </Reveal>
-              )}
-              {cs.background.stats && (
-                <StatRow stats={cs.background.stats} className="mt-8" />
-              )}
-            </Section>
+            <div className="relative mx-auto w-full max-w-[1440px]">
+              <BackgroundMeta items={cs.background.meta} />
+              <CSSection id="background" width={593}>
+                <CSLabel>{cs.background.badge}</CSLabel>
+                <CSHeading>{cs.background.heading}</CSHeading>
+                <CSBody paragraphs={cs.background.body} />
+              </CSSection>
+            </div>
           )}
 
           {/* 2 — Problem */}
           {cs.problem && (
-            <Section
-              id="problem"
-              badge={cs.problem.badge}
-              heading={cs.problem.heading}
-            >
-              <PairCards items={cs.problem.items} />
-            </Section>
+            <CSSection id="problem" width={593}>
+              <CSLabel>{cs.problem.badge}</CSLabel>
+              <CSHeading>{cs.problem.heading}</CSHeading>
+              <CSBody paragraphs={cs.problem.body} />
+            </CSSection>
           )}
 
-          {/* 3 — Design challenge */}
+          {/* 3 — Design challenge, ending on the framing question */}
           {cs.designChallenge && (
-            <Section
-              id="challenge"
-              badge={cs.designChallenge.badge}
-              heading={cs.designChallenge.heading}
-            >
-              <RichText
-                paragraphs={cs.designChallenge.body}
-                className="mt-6 max-w-3xl"
-              />
-              <Question className="mt-8">{cs.designChallenge.question}</Question>
-            </Section>
+            <CSSection id="challenge">
+              <CSLabel>{cs.designChallenge.badge}</CSLabel>
+              <CSHeading>{cs.designChallenge.heading}</CSHeading>
+              <CSBody paragraphs={cs.designChallenge.body} />
+              <CSQuote>{cs.designChallenge.question}</CSQuote>
+            </CSSection>
           )}
 
           {/* 4 — Solution preview */}
           {cs.solution && (
-            <Section
-              id="solution"
-              badge={cs.solution.badge}
-              heading={cs.solution.heading}
-            >
-              <PairCards items={cs.solution.items} />
-            </Section>
+            <CSSection id="solution">
+              <CSLabel>{cs.solution.badge}</CSLabel>
+              <CSHeading>{cs.solution.heading}</CSHeading>
+              <CSBody paragraphs={cs.solution.body} />
+            </CSSection>
           )}
 
-          {/* 5 — Discovery */}
+          {/* 5 — Discovery: the two annotated boards */}
           {cs.discovery && (
-            <Section
-              id="discovery"
-              badge={cs.discovery.badge}
-              heading={cs.discovery.heading}
-            >
-              <RichText
-                paragraphs={cs.discovery.body}
-                className="mt-6 max-w-3xl"
-              />
-              <div className="mt-8 space-y-8">
-                {cs.discovery.figures.map((figure) => (
-                  <Figure
-                    key={figure.src}
-                    figure={figure}
-                    onOpen={openFigure}
-                    padded={false}
-                  />
-                ))}
-              </div>
-            </Section>
+            <CSSection id="discovery" width={1000}>
+              <CSLabel>{cs.discovery.badge}</CSLabel>
+              <CSHeading loose>{cs.discovery.heading}</CSHeading>
+              <CSBody paragraphs={cs.discovery.body} />
+              {cs.discovery.figures.map((figure) => (
+                <Figure
+                  key={figure.src}
+                  figure={figure}
+                  caption={figure.caption}
+                  onOpen={open}
+                />
+              ))}
+            </CSSection>
           )}
 
-          {/* 6 — Research */}
+          {/* 6 — Research: reviews, then literature */}
           {cs.research && (
-            <Section
-              id="research"
-              badge={cs.research.badge}
-              heading={cs.research.heading}
-            >
-              <RichText
-                paragraphs={cs.research.intro}
-                className="mt-6 max-w-3xl"
+            <>
+              <CSSection id="research">
+                <CSLabel>{cs.research.badge}</CSLabel>
+                <CSHeading>{cs.research.heading}</CSHeading>
+                <CSBody paragraphs={cs.research.intro} />
+              </CSSection>
+
+              {/* Sentiment: the claim beside the panel that carries it. */}
+              <PanelRow
+                copy={<CSBody paragraphs={cs.research.sentimentBody} />}
+                panel={
+                  <ScaleToFit width={SENTIMENT_WIDTH}>
+                    <SentimentPanel data={cs.research.sentiment} />
+                  </ScaleToFit>
+                }
               />
 
-              <div className="mt-10">
-                <SentimentPanel data={cs.research.sentiment} />
-              </div>
-              <RichText
-                paragraphs={cs.research.sentimentBody}
-                className="mt-8 max-w-3xl"
+              {/* Friction: the chart leads, the conclusion follows it. */}
+              <PanelRow
+                reverse
+                copy={
+                  <div className="flex w-full flex-col gap-cs-stack">
+                    <CSHeading>{cs.research.frictionHeading}</CSHeading>
+                    <div className="flex w-full flex-col">
+                      <CSBody paragraphs={cs.research.frictionIntro} />
+                      <CSList items={cs.research.frictionTypes} />
+                      <CSBody paragraphs={cs.research.frictionConclusion} />
+                    </div>
+                  </div>
+                }
+                panel={
+                  <ScaleToFit width={FRICTION_WIDTH}>
+                    <FrictionChart data={cs.research.chart} />
+                  </ScaleToFit>
+                }
               />
 
-              <div className="mt-12">
-                <FrictionChart data={cs.research.chart} />
-              </div>
-
-              <Subheading className="mt-16">
-                {cs.research.frictionHeading}
-              </Subheading>
-              <RichText
-                paragraphs={cs.research.frictionIntro}
-                className="mt-4 max-w-3xl"
-              />
-              <InfoCards
-                items={cs.research.frictionTypes}
-                columns={4}
-                className="mt-8"
-              />
-              <RichText
-                paragraphs={cs.research.frictionConclusion}
-                className="mt-8 max-w-3xl"
-              />
-
-              <Subheading className="mt-16">
-                {cs.research.literatureHeading}
-              </Subheading>
-              <RichText
-                paragraphs={cs.research.literatureIntro}
-                className="mt-4 max-w-3xl"
-              />
-              <InfoCards
-                items={cs.research.literature}
-                columns={3}
-                numbered
-                className="mt-8"
-              />
-
-              <Subheading className="mt-16">
-                {cs.research.synthesisHeading}
-              </Subheading>
-              <RichText
-                paragraphs={cs.research.synthesis}
-                className="mt-4 max-w-3xl"
-              />
-            </Section>
+              <CSSection id="literature" width={1158}>
+                <CSBody paragraphs={cs.research.literatureIntro} />
+                <CSLiteratureCards items={cs.research.literature} className="w-full" />
+                <CSHeading>{cs.research.synthesisHeading}</CSHeading>
+                <CSBody paragraphs={cs.research.synthesis} />
+              </CSSection>
+            </>
           )}
 
-          {/* 7 — Solution 1: the Today screen */}
-          {cs.todayScreen && (
-            <Section
-              id="today-screen"
-              badge={cs.todayScreen.badge}
-              heading={cs.todayScreen.heading}
-            >
-              <Reveal className="mt-6">
-                <p className="text-sm font-semibold text-text-muted">
-                  {cs.todayScreen.eyebrow}
-                </p>
-              </Reveal>
-              <ol className="mt-8 space-y-12">
-                {cs.todayScreen.steps.map((step, i) => (
-                  <li key={step.title}>
-                    <Reveal className="max-w-3xl">
-                      <div className="flex gap-5">
-                        <span className="pt-1 text-sm font-semibold text-text-muted">
-                          {String(i + 1).padStart(2, '0')}
-                        </span>
-                        <div>
-                          <h3 className="text-xl font-semibold leading-tight">
-                            {step.title}
-                          </h3>
-                          <p className="mt-3 text-base font-normal leading-body text-text-muted">
-                            <Rich>{step.body}</Rich>
-                          </p>
-                        </div>
-                      </div>
-                    </Reveal>
-                    {step.figure && (
-                      <Figure
-                        figure={step.figure}
-                        onOpen={openFigure}
-                        className="mt-8"
-                      />
-                    )}
+          {/* 7 — Product decision: the Today screen, six moves */}
+          {cs.productDecision && (
+            <CSSection id="today-screen" width={1000}>
+              <CSLabel>{cs.productDecision.badge}</CSLabel>
+              <CSHeading>{cs.productDecision.heading}</CSHeading>
+              <CSLabel tone="copy">{cs.productDecision.subLabel}</CSLabel>
+              <ol className="flex w-full flex-col gap-cs-stack">
+                {cs.productDecision.steps.map((step, i) => (
+                  <li
+                    key={step.body}
+                    className={`flex w-full flex-col gap-cs-stack ${
+                      step.spaced ? 'pt-[30px]' : ''
+                    }`}
+                  >
+                    <Step index={i} body={step.body} />
+                    {step.figure && <Figure figure={step.figure} onOpen={open} />}
                   </li>
                 ))}
               </ol>
-            </Section>
+            </CSSection>
           )}
 
-          {/* 8 — Solution 2: repeat logging */}
+          {/* 8 — Solution 2: what the prediction runs on */}
           {cs.repeatLogging && (
-            <Section
-              id="repeat-logging"
-              badge={cs.repeatLogging.badge}
-              heading={cs.repeatLogging.heading}
-            >
-              <Reveal className="mt-6">
-                <p className="text-sm font-semibold text-text-muted">
-                  {cs.repeatLogging.eyebrow}
-                </p>
-              </Reveal>
-              <RichText
-                paragraphs={cs.repeatLogging.intro}
-                className="mt-6 max-w-3xl"
-                size="lg"
-              />
-
-              <InfoCards
-                items={cs.repeatLogging.signals}
-                columns={3}
-                className="mt-10"
-              />
-
-              {/* Placement: the argument beside the screen it produced. */}
-              <Subheading className="mt-16">
-                {cs.repeatLogging.placement.heading}
-              </Subheading>
-              <div className="mt-8 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
-                <RichText paragraphs={cs.repeatLogging.placement.body} />
-                <Figure
-                  figure={cs.repeatLogging.placement.figure}
-                  onOpen={openFigure}
-                  className="mx-auto w-full max-w-xs lg:mx-0 lg:max-w-none"
-                />
-              </div>
-
-              {/* Commit: figure first on desktop, so the pair reads as a beat
-                  answering the one above rather than repeating its shape. */}
-              <Subheading className="mt-16">
-                {cs.repeatLogging.commit.heading}
-              </Subheading>
-              <div className="mt-8 grid items-start gap-10 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-12">
-                <Figure
-                  figure={cs.repeatLogging.commit.figure}
-                  onOpen={openFigure}
-                  className="mx-auto w-full max-w-xs lg:mx-0 lg:max-w-none"
-                />
-                <RichText paragraphs={cs.repeatLogging.commit.body} />
-              </div>
-
-              <Subheading className="mt-16">
-                {cs.repeatLogging.limits.heading}
-              </Subheading>
-              <CompareColumns
-                columns={cs.repeatLogging.limits.columns}
-                className="mt-8"
-              />
-            </Section>
+            <CSSection id="repeat-logging">
+              <CSLabel tone="copy">{cs.repeatLogging.label}</CSLabel>
+              <CSHeading>{cs.repeatLogging.heading}</CSHeading>
+              <CSBody paragraphs={cs.repeatLogging.body} />
+              <CSSignalCards items={cs.repeatLogging.signals} className="w-full" />
+            </CSSection>
           )}
 
-          {/* 9 — Testing */}
+          {/* 9 — Where the prediction sits, beside the screen it produced */}
+          {cs.predictionCard && (
+            <CSSection id="prediction-card" width={1004}>
+              <div className="flex w-full flex-col items-center justify-center gap-cs-stack lg:flex-row">
+                <div className="flex w-full flex-col items-start justify-center gap-cs-stack lg:w-[703px] lg:shrink-0">
+                  <CSHeading>{cs.predictionCard.heading}</CSHeading>
+                  <CSBody paragraphs={cs.predictionCard.body} />
+                </div>
+                <Figure
+                  figure={cs.predictionCard.figure}
+                  onOpen={open}
+                  className="lg:-mx-[4.613px] lg:w-[285.99px] lg:shrink-0"
+                />
+              </div>
+            </CSSection>
+          )}
+
+          {/* 10 — What Done does */}
+          {cs.addMore && (
+            <CSSection id="add-more" width={1000}>
+              <CSBody paragraphs={cs.addMore.body} />
+              <Figure figure={cs.addMore.figure} onOpen={open} />
+            </CSSection>
+          )}
+
+          {/* 11 — Strong / weak */}
+          {cs.strength && (
+            <CSSection id="strength" width={880}>
+              <CSHeading>{cs.strength.heading}</CSHeading>
+              <CSCompareColumns columns={cs.strength.columns} className="w-full" />
+            </CSSection>
+          )}
+
+          {/* 12 — Testing outcomes */}
           {cs.testing && (
-            <Section
-              id="testing"
-              badge={cs.testing.badge}
-              heading={cs.testing.heading}
-            >
-              <RichText
-                paragraphs={cs.testing.intro}
-                className="mt-6 max-w-3xl"
-              />
-              <Note
-                label={cs.testing.task.label}
-                title={cs.testing.task.value}
-                className="mt-8 max-w-3xl"
-              >
-                {cs.testing.task.note}
-              </Note>
-              <StatRow stats={cs.testing.results} className="mt-8" />
-              <RichText
-                paragraphs={cs.testing.body}
-                className="mt-8 max-w-3xl"
-              />
-              <Note
-                label={cs.testing.caveat.label}
-                className="mt-8 max-w-3xl"
-              >
-                {cs.testing.caveat.body}
-              </Note>
-            </Section>
+            <CSSection id="testing" width={928}>
+              <CSLabel>{cs.testing.badge}</CSLabel>
+              <CSHeading>{cs.testing.heading}</CSHeading>
+              <CSBody paragraphs={cs.testing.intro} />
+              <CSCallout lines={cs.testing.task} gap={false} className="w-full" />
+              <CSResultCards items={cs.testing.results} className="w-full" />
+              <CSBody paragraphs={cs.testing.body} />
+              <CSCallout lines={cs.testing.caveat} className="w-full" />
+            </CSSection>
+          )}
+
+          {/* 13 — If this shipped */}
+          {cs.ifShipped && (
+            <CSSection id="if-shipped" width={928}>
+              <CSLabel>{cs.ifShipped.badge}</CSLabel>
+              <CSHeading>{cs.ifShipped.heading}</CSHeading>
+              <CSBody paragraphs={cs.ifShipped.intro} />
+              <CSList items={cs.ifShipped.signals} />
+              <CSCallout lines={cs.ifShipped.callout} className="w-full" />
+            </CSSection>
+          )}
+
+          {/* 14 — Learnings */}
+          {cs.learnings && (
+            <CSSection id="learnings" width={928}>
+              <CSLabel>{cs.learnings.badge}</CSLabel>
+              <CSHeading>{cs.learnings.heading}</CSHeading>
+              <CSBody paragraphs={cs.learnings.body} />
+            </CSSection>
           )}
         </div>
 
-        <Contents />
-      </div>
+        {/* Closing back-home affordance */}
+        <div className="mx-auto mt-cs-gap max-w-cs-1182">
+          <BackHome />
+        </div>
 
-      {/* Closing back-home affordance */}
-      <div className="mt-section-sm md:mt-section-md lg:mt-section">
-        <BackHome />
-      </div>
-
-      <Lightbox figure={lightbox} onClose={() => setLightbox(null)} />
-    </article>
+        <Lightbox figure={lightbox} onClose={() => setLightbox(null)} />
+      </article>
+    </>
   )
 }
 
-// The subject product's app icon, as a small rounded tile beside the title.
-// Hides itself if the file is missing, so a not-yet-added asset never leaves a
-// broken-image box in the masthead.
-function AppIcon({ icon }) {
-  const [failed, setFailed] = useState(false)
-  if (failed) return null
+// A prose column beside one of the research panels: 567 + 24 + 591 = the
+// frame's 1182 measure. Side by side once there's room for all 1182, stacked
+// under that, with the panel scaling to whatever width it lands in.
+function PanelRow({ copy, panel, reverse = false }) {
   return (
-    <img
-      src={icon.src}
-      alt={icon.alt}
-      width="96"
-      height="96"
-      onError={() => setFailed(true)}
-      className="h-14 w-14 shrink-0 rounded-2xl border border-border object-cover sm:h-16 sm:w-16"
-    />
+    <div
+      className={`mx-auto flex w-full max-w-cs-1182 flex-col items-center justify-center gap-cs-stack ${
+        reverse ? 'min-[1280px]:flex-row-reverse' : 'min-[1280px]:flex-row'
+      }`}
+    >
+      <div className="w-full min-[1280px]:w-[567px] min-[1280px]:shrink-0">{copy}</div>
+      <div className="w-full min-[1280px]:w-[591px] min-[1280px]:shrink-0">{panel}</div>
+    </div>
+  )
+}
+
+// One of the six Today-screen moves: a bold ordinal, then the change.
+function Step({ index, body }) {
+  const reveal = useReveal()
+  return (
+    <motion.div {...reveal} className="flex w-full items-start gap-2.5 text-cs-copy">
+      <p className="font-cs shrink-0 text-cs-body-xl font-bold">
+        {String(index + 1).padStart(2, '0')}
+      </p>
+      <p className="font-cs min-w-0 flex-1 text-cs-body-xl font-normal">
+        <CSRich>{body}</CSRich>
+      </p>
+    </motion.div>
+  )
+}
+
+// Full-bleed band that opens the case study — the frame's own hero: the App
+// Store screenshot pinned to the left on the product's brand blue, with the
+// title and tagline centred over it. Hides itself without an image so an
+// unfinished project never ships a bare colour band.
+function CaseStudyHero({ hero, title, tagline }) {
+  const reveal = useReveal()
+  if (!hero?.image?.src) return null
+  return (
+    <section className="relative w-full overflow-hidden bg-mfp-blue">
+      <div className="relative mx-auto flex min-h-[380px] w-full max-w-[1440px] flex-col items-center justify-center gap-cs-stack px-6 py-16 text-center sm:min-h-[420px] sm:py-20 lg:h-[514px] lg:min-h-0 lg:py-0">
+        <img
+          src={hero.image.src}
+          alt={hero.image.alt}
+          width={hero.image.width}
+          height={hero.image.height}
+          fetchpriority="high"
+          className="relative z-0 h-auto w-full max-w-[200px] sm:max-w-[220px] lg:absolute lg:left-[26px] lg:top-[12px] lg:h-[500px] lg:w-[333px] lg:max-w-none lg:object-cover"
+        />
+        <motion.h1
+          {...reveal}
+          className="font-cs relative z-10 text-4xl font-semibold leading-[1.05] tracking-tight text-cs-inverse sm:text-6xl lg:whitespace-nowrap lg:text-cs-5xl"
+        >
+          {title}
+        </motion.h1>
+        {tagline && (
+          <motion.p
+            {...reveal}
+            className="font-cs relative z-10 w-full max-w-[684px] text-lg font-normal leading-snug text-cs-inverse sm:text-2xl lg:text-cs-tagline"
+          >
+            {tagline}
+          </motion.p>
+        )}
+      </div>
+    </section>
+  )
+}
+
+// The narrow fact-sheet rail beside Background — my role, status, type and
+// tools. The frame parks it at x=114 on a 1440 canvas, i.e. 606px left of
+// centre, so at 1440 and above it takes exactly that position; below that
+// there is no room for it beside a centred 593px column, so it reads as a
+// fact sheet above the narrative instead.
+function BackgroundMeta({ items }) {
+  const reveal = useReveal()
+  if (!items?.length) return null
+  return (
+    <motion.dl
+      {...reveal}
+      className="mx-auto mb-cs-stack flex w-full max-w-cs-593 flex-col gap-10 min-[1440px]:absolute min-[1440px]:left-[calc(50%-606px)] min-[1440px]:top-0 min-[1440px]:mx-0 min-[1440px]:mb-0 min-[1440px]:w-[163px]"
+    >
+      {items.map((item) => (
+        <div key={item.label} className="flex flex-col items-start gap-2">
+          <CSSubheading as="dt">{item.label}</CSSubheading>
+          <dd className="w-full">
+            <ul className="font-cs list-disc pl-6 text-cs-body-xl font-normal text-cs-primary">
+              {item.items.map((value) => (
+                <li key={value}>{value}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      ))}
+    </motion.dl>
   )
 }
 
@@ -459,37 +382,6 @@ function ReadingProgress() {
       className="fixed inset-x-0 top-0 z-[60] h-0.5 origin-left bg-text"
       style={{ scaleX: scrollYProgress }}
     />
-  )
-}
-
-// Sticky contents rail (desktop only — below lg the page is a single column
-// and the progress bar carries orientation on its own). Plain anchors, so it
-// works without JS and the browser handles the smooth scroll.
-function Contents() {
-  const active = useActiveSection(CONTENTS.map((c) => c.id))
-  return (
-    <nav aria-label="On this page" className="hidden lg:block">
-      <ul className="sticky top-28 space-y-1 border-l border-border">
-        {CONTENTS.map((item) => {
-          const isActive = item.id === active
-          return (
-            <li key={item.id}>
-              <a
-                href={`#${item.id}`}
-                aria-current={isActive ? 'true' : undefined}
-                className={`-ml-px block border-l py-1.5 pl-4 text-sm transition-colors duration-200 ${
-                  isActive
-                    ? 'border-text font-semibold text-text'
-                    : 'border-transparent font-normal text-text-muted hover:text-text'
-                }`}
-              >
-                {item.label}
-              </a>
-            </li>
-          )
-        })}
-      </ul>
-    </nav>
   )
 }
 
@@ -509,15 +401,5 @@ function BackHome() {
         Back to home
       </Button>
     </Magnetic>
-  )
-}
-
-// Reveal wrapper (reduced-motion aware) for block content.
-function Reveal({ children, className }) {
-  const reveal = useReveal()
-  return (
-    <motion.div {...reveal} className={className}>
-      {children}
-    </motion.div>
   )
 }

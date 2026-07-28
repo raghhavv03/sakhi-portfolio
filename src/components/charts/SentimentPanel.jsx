@@ -1,86 +1,86 @@
 import { useRef } from 'react'
-import { motion } from 'framer-motion'
-import { useReveal, useInViewOnce } from '../../lib/hooks'
+import { useInViewOnce } from '../../lib/hooks'
 
-// Tone → fill. The palette stays neutral so the one pastel-blue run reads as
-// the positive share rather than as decoration; the site's rule is that blue
-// carries meaning sparingly, never fills a chart for variety.
+// The Sunbeam CX sentiment panel, rebuilt at the frame's own geometry.
+//
+// The panel is drawn in Figma at 591px wide: 18.156px padding, a 12.104px
+// radius, a 23px-tall split bar whose three segments are 301.063 / 40.341 /
+// 213.284px, and a four-up stat row. Those widths are the design, not a
+// derivation of the percentages — the frame's segments are drawn, so they are
+// reproduced as drawn rather than recomputed from 55/4/41.
+//
+// Red / grey / green is the frame's actual encoding for negative / neutral /
+// positive, which is why this chart is exempt from the site's no-saturated-hue
+// rule. The bar grows on arrival from one observer on the panel, so all three
+// segments move together as a single measurement (see useInViewOnce).
+
+export const SENTIMENT_WIDTH = 591
+// 591 less the panel's 18.156px padding on both sides — the exact sum of the
+// three drawn segment widths.
+const SENTIMENT_BAR = 554.688
+
 const TONES = {
-  strong: 'bg-text',
-  muted: 'bg-border',
-  accent: 'bg-accent',
+  negative: 'bg-cs-negative',
+  neutral: 'bg-cs-neutral',
+  positive: 'bg-cs-positive',
 }
 
-// Review-sentiment summary: a single 100% stacked bar plus the headline counts
-// behind it. The segments grow from zero once, when the bar first scrolls into
-// view — one observer on the track drives all three as a CSS width transition,
-// so the three segments stay in step and no motion runs off-screen.
 export default function SentimentPanel({ data }) {
-  const reveal = useReveal()
-  const barRef = useRef(null)
-  const grown = useInViewOnce(barRef)
+  const ref = useRef(null)
+  const shown = useInViewOnce(ref)
   if (!data) return null
 
   return (
-    <motion.figure
-      {...reveal}
-      className="overflow-hidden rounded-2xl border border-border bg-surface"
+    <div
+      ref={ref}
+      className="flex flex-col items-start gap-3 rounded-[12.104px] border border-cs-card-border bg-cs-card p-[18.156px]"
+      style={{ width: SENTIMENT_WIDTH }}
     >
-      <figcaption className="border-b border-border p-6 sm:p-8">
-        <h3 className="text-lg font-semibold leading-tight">{data.title}</h3>
-        <p className="mt-2 text-xs font-normal leading-body text-text-muted">
+      <div className="flex flex-col items-start gap-1 text-cs-secondary">
+        <p className="font-cs whitespace-nowrap text-[19.367px] font-semibold leading-[24.208px] tracking-[-0.6052px]">
+          {data.title}
+        </p>
+        <p className="font-cs whitespace-pre text-cs-body-s font-normal">
           {data.source}
         </p>
-      </figcaption>
-
-      <div className="p-6 sm:p-8">
-        <p className="text-xs font-normal text-text-muted">{data.splitLabel}</p>
-
-        <div
-          ref={barRef}
-          role="img"
-          aria-label={data.split
-            .map((s) => `${s.label} ${s.value} percent`)
-            .join(', ')}
-          className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-border"
-        >
-          {data.split.map((segment) => (
-            <div
-              key={segment.label}
-              style={{ width: grown ? `${segment.value}%` : '0%' }}
-              className={`transition-[width] duration-500 ease-out motion-reduce:transition-none ${TONES[segment.tone]}`}
-            />
-          ))}
-        </div>
-
-        <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-          {data.split.map((segment) => (
-            <li
-              key={segment.label}
-              className="flex items-center gap-2 text-xs font-normal text-text-muted"
-            >
-              <span
-                aria-hidden="true"
-                className={`h-2 w-2 rounded-full ${TONES[segment.tone]}`}
-              />
-              {segment.label}
-              <span className="font-semibold text-text">{segment.value}%</span>
-            </li>
-          ))}
-        </ul>
       </div>
 
-      <dl className="grid grid-cols-2 gap-px border-t border-border bg-border lg:grid-cols-4">
+      <div className="flex flex-col items-start gap-1">
+        <p className="font-cs whitespace-nowrap text-cs-body-s font-normal text-cs-secondary">
+          {data.splitLabel}
+        </p>
+        {/* The whole bar wipes in; the segments keep their drawn widths, so
+            the split never renders at a ratio the frame doesn't show. */}
+        <div
+          className="flex h-[23px] items-center overflow-hidden rounded-[12.104px] transition-[width] duration-700 ease-out motion-reduce:transition-none"
+          style={{ width: shown ? SENTIMENT_BAR : 0 }}
+        >
+          {data.segments.map((segment) => (
+            <div
+              key={segment.tone}
+              className={`relative h-[47.811px] shrink-0 overflow-hidden ${TONES[segment.tone]}`}
+              style={{ width: segment.width }}
+            >
+              <p className="font-cs absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[9.683px] font-normal leading-[14.525px] text-cs-inverse">
+                {segment.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex w-full items-center justify-between whitespace-nowrap text-cs-secondary">
         {data.stats.map((stat) => (
-          <div key={stat.label} className="bg-surface p-6">
-            <dt className="text-xs font-normal text-text-muted">{stat.label}</dt>
-            <dd className="mt-2 text-3xl font-semibold leading-none">
-              {stat.value}
-            </dd>
-            <p className="mt-2 text-xs font-normal text-text-muted">{stat.note}</p>
+          <div
+            key={stat.label}
+            className="flex flex-col items-center justify-center gap-[6.052px] rounded-[10px] border border-[#e9e9e9] bg-cs-bg p-[6.052px]"
+          >
+            <p className="font-cs text-cs-body-s font-normal">{stat.label}</p>
+            <p className="font-cs text-cs-m font-semibold">{stat.value}</p>
+            <p className="font-cs text-cs-body-s font-normal">{stat.note}</p>
           </div>
         ))}
-      </dl>
-    </motion.figure>
+      </div>
+    </div>
   )
 }

@@ -68,13 +68,17 @@ src/
 - **Text is never blue.** Pastel blue (`accent`) has exactly two jobs: hover
   states and the hero illustration's fills. The vivid `cursor` blue is the
   cursor only. Focus rings are off-black.
-- **Two font weights only** — 400 and 600. Sentence case everywhere.
+- **Two font weights only** — 400 and 600. Sentence case everywhere. The one
+  exception is the case-study page, whose Figma source sets inline emphasis in
+  Inter Bold (700); that weight exists for `font-cs` and nothing else.
 - **Scroll reveals fire once** (`viewport={{ once: true }}`) and are disabled
   entirely under `prefers-reduced-motion` (that is what `useReveal` handles).
 - **The custom cursor is decorative.** Every `data-cursor` element must also
   carry real link text or an `aria-label`. It is gated on `(pointer: fine)`.
-- **Charts grow their bars via `useInViewOnce` + a CSS width transition**, not a
+- **Charts grow their bars via `useInViewOnce` + a CSS transition**, not a
   Framer in-view gesture — one observer per chart so all bars move together.
+  The friction chart grows with `scaleX`, not `width`, because its labels are
+  right-aligned in a shared grid and animating width would re-measure them.
 - Every image needs explicit `width`/`height` and `alt`. Below-the-fold images
   lazy-load.
 
@@ -84,6 +88,42 @@ src/
 
 Newest first. Add an entry per working session — what shipped, and what the
 next session should pick up.
+
+### 2026-07-28 — case study rebuilt from the current Figma frame (`case-study`)
+- Replaced the entire case-study page with the current MyFitnessPal frame
+  (`46RjVrGHqQvJtK1uPSRdtH`, node `728:2865`, 1440 × 16574). Seventeen sections
+  in the frame's order, each centred on **its own measure** — 593, 880, 928,
+  948, 1000, 1003.76, 1158, 1182 — with the frame's uniform **104px** section
+  rhythm and **24px** internal rhythm. Verified section-by-section against the
+  frame: every `x` and `width` matches exactly, and every height matches to
+  within 2–3px except the two noted below.
+- Two paragraphs wrap one line differently from Figma: Problem 1 (Figma 3
+  lines, Chrome 4) and the design-challenge question (Figma 3, Chrome 2). The
+  family, size, weight, line height, tracking and box width are all verified
+  identical to the frame's variables — Figma's text shaper simply breaks a few
+  pixels differently. Not worth altering extracted values to chase.
+- Tokens: added `cs-copy` (#575757), `cs-card`/`cs-card-border`, the sentiment
+  and friction hues, the per-section `max-w-cs-*` measures, and `cs-gap` /
+  `cs-stack`. Added Inter 700 (see the weights note above).
+- `charts/SentimentPanel` and `charts/FrictionChart` are rebuilt at the frame's
+  literal geometry (both 591px wide, 8–9px labels, bars in tenths of a pixel).
+  **Their bar lengths are the lengths the frame draws, not value × a scale** —
+  the frame's chart is drawn, not plotted, so don't "fix" them to be
+  proportional. New `casestudy/ScaleToFit` scales those two panels as a unit
+  below their natural width, which is how they stay exact on tablet/mobile.
+- Assets re-exported from the frame at 2–3× into `public/images/myfitnesspal/`:
+  `ui-teardown`, `repeat-journey`, `today-nutrition`, `day-navigation`,
+  `batch-shortcuts`, `inline-diary-edit`, `prediction-card`, `add-more-card`,
+  `hero-app-store`, `quote-mark.svg`. The teardown boards and prototype boards
+  carry the frame's own card/border/radius baked in, which is why `Figure` no
+  longer wraps anything in a card. Deleted the superseded exports.
+- The prediction-card phone exports 4.613px larger on every side than its node
+  box, because that device frame's stroke sits outside it — it renders at the
+  export's size with a matching negative margin so the screen lands exactly
+  where the frame puts it.
+- **Next:** the hero is the LCP image on this route and is still a single
+  107KB WebP; a `srcset` would pay for itself. Route-level code splitting is
+  still open, and now matters more — this page is much heavier than the rest.
 
 ### 2026-07-27 — home thumbnail is the brand mark
 - The MyFitnessPal home-card thumbnail is now the product mark on the
