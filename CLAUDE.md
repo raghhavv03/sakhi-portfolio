@@ -22,6 +22,12 @@ npm run preview    # serve the production build on :4173
 `assets/hero-scene-light.png` / `assets/hero-scene-dark.png` into AVIF + WebP
 at three widths (840 / 1280 / 1672).
 
+`npm run optimize:about` regenerates the thirteen About photographs from
+`assets/about/*.jpg` into `public/images/about/*.webp`, cover-cropped to the
+four card shapes the page actually renders (`make` / `cat` / `trip` /
+`portrait`). The masters in `assets/` are already downscaled to 1400px — the
+phone originals are not in the repo.
+
 ---
 
 ## Architecture
@@ -54,12 +60,15 @@ at three widths (840 / 1280 / 1672).
 - **Empty means "don't render".** Every consumer of `portfolio.js` treats an
   empty string or empty array as a missing value and hides the affordance: no
   résumé URL hides the Resume button, no email hides every mailto, an empty
-  `education` array hides that section, no Crochet Curio images lets the copy
-  span full width. So leave a field empty until it's real — never a placeholder
+  `education` array hides that section, a photo with no `caption` simply never
+  names itself. So leave a field empty until it's real — never a placeholder
   string, which ships as visible filler.
 - **Footer is a centred sign-off, not a sitemap.** Copy lives in `footer` +
-  `site.copyright`; connect links are assembled from `links` and `contact.email`
-  inside `Footer.jsx` (each hidden until real). Back to top is footer-only — no
+  `site.copyright`; the connect row is a set of round hairline icon buttons
+  assembled from `links` and `contact.email` inside `Footer.jsx`, each hidden
+  until real. "Say hello" → `/contact` is the one that never hides, so the row
+  is never empty. Résumé stays a `Button`, not an icon — the frame has no glyph
+  for it and a hand-drawn one would be a guess. Back to top is footer-only — no
   floating control. The old dark multi-column footer and the case-study
   `BackHome` buttons are gone.
 
@@ -68,12 +77,14 @@ src/
   App.jsx                    ThemeProvider + Router + Header/Footer/Cursor shell
   pages/                     Home · About · Contact · CaseStudy
   components/
-    Header Footer Cursor Magnetic Button Badge SectionHeader Doodle
+    Header Footer Cursor Magnetic Button Badge SectionHeader
     ProjectCard
     ThemeProvider.jsx        owns light/dark; wraps the whole app
     ThemeToggle.jsx          header switch (desktop actions + mobile bar)
     HeroScene.jsx            the two hero frames + the lamp that switches them
     Journey.jsx              home's scroll-drawn trail + its four chapters
+    PhotoStack.jsx           About's fan / pile of photos + the lift-to-name
+                             interaction (strip that scrolls below `lg`)
     RichText.jsx             **bold** inline emphasis for copy from the data file
     Figure.jsx               case-study visual + Enlarge affordance
     Lightbox.jsx             full-bleed image viewer (Esc / backdrop / focus return)
@@ -82,7 +93,7 @@ src/
     charts/                  SentimentPanel, FrictionChart
   lib/
     hooks.js                 useFinePointer useReducedMotion useReveal
-                             useInViewOnce useActiveSection
+                             useInViewOnce useActiveSection useLargeScreen
     theme.js                 ThemeContext, useTheme, storage + applyTheme
     animations.js            EASE, DUR, fadeUp, stagger
   data/portfolio.js          every string on the site
@@ -130,6 +141,12 @@ src/
   right-aligned in a shared grid and animating width would re-measure them.
 - Every image needs explicit `width`/`height` and `alt`. Below-the-fold images
   lazy-load.
+- **A stacked photo card must not move out from under the pointer.** In
+  `PhotoStack` a lifted card keeps its `x` in the spread and only rises,
+  straightens and scales. Sliding it back to centre un-hovers it, which slides
+  it back, which re-hovers it — a card that flickers forever. Same reason a
+  pile opens on the *group's* `pointerenter`, not a card's: at rest every card
+  but the top one is buried, so opening on the card leaves the rest unreachable.
 
 ---
 
@@ -143,9 +160,16 @@ Update this list, not each session's write-up, when an item is done.
   site has no way to reach her except the UI-only contact form until these land.
 - `resume.pdf` into `public/`, then `links.resume = '/resume.pdf'` — the
   Resume button stays hidden (header, mobile panel, footer) until then.
-- `about.education` entries — `{ institution, qualification, years }`.
+- `about.education` entries — `{ institution, qualification, years }`. The
+  About copy now says "an MBA in Marketing, 2025", so the institution is the
+  only missing fact.
 - Case-study `meta` has no timeline; the source PDF's Timeline field was blank.
-- `about.crochetCurio.images` — the section is copy-only without them.
+- `about.background.link` — the Crochet Curio shop URL. The copy names
+  `@crochetcurioo` but nothing links to it, and inventing the URL is not ours
+  to do. Fills the "Visit Crochet Curio" button.
+- Two of the three cats and two of the four trip photos have an empty
+  `caption`, so those cards never name themselves. Fine as-is; better with her
+  words.
 
 **Doable without her:**
 - Wire the contact form (Formspree or a Vercel function).
@@ -153,7 +177,12 @@ Update this list, not each session's write-up, when an item is done.
   shared case-study link previews as the home page.
 - Absolute `og:url` / `og:image` once the production domain is settled.
 - Project two, still a `coming-soon` placeholder.
-- Route-level code splitting — bundle is ~364KB / 117KB gzipped, most of it
+- The About section kickers are ours, not hers: the frame gives one heading per
+  section ("Background", "When I'm not designing"), and the site's
+  `SectionHeader` wants a badge above it. "Background" became the badge over
+  "Crochet Curio", and "Beyond design" sits over "When I'm not designing".
+  Worth her confirming.
+- Route-level code splitting — bundle is ~369KB / 119KB gzipped, most of it
   Framer Motion; the case study is the only page that needs the heavy parts,
   and it's also the LCP-heaviest route (hero is a single 107KB WebP — a
   `srcset` would pay for itself).
@@ -167,17 +196,65 @@ Update this list, not each session's write-up, when an item is done.
   at 8–12px inside `ScaleToFit`, but worth a look if the panels are redrawn.
 
 **Copy that is a first draft, not Sakhi's own words:** `site.bio`,
-`hero.opening`, `hero.scene.lampHint`, `contact.invite`, `footer.heading`,
-`footer.subtext`, `about.statement`, `about.paragraph`,
-`about.crochetCurio.paragraph`, all six `about.interests` blurbs, and the whole
+`hero.opening`, `hero.scene.lampHint`, `contact.invite`, and the whole
 `journey` block — its four chapters are written from the Stitch frame's
 outline (crochet → shop → MBA → UX), so the dates, the order and the wording
-all need her confirmation.
+all need her confirmation. **The entire `about` block and `footer` are now
+hers**, lifted verbatim from the "Website changes" Figma file; the only strings
+on that page we wrote are the two section badges and the image `alt` text.
 
 ## Progress log
 
 Newest first. Add an entry per working session — what shipped. Open TODOs go
 in **Open work** above, not in each entry.
+
+### 2026-07-30 — About rebuilt from Figma, one footer everywhere, curvier journey trail
+The About page is now Sakhi's own words and her own photographs, from the
+"Website changes" Figma file (`dZb2Q6tMIGKgg2Xozpb1Nk`, frame `2023:105`), and
+the footer is that frame's sign-off on every route.
+
+- **About** follows the frame's order: intro beside the portrait, the Crochet
+  Curio makes, the background behind them, then what happens off duty.
+  Education keeps its slot and stays hidden. The old placeholder page is gone —
+  `about.statement` / `about.paragraph` / `crochetCurio` / the six `interests`
+  cards were all drafts written for her, and every one is replaced. `Doodle.jsx`
+  was only ever used by those interest cards, so it's deleted along with
+  `public/about-sakhi-saree.png`.
+- **`PhotoStack.jsx`** carries the frame's interaction. A `fan` (the five
+  makes) spreads across the row; a `pile` (three cats, four trip photos) is
+  dealt almost on top of itself and opens while explored. Either way the card
+  under the pointer rises, straightens, scales and names itself in a pill —
+  the frame's yellow caption bubbles, re-drawn as the site's own card
+  (`surface` + `border`), because `#fffb00` is not in this palette. Below `lg`
+  it is a snap-scrolling strip with every caption visible, since a phone has
+  no hover and five 200px cards fanned across 342px would be five slivers.
+  New `useLargeScreen()` in `hooks.js` is what tells the two apart.
+- **Footer** is the frame's: hairline, "Thanks for stopping by!", the subtext,
+  a row of round hairline icon buttons, the copyright. The mail and chat glyphs
+  are the frame's own paths re-pointed at `currentColor`; LinkedIn stays set in
+  type, as the frame sets it, rather than shipping a redrawn brand mark. "Say
+  hello" → `/contact` is always present so the row is never empty.
+- **Journey trail** (home) — the dots were HTML pinned to the column centre
+  while the path was a hardcoded `d` in a stretched viewBox, so wrapped copy
+  walked them off the curve. The path is now measured: a `ResizeObserver` reads
+  each dot's centre and `buildTrail` threads a curve through those exact
+  points (max dot-to-path gap 1.3px at 1440 and 390). It is also much curvier —
+  alternating symmetric bellies, which stay tangent-continuous at every dot, so
+  it reads as one long wave; long gaps subdivide so a tall mobile card doesn't
+  flatten the wave into a line.
+- **Assets**: thirteen photographs exported from the frame's originals into
+  `assets/about/` (downscaled masters, 4.5MB) and `public/images/about/`
+  (WebP, 728KB total, largest 98KB) via the new `npm run optimize:about`.
+- **Verified** with `npm run lint`, `npm run build`, and a Playwright pass over
+  all four routes × light/dark × 1440/390 × normal and reduced motion: no
+  console errors, no horizontal overflow, no broken images, theme class
+  correct, connect row non-empty everywhere. Two real bugs were caught and
+  fixed in that pass — a React key-spread warning in the footer, and a lifted
+  pile card that slid out from under the pointer and flickered.
+- **Files touched:** `About.jsx`, `Footer.jsx`, `Journey.jsx`, `portfolio.js`,
+  `hooks.js`, `package.json`, `CLAUDE.md`, plus new `PhotoStack.jsx` and
+  `scripts/optimize-about.mjs`. Deleted `Doodle.jsx`,
+  `public/about-sakhi-saree.png`.
 
 ### 2026-07-29 — light + dark themes, new hero scene, the Journey section
 Home is now hero → journey → work, and the site has two themes with the hero

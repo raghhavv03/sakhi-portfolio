@@ -30,6 +30,14 @@ export function useReducedMotion() {
   return useMediaQuery('(prefers-reduced-motion: reduce)')
 }
 
+// True at Tailwind's `lg` and up. Only for layouts a class cannot express —
+// About's photo stacks compute their transforms in JS, and a stack that is a
+// scrolling strip on a phone must not be told to fan out. Keep the breakpoint
+// here in step with the `lg:` classes that go with it.
+export function useLargeScreen() {
+  return useMediaQuery('(min-width: 1024px)')
+}
+
 // Scroll-reveal props for a motion element. Under reduced motion the reveal is
 // disabled entirely — the element renders in its final state with no animation.
 export function useReveal() {

@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "optimize:scene": "node scripts/optimize-scene.mjs"
+    "optimize:scene": "node scripts/optimize-scene.mjs",
+    "optimize:about": "node scripts/optimize-about.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.3.0",

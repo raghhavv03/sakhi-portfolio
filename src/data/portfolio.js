@@ -12,14 +12,17 @@ export const site = {
   name: 'Sakhi Rana',
   role: 'UI/UX & Product Designer',
   bio: 'UI/UX designer working on product problems — research first, then the interface that answers it.',
-  copyright: '© 2026 Sakhi Rana · all rights reserved',
+  copyright: '© 2026 Sakhi Rana · Built with love',
 }
 
 // Footer closing copy — the centred sign-off band at the bottom of every page.
 export const footer = {
-  heading: 'Thanks for stopping by',
+  heading: 'Thanks for stopping by!',
   subtext:
-    "I'd love to talk projects, collaborations, or anything design.",
+    "Feel free to reach out if you'd like to chat, collaborate, or simply say hello.",
+  // The one connect affordance that never depends on a fact we don't have yet:
+  // the contact form. LinkedIn and email join it as soon as they exist.
+  sayHello: 'Say hello',
 }
 
 export const contact = {
@@ -610,55 +613,115 @@ export const projects = [
   },
 ]
 
+// ---------------------------------------------------------------------------
+// About. Every string below is Sakhi's own, from the "Website changes" Figma
+// frame — not a draft written for her.
+//
+// The three photo groups (`makes`, `offDuty.cats`, `offDuty.trips`) are read
+// by one component. A `caption` is what the card names itself as when it is
+// lifted out of the stack; leave it empty and the photo simply carries no
+// label. `alt` always describes the picture, caption or not.
+// ---------------------------------------------------------------------------
 export const about = {
-  badge: 'About Me',
-  statement:
-    "Design has always been more than just a job — it's my passion.",
-  paragraph:
-    "I'm a UI/UX designer drawn to the small, repeated actions a product depends on — the ones people perform every day and stop noticing until they get harder. I like starting in the research: reviews, journeys, the behavioural literature, whatever explains why something feels heavier than it should. The interface comes after, and it has to earn every tap it asks for.",
+  badge: 'About me',
+  heading: 'A little bit about me...',
+  statement: "I didn't study product design. I found my way to it.",
+  paragraphs: [
+    'I graduated in 2025 with an MBA in Marketing, where I spent a lot of time understanding consumer behavior, human psychology, and what makes people connect with products. Somewhere along the way, my focus shifted from why people choose products to how those products are shaped in the first place. That curiosity eventually led me to product design.',
+    "Today, I spend a lot of my time paying attention to the little things most people overlook. I like noticing why one interaction feels effortless while another doesn't, questioning the decisions behind products I use every day, and exploring how thoughtful design can quietly make life easier.",
+  ],
+  portrait: {
+    src: '/images/about/portrait.webp',
+    alt: 'Sakhi in a grey saree, standing against a red brick wall',
+    width: 720,
+    height: 927,
+  },
+
+  // The Crochet Curio makes — the shop's own catalogue, in the frame's order.
+  makes: [
+    {
+      src: '/images/about/make-coasters.webp',
+      alt: 'Crocheted flower coasters in red, blue, orange and yellow',
+      caption: 'Tea & coffee coasters',
+    },
+    {
+      src: '/images/about/make-bucket-hat.webp',
+      alt: 'A pale blue crocheted bucket hat',
+      caption: 'Bucket hat',
+    },
+    {
+      src: '/images/about/make-caroline-top.webp',
+      alt: 'A teal crocheted top with green and white trim',
+      caption: 'Custom Caroline top',
+    },
+    {
+      src: '/images/about/make-cardigan.webp',
+      alt: 'A white crocheted cardigan with strawberries across the front',
+      caption: 'Strawberry cardigan',
+    },
+    {
+      src: '/images/about/make-tote.webp',
+      alt: 'A blue and white checkered crocheted tote bag',
+      caption: 'Checkered tote bag',
+    },
+  ],
+
+  background: {
+    heading: 'Crochet Curio',
+    paragraphs: [
+      'I have a habit of diving headfirst into things that spark my curiosity. Crochet was one of them. What began as learning a few stitches eventually turned into a small online business where I designed and sold handmade accessories and clothing through (@crochetcurioo). It taught me that the most rewarding projects usually start with simply being willing to learn.',
+      "I approach product design with that same curiosity. I'm always exploring new ideas, refining my thinking, and paying attention to the details that make experiences feel effortless. Outside of design, that curiosity finds its way into other parts of my life too. Right now, I'm learning German, working on my pickleball game, and probably adding another unexpected skill to the list.",
+    ],
+    link: '', // the shop's page — empty hides the Visit button
+  },
+
   educationHeading: 'Where I studied',
   // Each entry: { institution, qualification, years }. Empty until filled —
   // the Education section doesn't render without it.
   education: [],
-  crochetCurio: {
-    heading: 'Crochet Curio',
+
+  offDuty: {
+    heading: "When I'm not designing",
     paragraph:
-      "Crochet Curio is where I make things with my hands instead of a cursor. It's the same instinct as the design work — structure, repetition, a pattern you can feel your way through — just slower, and with the finished object in your lap at the end. It's also the best thinking I do all week.",
-    images: [],
-    link: '', // optional shop/page URL; uses the Visit cursor
+      "I'm usually planning my next trip, trying a new sport, doing Pilates, trying to make every stray cat fall in love with me (they're rarely convinced), or convincing myself I have enough time to pick up yet another hobby.",
+    cats: [
+      {
+        src: '/images/about/cat-1.webp',
+        alt: 'A tabby cat looking straight into the camera',
+        caption: 'pspspsps',
+      },
+      {
+        src: '/images/about/cat-2.webp',
+        alt: 'A tabby cat stretched out asleep on warm concrete',
+        caption: '',
+      },
+      {
+        src: '/images/about/cat-3.webp',
+        alt: 'A black stray cat sitting in the sun by a wall',
+        caption: '',
+      },
+    ],
+    trips: [
+      {
+        src: '/images/about/trip-kayaking.webp',
+        alt: 'A yellow kayak on the water in front of a marina',
+        caption: 'First time kayaking!',
+      },
+      {
+        src: '/images/about/trip-aquarium.webp',
+        alt: 'Standing in front of a floor-to-ceiling aquarium tank',
+        caption: '',
+      },
+      {
+        src: '/images/about/trip-sunset.webp',
+        alt: 'Palm trees against a pink and purple sunset',
+        caption: '',
+      },
+      {
+        src: '/images/about/trip-rainier.webp',
+        alt: 'A forest trail through tall trees on Mount Rainier',
+        caption: 'Trekking mount rainier',
+      },
+    ],
   },
-  interestsHeading: 'The things that define me',
-  // `motif` selects which hero-doodle accent the card echoes.
-  interests: [
-    {
-      title: 'Crochet',
-      blurb: 'Patterns, yarn, and the satisfaction of a row that finally sits straight.',
-      motif: 'circle',
-    },
-    {
-      title: 'My cat',
-      blurb: 'Chief design critic. Sits on the keyboard at the exact moment of insight.',
-      motif: 'dot',
-    },
-    {
-      title: 'My dog',
-      blurb: 'The reason I take breaks, and the reason those breaks are the best part of the day.',
-      motif: 'dot',
-    },
-    {
-      title: 'Plants',
-      blurb: 'A growing collection, kept alive with more optimism than expertise.',
-      motif: 'squiggle',
-    },
-    {
-      title: 'Photography',
-      blurb: 'Looking properly at ordinary things until they turn into a frame.',
-      motif: 'circle',
-    },
-    {
-      title: 'Kathak',
-      blurb: 'Around ten years of classical training — rhythm I still count in my head.',
-      motif: 'squiggle',
-    },
-  ],
 }
