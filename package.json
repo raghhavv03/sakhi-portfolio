@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "optimize:hero": "node scripts/optimize-hero.mjs"
+    "optimize:scene": "node scripts/optimize-scene.mjs"
   },
   "dependencies": {
     "framer-motion": "^11.3.0",

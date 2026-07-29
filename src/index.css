@@ -3,27 +3,77 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   Design tokens as CSS variables (mirror of tailwind.config.js).
-   Components should use Tailwind token classes; these exist for raw CSS needs
-   (e.g. the cursor) so no ad-hoc hex appears anywhere.
+   Design tokens. These variables ARE the palette — tailwind.config.js reads
+   every themed colour from them as `rgb(var(--x) / <alpha-value>)`, so
+   swapping the block below is what switches the whole site between light and
+   dark. Values are space-separated RGB channels, not hex, because that is
+   what lets Tailwind's alpha modifiers (`ring-text/25`) keep working.
+
+   Light is the warm cream studio of the daytime hero scene; dark is the same
+   room at night — a navy-ink canvas with warm off-white ink on it.
 --------------------------------------------------------------------------- */
 :root {
-  --bg: #fafaf8;
-  --surface: #ffffff;
-  --text: #1a1a1a; /* every heading, everywhere */
-  --text-muted: #575757; /* every paragraph, label, caption */
-  --border: #e6e6e2;
+  color-scheme: light;
 
-  --dark-bg: #121212;
-  --dark-surface: #1c1c1e;
-  --dark-text: #ededed;
-  --dark-muted: #a1a1a1;
-  --dark-border: #2a2a2c;
+  --bg: 251 249 245; /* #FBF9F5 warm cream canvas */
+  --surface: 255 255 255; /* #FFFFFF cards */
+  --border: 226 220 206; /* #E2DCCE warm hairline */
+  --text: 27 28 26; /* #1B1C1A every heading, everywhere */
+  --text-muted: 77 70 53; /* #4D4635 every paragraph, label, caption */
 
-  --accent: #a7c7e7;
-  --accent-hover: #8fb8de;
+  --accent: 167 199 231; /* #A7C7E7 pastel blue — hover only */
+  --accent-hover: 143 184 222; /* #8FB8DE */
+  --lamp: 212 175 55; /* #D4AF37 the lamp's own light */
+
+  --shadow: 26 26 26; /* elevation ink */
+  --shine: 255 255 255; /* card hover sweep */
+  --shine-alpha: 0.35;
 
   --cursor: #2563eb;
+}
+
+html.dark {
+  color-scheme: dark;
+
+  --bg: 15 23 42; /* #0F172A night canvas */
+  --surface: 23 32 51; /* #172033 lifted card */
+  --border: 42 53 76; /* #2A354C hairline that survives the dark */
+  --text: 240 237 230; /* #F0EDE6 warm off-white — 15.5:1 on the canvas */
+  --text-muted: 175 182 196; /* #AFB6C4 — 8.6:1 on the canvas */
+
+  /* Pastel blue keeps its role (hover states, never resting colour, never
+     type) but not its value: a hover fill here carries light ink, so the
+     accent deepens instead of staying pastel. */
+  --accent: 61 92 128; /* #3D5C80 */
+  --accent-hover: 78 115 156; /* #4E739C */
+  --lamp: 245 196 92; /* #F5C45C the lit lamp, warmer and brighter */
+
+  --shadow: 0 0 0;
+  --shine: 255 255 255;
+  --shine-alpha: 0.12;
+}
+
+/* The theme swap itself is a cross-fade, not a cut. Colour properties only —
+   nothing here animates layout, and it is off under reduced motion. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 320ms ease,
+    border-color 320ms ease,
+    color 320ms ease,
+    fill 320ms ease,
+    stroke 320ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition: none;
+  }
 }
 
 @layer base {
@@ -35,11 +85,11 @@
 
   body {
     margin: 0;
-    background-color: var(--bg);
+    background-color: rgb(var(--bg));
     /* Body copy resolves to the muted ink; headings opt back up to --text via
        the rule below. Setting it this way means a component that forgets a
        colour class still lands on one of the two sanctioned colours. */
-    color: var(--text-muted);
+    color: rgb(var(--text-muted));
     font-family: Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     font-weight: 400;
     line-height: 1.75;
@@ -55,14 +105,14 @@
   h4,
   h5,
   h6 {
-    color: var(--text);
+    color: rgb(var(--text));
     font-weight: 600;
     margin: 0;
   }
 
   /* Off-black focus ring — pastel blue is too low-contrast on the canvas. */
   :focus-visible {
-    outline: 2px solid var(--text);
+    outline: 2px solid rgb(var(--text));
     outline-offset: 2px;
     border-radius: 2px;
   }
@@ -99,7 +149,7 @@
   background: linear-gradient(
     105deg,
     transparent 40%,
-    rgba(255, 255, 255, 0.35) 50%,
+    rgb(var(--shine) / var(--shine-alpha)) 50%,
     transparent 60%
   );
   transform: translateX(-130%);

@@ -16,10 +16,14 @@ import { useReducedMotion } from '../lib/hooks'
 
 const MotionLink = motion.create(Link)
 
+// The hover shadow is CSS rather than a Framer value because its ink is a
+// theme variable (off-black on the cream canvas, true black on the night one)
+// and Framer would have to interpolate a colour it cannot read.
 const base =
   'inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 ' +
-  'text-body-sm font-semibold transition-colors duration-200 min-h-[44px] ' +
-  'whitespace-nowrap'
+  'text-body-sm font-semibold min-h-[44px] whitespace-nowrap ' +
+  'transition-[color,background-color,border-color,box-shadow] duration-200 ' +
+  'hover:shadow-[0_4px_14px_-4px_rgb(var(--shadow)/0.28)]'
 
 const variants = {
   primary:
@@ -30,10 +34,6 @@ const variants = {
   dark:
     'border border-dark-border text-dark-text bg-transparent hover:bg-accent hover:border-accent hover:text-text',
 }
-
-// Neutral elevation only — no color, so it works on light and dark bands.
-const restShadow = '0 0 0 0 rgba(26,26,26,0)'
-const hoverShadow = '0 4px 14px -4px rgba(26,26,26,0.18)'
 
 export default function Button({
   children,
@@ -52,8 +52,7 @@ export default function Button({
   const motionProps = reducedMotion
     ? {}
     : {
-        initial: { boxShadow: restShadow },
-        whileHover: { scale: 1.02, y: -1, boxShadow: hoverShadow },
+        whileHover: { scale: 1.02, y: -1 },
         whileTap: { scale: 0.98, y: 0, transition: { duration: DUR.tap } },
         transition: { duration: DUR.hover, ease: EASE },
       }

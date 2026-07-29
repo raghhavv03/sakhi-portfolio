@@ -44,6 +44,10 @@ function CursorIcon({ type }) {
   )
 }
 
+// Labels that describe a state rather than a destination take no arrow —
+// nothing is being navigated to.
+const NO_ICON = new Set(['Coming soon', 'Lights on', 'Lights off'])
+
 function parseCursorLabel(label) {
   if (!label) return { text: '', icon: null }
 
@@ -51,7 +55,7 @@ function parseCursorLabel(label) {
     return { text: label.replace(/\s*↓\s*/, '').trim(), icon: 'down' }
   }
 
-  if (label === 'Coming soon') {
+  if (NO_ICON.has(label)) {
     return { text: label, icon: null }
   }
 
@@ -165,7 +169,11 @@ export default function Cursor() {
       >
         <motion.div
           className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full"
-          animate={{ width: 'auto', height: 'auto', backgroundColor: 'var(--accent-hover)' }}
+          animate={{
+            width: 'auto',
+            height: 'auto',
+            backgroundColor: 'rgb(var(--accent-hover))',
+          }}
           transition={
             reducedMotion
               ? { duration: 0 }

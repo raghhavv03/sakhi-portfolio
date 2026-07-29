@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { nav, links } from '../data/portfolio'
 import Button from './Button'
 import Magnetic from './Magnetic'
+import ThemeToggle from './ThemeToggle'
 import { useReducedMotion } from '../lib/hooks'
 import { EASE, DUR } from '../lib/animations'
 import { tapHaptic } from '../lib/haptics'
@@ -122,13 +123,15 @@ export default function Header() {
           className="inline-flex min-h-[44px] items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
           aria-label="Sakhi Rana — home"
         >
+          {/* The wordmark is a flat off-black PNG, so dark mode flips it to
+              the light ink rather than shipping a second file. */}
           <img
             src="/logo-wordmark.png"
             alt=""
             aria-hidden="true"
             width="261"
             height="67"
-            className="h-8 w-auto"
+            className="h-8 w-auto dark:brightness-0 dark:invert"
           />
         </Link>
 
@@ -179,6 +182,9 @@ export default function Header() {
         {/* Desktop right-side actions — Magnetic adds a ≤3px cursor-aware
             drift; the Button itself carries hover lift + tap press. */}
         <div className="hidden items-center gap-2 md:flex">
+          {/* Same switch the hero lamp is — one shared state, so the two can
+              never show different things. */}
+          <ThemeToggle />
           {links.resume && (
             <Magnetic>
               <Button
@@ -205,32 +211,36 @@ export default function Header() {
           )}
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full md:hidden"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          <span className="relative block h-4 w-5">
-            <span
-              className={`absolute left-0 top-0 h-0.5 w-5 bg-text transition-transform duration-200 ${
-                menuOpen ? 'translate-y-[7px] rotate-45' : ''
-              }`}
-            />
-            <span
-              className={`absolute left-0 top-[7px] h-0.5 w-5 bg-text transition-opacity duration-200 ${
-                menuOpen ? 'opacity-0' : 'opacity-100'
-              }`}
-            />
-            <span
-              className={`absolute left-0 top-[14px] h-0.5 w-5 bg-text transition-transform duration-200 ${
-                menuOpen ? '-translate-y-[7px] -rotate-45' : ''
-              }`}
-            />
-          </span>
-        </button>
+        {/* Mobile actions — the theme toggle stays out of the panel so it is
+            reachable without opening the menu. */}
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span className="relative block h-4 w-5">
+              <span
+                className={`absolute left-0 top-0 h-0.5 w-5 bg-text transition-transform duration-200 ${
+                  menuOpen ? 'translate-y-[7px] rotate-45' : ''
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-[7px] h-0.5 w-5 bg-text transition-opacity duration-200 ${
+                  menuOpen ? 'opacity-0' : 'opacity-100'
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-[14px] h-0.5 w-5 bg-text transition-transform duration-200 ${
+                  menuOpen ? '-translate-y-[7px] -rotate-45' : ''
+                }`}
+              />
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile full-width panel */}

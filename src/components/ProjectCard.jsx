@@ -32,7 +32,7 @@ export default function ProjectCard({ project, delay = 0 }) {
       <div
         className={`card-shine relative aspect-[4/3] w-full overflow-hidden rounded-2xl border bg-surface transition-[border-color,box-shadow] duration-300 ${
           interactive
-            ? 'border-border group-hover:border-text/20 group-hover:shadow-[0_16px_32px_-16px_rgba(26,26,26,0.18)]'
+            ? 'border-border group-hover:border-text/20 group-hover:shadow-[0_16px_32px_-16px_rgb(var(--shadow)/0.22)]'
             : 'border-border'
         }`}
       >

@@ -122,7 +122,7 @@ export default function Contact() {
                 rows={5}
                 required
                 placeholder="Tell me about your project…"
-                className="mt-2 w-full resize-y rounded-xl border border-border bg-bg px-4 py-3 text-body font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgba(26,26,26,0.07)] focus:outline-none focus:placeholder:opacity-50"
+                className="mt-2 w-full resize-y rounded-xl border border-border bg-bg px-4 py-3 text-body font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgb(var(--text)/0.12)] focus:outline-none focus:placeholder:opacity-50"
               />
             </div>
 
@@ -211,7 +211,7 @@ function Field({ id, label, type, autoComplete, placeholder }) {
         required
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="mt-2 w-full rounded-xl border border-border bg-bg px-4 py-3 text-body font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgba(26,26,26,0.07)] focus:outline-none focus:placeholder:opacity-50"
+        className="mt-2 w-full rounded-xl border border-border bg-bg px-4 py-3 text-body font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgb(var(--text)/0.12)] focus:outline-none focus:placeholder:opacity-50"
       />
     </div>
   )

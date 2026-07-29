@@ -51,6 +51,48 @@ export const hero = {
   name: 'Sakhi Rana',
   opening:
     "Hi, I'm Sakhi — a UI/UX designer who digs into why a product is hard to use, then designs the version that isn't.",
+  // The hero artwork is the same desk in two lights, and the lamp in it is
+  // the site's theme switch. Both frames need their own alt text, because
+  // which one you are looking at is itself the state of the control.
+  scene: {
+    altLight:
+      'Illustration of a designer at a sunlit desk — laptop, sketchbook of wireframes, coffee and plants, with a park and city skyline through the window.',
+    altDark:
+      'The same desk at night — the desk lamp is lit, the laptop glows, and the park outside sits under a moonlit sky.',
+    lampHint: 'Tap the lamp to change the light',
+  },
+}
+
+// Home's journey section — the route from crochet to product design, drawn as
+// a trail that fills in as you scroll. Order is the order of the trail.
+export const journey = {
+  badge: 'Journey',
+  heading: 'The long way round to design',
+  subhead:
+    "Every design has a backstory. Mine didn't start on a screen — it started with a hook, a ball of yarn, and a lockdown.",
+  chapters: [
+    {
+      label: 'Chapter 01',
+      title: 'Lockdown and a crochet hook',
+      body: "When everything paused in 2020 I picked up a hook and yarn. It turned out to be a first lesson in structure: one thread, repeated in a pattern, becomes an object that holds its shape. That's the same thing a component is.",
+    },
+    {
+      label: 'Chapter 02',
+      title: 'Crochet Curio',
+      body: 'The hobby became a small business — orders, packaging, shipping, replies, a shop feed to keep alive. It taught me the thing I still design around: a beautiful product counts for nothing if the path to it is awkward.',
+    },
+    {
+      label: 'Chapter 03',
+      title: 'The MBA',
+      body: 'I wanted the why behind the numbers, so I went and studied them. Business value, funnels, and — the part that stuck — the psychology of the person deciding whether something is worth their time.',
+    },
+    {
+      label: 'Chapter 04',
+      title: 'Finding UX',
+      body: 'Then the pieces met: the tactile making, the business sense, and a stubborn interest in why people struggle with things. Wireframes became the new patterns, design systems the new inventory.',
+    },
+  ],
+  closing: 'Which is where the work below picks up.',
 }
 
 // Home's portfolio section.

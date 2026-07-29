@@ -1,5 +1,6 @@
-// Small decorative doodle that echoes the hero illustration's motifs
-// (pastel-blue accent fills + off-black line work). Purely decorative.
+// Small decorative doodle — a pastel accent fill under a line of heading ink.
+// Purely decorative. Paint comes from the theme variables rather than literal
+// hex, so the marks follow the canvas into dark mode.
 export default function Doodle({ variant = 'circle', className = '' }) {
   const common = {
     width: 40,
@@ -10,11 +11,14 @@ export default function Doodle({ variant = 'circle', className = '' }) {
     className,
   }
 
+  const accent = 'rgb(var(--accent))'
+  const ink = 'rgb(var(--text))'
+
   if (variant === 'dot') {
     return (
       <svg {...common}>
-        <circle cx="20" cy="20" r="12" fill="#A7C7E7" />
-        <circle cx="27" cy="13" r="3" fill="#1A1A1A" />
+        <circle cx="20" cy="20" r="12" fill={accent} />
+        <circle cx="27" cy="13" r="3" fill={ink} />
       </svg>
     )
   }
@@ -24,7 +28,7 @@ export default function Doodle({ variant = 'circle', className = '' }) {
       <svg {...common}>
         <path
           d="M4 24 q 8 -14 16 0 q 8 14 16 0"
-          stroke="#1A1A1A"
+          stroke={ink}
           strokeWidth="3"
           strokeLinecap="round"
         />
@@ -35,10 +39,10 @@ export default function Doodle({ variant = 'circle', className = '' }) {
   // circle (default)
   return (
     <svg {...common}>
-      <circle cx="18" cy="20" r="14" fill="#A7C7E7" />
+      <circle cx="18" cy="20" r="14" fill={accent} />
       <path
         d="M10 16 q 6 -6 12 0"
-        stroke="#1A1A1A"
+        stroke={ink}
         strokeWidth="2.5"
         strokeLinecap="round"
       />

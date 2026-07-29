@@ -315,14 +315,14 @@ function CaseStudyHero({ hero, title, tagline }) {
         />
         <motion.h1
           {...reveal}
-          className="relative z-10 text-display font-semibold text-surface lg:whitespace-nowrap"
+          className="relative z-10 text-display font-semibold text-on-brand lg:whitespace-nowrap"
         >
           {title}
         </motion.h1>
         {tagline && (
           <motion.p
             {...reveal}
-            className="relative z-10 w-full max-w-[684px] text-lead font-normal text-surface"
+            className="relative z-10 w-full max-w-[684px] text-lead font-normal text-on-brand"
           >
             {tagline}
           </motion.p>

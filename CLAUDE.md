@@ -18,8 +18,9 @@ npm run lint       # eslint (must pass clean before committing)
 npm run preview    # serve the production build on :4173
 ```
 
-`npm run optimize:hero` regenerates the responsive hero illustration from
-`assets/hero-illustration.png` into AVIF + WebP at three widths.
+`npm run optimize:scene` regenerates the two hero scenes from
+`assets/hero-scene-light.png` / `assets/hero-scene-dark.png` into AVIF + WebP
+at three widths (840 / 1280 / 1672).
 
 ---
 
@@ -29,12 +30,21 @@ npm run preview    # serve the production build on :4173
   **React Router** for routing. No backend — the contact form is UI-only.
 - **All copy lives in `src/data/portfolio.js`.** Components never hardcode
   content. If a change is wording, it is a data change, not a component change.
-- **All colour lives in `tailwind.config.js`** (mirrored as CSS variables in
-  `src/index.css` for raw-CSS needs like the cursor). No ad-hoc hex in
-  components.
+- **All colour lives in `tailwind.config.js`, and its values live in
+  `src/index.css`.** Every themed token is `rgb(var(--x) / <alpha-value>)`, so
+  `bg-bg` / `text-text` / `border-border` already mean the right thing in both
+  themes and **no component ever writes a `dark:` colour variant**. The two
+  blocks of variables — `:root` and `html.dark` — are the entire palette. No
+  ad-hoc hex in components.
+- **The site has two themes and one switch.** `ThemeProvider` owns the
+  decision, `useTheme()` reads it, and both controls (the hero lamp and the
+  header toggle) call the same `toggleTheme`, so they cannot disagree. An
+  explicit choice is stored in `localStorage` and wins; with no choice the site
+  follows the OS and keeps following it. The inline script in `index.html`
+  sets the class before first paint — keep it in sync with `src/lib/theme.js`.
 - **Two type colours, one type scale, one family — site-wide.** Every heading
-  on every route is `text-text` (#1A1A1A); every paragraph, label, list and
-  caption is `text-text-muted` (#575757). Sizes come from the named scale in
+  on every route is `text-text`; every paragraph, label, list and
+  caption is `text-text-muted`. Sizes come from the named scale in
   `tailwind.config.js` — `display h1 h2 h3 h4 lead body body-sm caption` — and
   each entry carries its own line height and tracking, so a component sets a
   size and nothing else. The family is Inter everywhere. See the conventions
@@ -55,11 +65,15 @@ npm run preview    # serve the production build on :4173
 
 ```
 src/
-  App.jsx                    Router + Header/Footer/Cursor shell
+  App.jsx                    ThemeProvider + Router + Header/Footer/Cursor shell
   pages/                     Home · About · Contact · CaseStudy
   components/
     Header Footer Cursor Magnetic Button Badge SectionHeader Doodle
-    ProjectCard HeroImage
+    ProjectCard
+    ThemeProvider.jsx        owns light/dark; wraps the whole app
+    ThemeToggle.jsx          header switch (desktop actions + mobile bar)
+    HeroScene.jsx            the two hero frames + the lamp that switches them
+    Journey.jsx              home's scroll-drawn trail + its four chapters
     RichText.jsx             **bold** inline emphasis for copy from the data file
     Figure.jsx               case-study visual + Enlarge affordance
     Lightbox.jsx             full-bleed image viewer (Esc / backdrop / focus return)
@@ -69,6 +83,7 @@ src/
   lib/
     hooks.js                 useFinePointer useReducedMotion useReveal
                              useInViewOnce useActiveSection
+    theme.js                 ThemeContext, useTheme, storage + applyTheme
     animations.js            EASE, DUR, fadeUp, stagger
   data/portfolio.js          every string on the site
 ```
@@ -77,14 +92,24 @@ src/
 
 ## Conventions that are easy to get wrong
 
-- **Text is never blue.** Pastel blue (`accent`) has exactly two jobs: hover
-  states and the hero illustration's fills. The vivid `cursor` blue is the
-  cursor only. Focus rings are off-black — `focus-visible:ring-2
+- **Text is never blue.** Pastel blue (`accent`) has one job in both themes:
+  hover states. It is never a resting colour and never type. Its *value*
+  changes in dark mode (deepened to #3D5C80) precisely so the light ink that
+  lands on a hover fill keeps its contrast — the role is what stays fixed, not
+  the hex. Focus rings are the heading ink — `focus-visible:ring-2
   focus-visible:ring-text/25 focus-visible:ring-offset-2` everywhere.
+- **`lamp` is the hero lamp's own light, not a third accent.** It appears on
+  the lamp toggle's halo, the journey milestones, and the hero's one-line hint
+  dot. Never type, never a surface.
+- **Never add a `dark:` colour class.** If something looks wrong in dark mode
+  the token is wrong, not the component. The three sanctioned `dark:` uses are
+  the header wordmark (`dark:brightness-0 dark:invert`, a flat PNG) and
+  nothing else so far.
 - **Two font weights only** — 400 and 600, no exceptions. Sentence case
   everywhere.
 - **The only text that is neither `text` nor `text-muted`** is: type inverted
-  on a coloured hero band (`text-surface` over `mfp-blue`), the case study's
+  on a coloured brand band (`text-on-brand` over `mfp-blue` — white in both
+  themes, because the fill under it does not change), the case study's
   one blue framing question (`cs-quote`), and the two research panels' data
   hues. Everything else — including every case-study heading, label and
   caption — uses the two site colours. A new grey is not an option; if
@@ -128,24 +153,80 @@ Update this list, not each session's write-up, when an item is done.
   shared case-study link previews as the home page.
 - Absolute `og:url` / `og:image` once the production domain is settled.
 - Project two, still a `coming-soon` placeholder.
-- Route-level code splitting — bundle is ~355KB / 113KB gzipped, most of it
+- Route-level code splitting — bundle is ~364KB / 117KB gzipped, most of it
   Framer Motion; the case study is the only page that needs the heavy parts,
   and it's also the LCP-heaviest route (hero is a single 107KB WebP — a
   `srcset` would pay for itself).
+- Home loads **both** hero scenes (the inactive one lazily). A ~60KB AVIF is
+  cheap, but a `<link rel="prefetch">` on the other theme, or dropping the
+  eager frame once switched, would be cheaper.
 - `public/logo.png` (gradient wordmark) is unreferenced — `logo-wordmark.png`
-  is the one the header uses. Delete it or find it a job.
+  is the one the header uses, and dark mode inverts it rather than shipping a
+  light variant. Delete it or find it a job.
 - Charts' internal labels sit on `text` rather than `text-muted` — deliberate
   at 8–12px inside `ScaleToFit`, but worth a look if the panels are redrawn.
 
 **Copy that is a first draft, not Sakhi's own words:** `site.bio`,
-`hero.opening`, `contact.invite`, `footer.heading`, `footer.subtext`,
-`about.statement`, `about.paragraph`, `about.crochetCurio.paragraph`, and all
-six `about.interests` blurbs.
+`hero.opening`, `hero.scene.lampHint`, `contact.invite`, `footer.heading`,
+`footer.subtext`, `about.statement`, `about.paragraph`,
+`about.crochetCurio.paragraph`, all six `about.interests` blurbs, and the whole
+`journey` block — its four chapters are written from the Stitch frame's
+outline (crochet → shop → MBA → UX), so the dates, the order and the wording
+all need her confirmation.
 
 ## Progress log
 
 Newest first. Add an entry per working session — what shipped. Open TODOs go
 in **Open work** above, not in each entry.
+
+### 2026-07-29 — light + dark themes, new hero scene, the Journey section
+Home is now hero → journey → work, and the site has two themes with the hero
+lamp as the switch. Structural inspiration for both came from a Stitch frame
+("The Designer's Odyssey"); the palette is that frame's warm-cream character
+applied to this site's own token roles, not its gold/sage material palette.
+
+- **Theme system.** Every themed colour is a CSS variable of RGB channels read
+  by Tailwind as `rgb(var(--x) / <alpha-value>)`, `darkMode: 'class'`. That is
+  why the whole site went dark without a single `dark:` class: the ~120
+  existing `bg-bg` / `text-text` / `border-border` / `ring-text/25` usages were
+  already correct. `ThemeProvider` + `useTheme` own the state; the inline
+  script in `index.html` sets the class pre-paint; `theme-transition` (added
+  for 400ms around a switch, off under reduced motion) cross-fades the change.
+- **Palette.** Light warmed to the scene: canvas #FBF9F5, hairline #E2DCCE,
+  ink #1B1C1A, muted ink #4D4635 (8.9:1). Dark: canvas #0F172A, card #172033,
+  hairline #2A354C, ink #F0EDE6 (15.5:1), muted #AFB6C4 (8.6:1). New tokens:
+  `on-brand` (white, for type on the MyFitnessPal band and the sentiment
+  bars), `lamp`, `shadow`, plus `--shine`/`--shine-alpha` for the card sweep.
+- **Hero** is the Stitch frame's layout: the artwork edge to edge with the copy
+  sitting in its light — full-bleed behind the copy on desktop (left-to-right
+  wash), stacked above it on mobile (bottom-up wash). `HeroScene` cross-fades
+  the day and night frames; the desk lamp is a real `<button>` (aria-pressed,
+  aria-label, `data-cursor` "Lights off"/"Lights on") placed in the artwork's
+  own coordinates — 87.4% / 55.5% of a frame that is never cropped vertically.
+  A one-line hint under the opening says the lamp is a control. The header
+  toggle is the same state, so the two are always in step.
+- **Journey** (`Journey.jsx`, copy in `portfolio.js`): four chapters
+  alternating either side of a trail that draws with scroll — a dashed
+  hairline for the route ahead, a solid path whose `pathLength` is tied to
+  `useScroll` (spring-smoothed) for the route walked. Milestones are HTML dots
+  (the SVG is vertically stretched, so an SVG circle would arrive an ellipse)
+  that light once via `useInViewOnce`. Under reduced motion the trail renders
+  fully drawn and nothing animates.
+- **Superseded and removed:** `HeroImage.jsx`, `scripts/optimize-hero.mjs`,
+  `assets/hero-illustration.png` and the six `public/hero-illustration-*`
+  exports. `Doodle.jsx` now paints from the theme variables instead of hex.
+  Button's hover shadow moved from a Framer value to a CSS token (Framer
+  cannot interpolate a colour held in a variable).
+- **Verified** with `npm run lint`, `npm run build`, and a Playwright pass at
+  1440 and 390 over all four routes in both themes plus a reduced-motion run:
+  no console errors, theme survives reload, both controls report the same
+  `aria-pressed`.
+- **Files touched:** `tailwind.config.js`, `index.css`, `index.html`,
+  `package.json`, `App.jsx`, `Home.jsx`, `Header.jsx`, `Cursor.jsx`,
+  `Button.jsx`, `ProjectCard.jsx`, `Doodle.jsx`, `SentimentPanel.jsx`,
+  `CaseStudy.jsx`, `Contact.jsx`, `portfolio.js`, plus new `ThemeProvider.jsx`,
+  `ThemeToggle.jsx`, `HeroScene.jsx`, `Journey.jsx`, `lib/theme.js`,
+  `scripts/optimize-scene.mjs`.
 
 ### 2026-07-29 — type consistency audit, line-height bump, background section reorder
 - Audited the whole site against the one-type-system rules below: no stray

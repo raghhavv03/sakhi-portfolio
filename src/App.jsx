@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Header from './components/Header'
+import ThemeProvider from './components/ThemeProvider'
 import Footer from './components/Footer'
 import Cursor from './components/Cursor'
 import Home from './pages/Home'
@@ -65,14 +66,16 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <div className="flex min-h-screen flex-col bg-bg text-text-muted">
-      <Cursor />
-      <ScrollToTop />
-      <Header />
-      <main className="flex-1 pt-20">
-        <AnimatedRoutes />
-      </main>
-      <Footer />
-    </div>
+    <ThemeProvider>
+      <div className="flex min-h-screen flex-col bg-bg text-text-muted">
+        <Cursor />
+        <ScrollToTop />
+        <Header />
+        <main className="flex-1 pt-20">
+          <AnimatedRoutes />
+        </main>
+        <Footer />
+      </div>
+    </ThemeProvider>
   )
 }

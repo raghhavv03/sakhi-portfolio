@@ -61,7 +61,7 @@ export default function SentimentPanel({ data }) {
               className={`relative h-[47.811px] shrink-0 overflow-hidden ${TONES[segment.tone]}`}
               style={{ width: segment.width }}
             >
-              <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[9.683px] font-normal leading-[14.525px] text-surface">
+              <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[9.683px] font-normal leading-[14.525px] text-on-brand">
                 {segment.label}
               </p>
             </div>

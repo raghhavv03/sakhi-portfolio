@@ -4,7 +4,30 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#FAFAF8" />
+    <meta name="theme-color" content="#FBF9F5" />
+
+    <!-- Theme, before first paint. Stored choice wins, otherwise the OS
+         preference; without this the page would paint light and then snap to
+         dark once React mounted. Kept in sync with src/lib/theme.js. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('sakhi-theme')
+          var dark =
+            stored === 'dark' ||
+            (stored !== 'light' &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches)
+          if (dark) {
+            document.documentElement.classList.add('dark')
+            document
+              .querySelector('meta[name="theme-color"]')
+              .setAttribute('content', '#0F172A')
+          }
+        } catch (e) {
+          /* storage blocked — light it is */
+        }
+      })()
+    </script>
 
     <!-- Inter — the site's one family, in its two weights (400 / 600). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

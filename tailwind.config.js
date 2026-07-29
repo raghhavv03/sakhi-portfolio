@@ -1,33 +1,60 @@
 /** @type {import('tailwindcss').Config} */
+// Every themed colour resolves through a CSS variable holding RGB channels, so
+// `bg-bg` / `text-text` / `border-border` mean "light" or "dark" depending on
+// the `dark` class on <html> — and every alpha modifier (`ring-text/25`) still
+// works. The values themselves live in src/index.css. Nothing in a component
+// ever needs a `dark:` variant for colour.
+const themed = (name) => `rgb(var(--${name}) / <alpha-value>)`
+
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {
-        // Light surfaces (primary theme)
-        bg: '#FAFAF8', // off-white page background (never pure #FFF)
-        surface: '#FFFFFF', // cards / raised surfaces
-        border: '#E6E6E2', // hairline borders (barely visible)
+        // Page surfaces. Light: warm cream canvas / white cards. Dark: deep
+        // navy-ink canvas / a lifted navy card, tuned to the night hero scene.
+        bg: themed('bg'), // page background (never pure #FFF / #000)
+        surface: themed('surface'), // cards / raised surfaces
+        border: themed('border'), // hairline borders (barely visible)
 
         // ── The two type colours. Every heading on every page is `text`;
         //    every paragraph, label, caption and list is `text-muted`. There
         //    is no third grey — if something needs to recede further it uses
         //    a smaller size, not a lighter ink. The only sanctioned exceptions
-        //    are inverse text on a coloured hero band and the one blue quote
-        //    card in the case study.
-        text: '#1A1A1A', // headings, emphasis, default buttons
-        'text-muted': '#575757', // body copy, labels, captions
+        //    are inverse text on a coloured band (`on-brand`) and the one blue
+        //    quote card in the case study.
+        text: themed('text'), // headings, emphasis, default buttons
+        'text-muted': themed('text-muted'), // body copy, labels, captions
 
-        // Dark band (lightbox overlay only)
+        // Type that sits on a saturated brand fill (MyFitnessPal's blue band,
+        // the sentiment bars). White in both themes — the fill under it does
+        // not change with the theme, so neither can the ink on it.
+        'on-brand': '#FFFFFF',
+
+        // Fixed dark band — the lightbox overlay, which is dark in both
+        // themes because it is a viewer, not a surface.
         'dark-bg': '#121212',
         'dark-surface': '#1C1C1E',
         'dark-text': '#EDEDED',
         'dark-muted': '#A1A1A1',
         'dark-border': '#2A2A2C',
 
-        // Accent — pastel blue (hover state + illustration fills only)
-        accent: '#A7C7E7',
-        'accent-hover': '#8FB8DE',
+        // Accent — pastel blue. Its job is unchanged in dark mode: hover
+        // states only, never resting colour and never type. The value is
+        // deepened there so the light ink that lands on a hover fill keeps
+        // its contrast (a pastel fill under light type would not).
+        accent: themed('accent'),
+        'accent-hover': themed('accent-hover'),
+
+        // Lamp amber — the hero lamp's own light. Used only where that light
+        // is the subject: the lamp toggle's halo and the journey trail's
+        // milestone glow. Never type, never a surface.
+        lamp: themed('lamp'),
+
+        // Neutral elevation ink (off-black in light, true black in dark), so
+        // one shadow recipe reads correctly on both canvases.
+        shadow: themed('shadow'),
 
         // MyFitnessPal's own brand blue — case-study hero band only. This is
         // the subject's colour, not Sakhi's palette (same rule as the home
@@ -106,7 +133,7 @@ export default {
         caption: ['0.75rem', { lineHeight: '1.65' }],
       },
       borderColor: {
-        DEFAULT: '#E6E6E2',
+        DEFAULT: themed('border'),
       },
       spacing: {
         // The single vertical rhythm. Every page — case study included — puts
@@ -122,9 +149,16 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        // The hero lamp's "I am a control" hint: the halo breathes rather
+        // than blinks. Opacity only, and it stops on hover/focus.
+        'lamp-breathe': {
+          '0%, 100%': { opacity: '0.35', transform: 'scale(1)' },
+          '50%': { opacity: '0.8', transform: 'scale(1.08)' },
+        },
       },
       animation: {
         marquee: 'marquee 28s linear infinite',
+        'lamp-breathe': 'lamp-breathe 3.2s ease-in-out infinite',
       },
     },
   },
