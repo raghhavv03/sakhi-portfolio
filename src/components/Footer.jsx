@@ -37,22 +37,22 @@ export default function Footer() {
   ].filter(Boolean)
 
   return (
-    <footer className="border-t border-border bg-bg text-text">
-      <div className="mx-auto flex max-w-content flex-col items-center px-6 py-section-sm text-center md:py-section">
+    <footer className="border-t border-border bg-bg">
+      <div className="mx-auto flex max-w-content flex-col items-center px-6 py-section-sm text-center md:py-section-md lg:py-section">
         <button
           type="button"
           onClick={scrollToTop}
-          className="group inline-flex min-h-[44px] items-center gap-2 text-sm font-normal text-text-muted transition-colors duration-200 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
+          className="group inline-flex min-h-[44px] items-center gap-2 text-body-sm font-normal text-text-muted transition-colors duration-200 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
         >
           Back to top
           <ArrowUpRightIcon className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0" />
         </button>
 
-        <h2 className="mt-8 max-w-2xl text-3xl font-semibold leading-tight sm:text-4xl">
+        <h2 className="mt-8 max-w-2xl text-h2 font-semibold text-text">
           {footerCopy.heading}
         </h2>
 
-        <p className="mt-4 max-w-lg text-base font-normal italic leading-body text-text-muted">
+        <p className="mt-4 max-w-lg text-body font-normal italic text-text-muted">
           {footerCopy.subtext}
         </p>
 
@@ -68,7 +68,7 @@ export default function Footer() {
                 target={item.external ? '_blank' : undefined}
                 rel={item.external ? 'noopener noreferrer' : undefined}
                 data-cursor={item.cursorLabel}
-                className="group inline-flex min-h-[44px] items-center gap-1.5 text-sm font-normal text-text transition-colors duration-200 hover:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
+                className="group inline-flex min-h-[44px] items-center gap-1.5 text-body-sm font-normal text-text transition-colors duration-200 hover:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
               >
                 {item.label}
                 <ArrowUpRightIcon className="text-text-muted transition-[color,transform] duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0" />
@@ -77,7 +77,7 @@ export default function Footer() {
           </nav>
         )}
 
-        <p className="mt-10 text-xs font-normal text-text-muted">
+        <p className="mt-10 text-caption font-normal text-text-muted">
           {site.copyright}
         </p>
       </div>

@@ -88,15 +88,18 @@ export default function Header() {
     setMenuOpen(false)
   }, [location.pathname])
 
+  // Active nav item rises to the heading ink; everything else rests on the
+  // body ink. Same two colours as the rest of the site — the only difference
+  // between the desktop and mobile rows is the shape of their hit area.
   const navLinkClass = ({ isActive }) =>
-    `relative rounded-full px-4 py-2 text-sm transition-colors duration-200 min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
+    `relative rounded-full px-4 py-2 text-body-sm transition-colors duration-200 min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
       isActive
         ? 'font-semibold text-text'
         : 'font-normal text-text-muted hover:text-text'
     }`
 
   const mobileNavLinkClass = ({ isActive }) =>
-    `flex min-h-[44px] items-center rounded-xl px-4 text-base transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
+    `flex min-h-[44px] items-center rounded-xl px-4 text-body transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
       isActive
         ? 'font-semibold text-text'
         : 'font-normal text-text-muted hover:text-text'
@@ -271,7 +274,7 @@ export default function Header() {
                   href={links.resume}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex min-h-[44px] items-center rounded-xl px-4 text-base font-normal text-text-muted hover:text-text"
+                  className={mobileNavLinkClass({ isActive: false })}
                 >
                   Resume
                 </a>
@@ -281,7 +284,7 @@ export default function Header() {
                   href={links.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex min-h-[44px] items-center rounded-xl px-4 text-base font-normal text-text-muted hover:text-text"
+                  className={mobileNavLinkClass({ isActive: false })}
                 >
                   LinkedIn
                 </a>

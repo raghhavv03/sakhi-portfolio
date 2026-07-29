@@ -5,7 +5,7 @@ export default function Badge({ children, className = '', dark = false }) {
     : 'border-border text-text-muted'
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-normal ${tone} ${className}`}
+      className={`inline-flex items-center rounded-full border px-3 py-1 text-caption font-normal ${tone} ${className}`}
     >
       {children}
     </span>

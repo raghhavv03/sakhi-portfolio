@@ -32,10 +32,10 @@ function Intro() {
     <section className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-center md:gap-14">
       <div>
         <Badge>{about.badge}</Badge>
-        <h1 className="mt-5 max-w-2xl text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+        <h1 className="mt-5 max-w-2xl text-h1 font-semibold text-text">
           {about.statement}
         </h1>
-        <p className="mt-6 max-w-xl text-base font-normal leading-body text-text-muted">
+        <p className="mt-6 max-w-xl text-body font-normal text-text-muted">
           {about.paragraph}
         </p>
       </div>
@@ -72,14 +72,14 @@ function Education() {
             className="flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
           >
             <div>
-              <p className="text-lg font-semibold leading-tight">
+              <p className="text-h4 font-semibold text-text">
                 {entry.institution}
               </p>
-              <p className="mt-1 text-sm font-normal text-text-muted">
+              <p className="mt-1 text-body-sm font-normal text-text-muted">
                 {entry.qualification}
               </p>
             </div>
-            <span className="shrink-0 text-sm font-normal text-text-muted">
+            <span className="shrink-0 text-body-sm font-normal text-text-muted">
               {entry.years}
             </span>
           </motion.li>
@@ -106,7 +106,7 @@ function CrochetCurio() {
         }`}
       >
         <motion.div {...reveal}>
-          <p className="max-w-xl text-base font-normal leading-body text-text-muted">
+          <p className="max-w-xl text-body font-normal text-text-muted">
             {paragraph}
           </p>
           {link && (
@@ -161,10 +161,10 @@ function Interests() {
             className="rounded-2xl border border-border bg-surface p-6"
           >
             <Doodle variant={interest.motif} />
-            <h3 className="mt-4 text-lg font-semibold leading-tight">
+            <h3 className="mt-4 text-h4 font-semibold text-text">
               {interest.title}
             </h3>
-            <p className="mt-2 text-sm font-normal leading-body text-text-muted">
+            <p className="mt-2 text-body-sm font-normal text-text-muted">
               {interest.blurb}
             </p>
           </motion.div>

@@ -15,10 +15,10 @@ import { EASE, DUR } from './lib/animations'
 // confirming here. Real pages come next.
 function Placeholder({ name }) {
   return (
-    <section className="mx-auto flex min-h-[60vh] max-w-content flex-col items-start justify-center px-6 py-section">
-      <p className="text-sm font-normal text-text-muted">Placeholder</p>
-      <h1 className="mt-2 text-3xl font-semibold">{name}</h1>
-      <p className="mt-4 max-w-md text-base font-normal leading-body text-text-muted">
+    <section className="mx-auto flex min-h-[60vh] max-w-content flex-col items-start justify-center px-6 py-section-sm md:py-section-md lg:py-section">
+      <p className="text-body-sm font-normal text-text-muted">Placeholder</p>
+      <h1 className="mt-2 text-h1 font-semibold text-text">{name}</h1>
+      <p className="mt-4 max-w-md text-body font-normal text-text-muted">
         This page is intentionally blank. We're confirming the shell, design
         tokens, header, footer, and custom cursor before building the page
         content.
@@ -65,7 +65,7 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <div className="flex min-h-screen flex-col bg-bg text-text">
+    <div className="flex min-h-screen flex-col bg-bg text-text-muted">
       <Cursor />
       <ScrollToTop />
       <Header />

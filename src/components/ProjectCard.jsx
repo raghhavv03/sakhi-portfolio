@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useReducedMotion, useReveal } from '../lib/hooks'
 import { EASE, DUR } from '../lib/animations'
+import Badge from './Badge'
 
 // Project card: a thumbnail with the project name on it, and a short
 // description below it. Live projects link to their case study ("View case
@@ -61,22 +62,20 @@ export default function ProjectCard({ project, delay = 0 }) {
         )}
 
         <div className="absolute inset-0 flex items-end p-6 sm:p-7">
-          <span className="text-2xl font-semibold leading-tight text-text sm:text-3xl">
-            {project.name}
-          </span>
+          <span className="text-h2 font-semibold text-text">{project.name}</span>
         </div>
 
         {!isLive && (
-          <span className="absolute right-4 top-4 inline-flex items-center rounded-full border border-border bg-bg/90 px-3 py-1 text-xs font-normal text-text-muted backdrop-blur">
+          <Badge className="absolute right-4 top-4 bg-bg/90 backdrop-blur">
             In progress
-          </span>
+          </Badge>
         )}
       </div>
     )
   }
 
   const body = (
-    <p className="mt-4 max-w-xl text-base font-normal leading-body text-text-muted">
+    <p className="mt-4 max-w-xl text-body font-normal text-text-muted">
       {project.description}
     </p>
   )
@@ -91,7 +90,7 @@ export default function ProjectCard({ project, delay = 0 }) {
           to={`/work/${project.slug}`}
           data-cursor="View case study"
           aria-label={`${project.name} — view case study`}
-          className="group block rounded-2xl focus-visible:outline-offset-4"
+          className="group block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
         >
           <motion.div
             whileHover={reducedMotion ? undefined : { y: -4 }}

@@ -28,17 +28,15 @@ export default function Home() {
       {/* 1. Hero. The whole area carries the "Scroll ↓" cursor hint. */}
       <section
         data-cursor="Scroll ↓"
-        className="mx-auto max-w-content px-6 pb-section-sm pt-10 sm:pt-16 md:pb-section"
+        className="mx-auto max-w-content px-6 pb-section-sm pt-10 sm:pt-16 md:pb-section-md lg:pb-section"
       >
         <div className="grid items-center gap-10 md:grid-cols-[0.9fr_1.4fr] md:gap-10 lg:gap-12">
           {/* Name + opening line — visible immediately, no animation delay.
               Name comes first in the DOM so it stacks above the illustration on
               mobile and sits to its left on desktop. */}
           <div>
-            <h1 className="font-semibold leading-hero tracking-tight text-hero">
-              {hero.name}
-            </h1>
-            <p className="mt-6 max-w-md text-lg font-normal leading-body text-text-muted sm:text-xl">
+            <h1 className="text-display font-semibold text-text">{hero.name}</h1>
+            <p className="mt-6 max-w-md text-lead font-normal text-text-muted">
               {hero.opening}
             </p>
           </div>

@@ -33,20 +33,20 @@ export default function SentimentPanel({ data }) {
   return (
     <div
       ref={ref}
-      className="flex flex-col items-start gap-3 rounded-[12.104px] border border-cs-card-border bg-cs-card p-[18.156px]"
+      className="flex flex-col items-start gap-3 rounded-[12.104px] border border-border bg-surface p-[18.156px]"
       style={{ width: SENTIMENT_WIDTH }}
     >
-      <div className="flex flex-col items-start gap-1 text-cs-secondary">
-        <p className="font-cs whitespace-nowrap text-[19.367px] font-semibold leading-[24.208px] tracking-[-0.6052px]">
+      <div className="flex flex-col items-start gap-1 text-text">
+        <p className="whitespace-nowrap text-[19.367px] font-semibold leading-[24.208px] tracking-[-0.6052px]">
           {data.title}
         </p>
-        <p className="font-cs whitespace-pre text-cs-body-s font-normal">
+        <p className="whitespace-pre text-[12px] leading-[16px] font-normal">
           {data.source}
         </p>
       </div>
 
       <div className="flex flex-col items-start gap-1">
-        <p className="font-cs whitespace-nowrap text-cs-body-s font-normal text-cs-secondary">
+        <p className="whitespace-nowrap text-[12px] leading-[16px] font-normal text-text">
           {data.splitLabel}
         </p>
         {/* The whole bar wipes in; the segments keep their drawn widths, so
@@ -61,7 +61,7 @@ export default function SentimentPanel({ data }) {
               className={`relative h-[47.811px] shrink-0 overflow-hidden ${TONES[segment.tone]}`}
               style={{ width: segment.width }}
             >
-              <p className="font-cs absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[9.683px] font-normal leading-[14.525px] text-cs-inverse">
+              <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[9.683px] font-normal leading-[14.525px] text-surface">
                 {segment.label}
               </p>
             </div>
@@ -69,15 +69,15 @@ export default function SentimentPanel({ data }) {
         </div>
       </div>
 
-      <div className="flex w-full items-center justify-between whitespace-nowrap text-cs-secondary">
+      <div className="flex w-full items-center justify-between whitespace-nowrap text-text">
         {data.stats.map((stat) => (
           <div
             key={stat.label}
-            className="flex flex-col items-center justify-center gap-[6.052px] rounded-[10px] border border-[#e9e9e9] bg-cs-bg p-[6.052px]"
+            className="flex flex-col items-center justify-center gap-[6.052px] rounded-[10px] border border-border bg-surface p-[6.052px]"
           >
-            <p className="font-cs text-cs-body-s font-normal">{stat.label}</p>
-            <p className="font-cs text-cs-m font-semibold">{stat.value}</p>
-            <p className="font-cs text-cs-body-s font-normal">{stat.note}</p>
+            <p className="text-[12px] leading-[16px] font-normal">{stat.label}</p>
+            <p className="text-[28px] leading-[36px] tracking-[-0.5px] font-semibold">{stat.value}</p>
+            <p className="text-[12px] leading-[16px] font-normal">{stat.note}</p>
           </div>
         ))}
       </div>

@@ -31,25 +31,25 @@ export default function FrictionChart({ data }) {
   return (
     <div
       ref={ref}
-      className="flex flex-col items-start gap-[15.983px] rounded-[13.319px] border border-cs-card-border bg-cs-card px-[23.5px] py-5"
+      className="flex flex-col items-start gap-[15.983px] rounded-[13.319px] border border-border bg-surface px-[23.5px] py-5"
       style={{ width: FRICTION_WIDTH }}
     >
-      <div className="flex flex-col items-start gap-[2.664px] text-cs-secondary">
-        <p className="font-cs text-[12.899px] font-semibold leading-[25.794px] tracking-[-0.403px]">
+      <div className="flex flex-col items-start gap-[2.664px] text-text">
+        <p className="text-[12.899px] font-semibold leading-[25.794px] tracking-[-0.403px]">
           {data.title}
         </p>
         {/* The frame sizes this card to this one un-wrapping line — it is
             what makes the panel 591 wide — so it must not wrap here either. */}
-        <p className="font-cs whitespace-nowrap text-[7.991px] font-normal leading-[10.655px]">
+        <p className="whitespace-nowrap text-[7.991px] font-normal leading-[10.655px]">
           {data.source}
         </p>
       </div>
 
-      <div className="flex w-full flex-col items-start gap-[5.328px] rounded-[6.659px] border-[0.666px] border-cs-callout bg-[rgba(129,124,255,0.5)] px-[13.319px] py-[9.989px] text-cs-secondary">
-        <p className="font-cs text-[9.323px] font-semibold leading-[13.319px]">
+      <div className="flex w-full flex-col items-start gap-[5.328px] rounded-[6.659px] border-[0.666px] border-cs-callout bg-cs-callout/50 px-[13.319px] py-[9.989px] text-text">
+        <p className="text-[9.323px] font-semibold leading-[13.319px]">
           {data.callout.title}
         </p>
-        <p className="font-cs text-[7.991px] font-normal leading-[10.655px]">
+        <p className="text-[7.991px] font-normal leading-[10.655px]">
           {data.callout.body}
         </p>
       </div>
@@ -71,14 +71,14 @@ export default function FrictionChart({ data }) {
                 aria-hidden="true"
                 className={`size-[13.319px] shrink-0 rounded-[3.33px] ${TONES[group.tone]}`}
               />
-              <p className="font-cs whitespace-nowrap text-[9.323px] font-semibold leading-[13.319px] text-cs-secondary">
+              <p className="whitespace-nowrap text-[9.323px] font-semibold leading-[13.319px] text-text">
                 {group.label}
               </p>
             </div>
 
             {group.rows.map((row, i) => (
               <Fragment key={`${group.label}-${i}`}>
-                <p className="font-cs whitespace-nowrap text-right text-[7.991px] font-normal leading-[10.655px] text-cs-secondary">
+                <p className="whitespace-nowrap text-right text-[7.991px] font-normal leading-[10.655px] text-text">
                   {row.label}
                 </p>
                 <div className="flex items-center gap-[7.991px]">
@@ -89,7 +89,7 @@ export default function FrictionChart({ data }) {
                       transform: `scaleX(${shown ? 1 : 0})`,
                     }}
                   />
-                  <p className="font-cs text-[7.991px] font-normal leading-[10.655px] text-cs-secondary">
+                  <p className="text-[7.991px] font-normal leading-[10.655px] text-text">
                     {row.value}
                   </p>
                 </div>

@@ -32,6 +32,13 @@ npm run preview    # serve the production build on :4173
 - **All colour lives in `tailwind.config.js`** (mirrored as CSS variables in
   `src/index.css` for raw-CSS needs like the cursor). No ad-hoc hex in
   components.
+- **Two type colours, one type scale, one family — site-wide.** Every heading
+  on every route is `text-text` (#1A1A1A); every paragraph, label, list and
+  caption is `text-text-muted` (#575757). Sizes come from the named scale in
+  `tailwind.config.js` — `display h1 h2 h3 h4 lead body body-sm caption` — and
+  each entry carries its own line height and tracking, so a component sets a
+  size and nothing else. The family is Inter everywhere. See the conventions
+  section below for the three sanctioned exceptions.
 - **All motion timing lives in `src/lib/animations.js`.** `EASE` and `DUR` are
   the only curves and durations on the site.
 - **Empty means "don't render".** Every consumer of `portfolio.js` treats an
@@ -56,8 +63,8 @@ src/
     RichText.jsx             **bold** inline emphasis for copy from the data file
     Figure.jsx               case-study visual + Enlarge affordance
     Lightbox.jsx             full-bleed image viewer (Esc / backdrop / focus return)
-    casestudy/Blocks.jsx     Section, PairCards, InfoCards, Question, Note,
-                             StatRow, CompareColumns, Subheading
+    casestudy/Blocks.jsx     CSSection CSLabel CSHeading CSSubheading CSBody
+                             CSList CSCard CSCallout CSQuote + the card grids
     charts/                  SentimentPanel, FrictionChart
   lib/
     hooks.js                 useFinePointer useReducedMotion useReveal
@@ -72,10 +79,22 @@ src/
 
 - **Text is never blue.** Pastel blue (`accent`) has exactly two jobs: hover
   states and the hero illustration's fills. The vivid `cursor` blue is the
-  cursor only. Focus rings are off-black.
-- **Two font weights only** — 400 and 600. Sentence case everywhere. The one
-  exception is the case-study page, whose Figma source sets inline emphasis in
-  Inter Bold (700); that weight exists for `font-cs` and nothing else.
+  cursor only. Focus rings are off-black — `focus-visible:ring-2
+  focus-visible:ring-text/25 focus-visible:ring-offset-2` everywhere.
+- **Two font weights only** — 400 and 600, no exceptions. Sentence case
+  everywhere.
+- **The only text that is neither `text` nor `text-muted`** is: type inverted
+  on a coloured hero band (`text-surface` over `mfp-blue`), the case study's
+  one blue framing question (`cs-quote`), and the two research panels' data
+  hues. Everything else — including every case-study heading, label and
+  caption — uses the two site colours. A new grey is not an option; if
+  something needs to recede further, make it smaller.
+- **Never pair a size class with `leading-*` or `tracking-*`.** The `text-*`
+  token already sets both. Adding `leading-tight` next to `text-h2` is how the
+  page drifts out of the scale.
+- **One vertical rhythm.** `py-section-sm md:py-section-md lg:py-section`
+  between page sections on every route, `gap-6` (24px) between blocks inside
+  one, and `p-6` inside every card. The case study uses these too.
 - **Scroll reveals fire once** (`viewport={{ once: true }}`) and are disabled
   entirely under `prefers-reduced-motion` (that is what `useReveal` handles).
 - **The custom cursor is decorative.** Every `data-cursor` element must also
@@ -89,10 +108,115 @@ src/
 
 ---
 
+## Open work
+
+Consolidated from the progress log below so it isn't repeated in every entry.
+Update this list, not each session's write-up, when an item is done.
+
+**Blocked on facts only Sakhi has:**
+- `contact.email`, `links.linkedin`, `links.behance` in `portfolio.js` — the
+  site has no way to reach her except the UI-only contact form until these land.
+- `resume.pdf` into `public/`, then `links.resume = '/resume.pdf'` — the
+  Resume button stays hidden (header, mobile panel, footer) until then.
+- `about.education` entries — `{ institution, qualification, years }`.
+- Case-study `meta` has no timeline; the source PDF's Timeline field was blank.
+- `about.crochetCurio.images` — the section is copy-only without them.
+
+**Doable without her:**
+- Wire the contact form (Formspree or a Vercel function).
+- Per-route `<title>` / description — every route shares `index.html`'s, so a
+  shared case-study link previews as the home page.
+- Absolute `og:url` / `og:image` once the production domain is settled.
+- Project two, still a `coming-soon` placeholder.
+- Route-level code splitting — bundle is ~355KB / 113KB gzipped, most of it
+  Framer Motion; the case study is the only page that needs the heavy parts,
+  and it's also the LCP-heaviest route (hero is a single 107KB WebP — a
+  `srcset` would pay for itself).
+- `public/logo.png` (gradient wordmark) is unreferenced — `logo-wordmark.png`
+  is the one the header uses. Delete it or find it a job.
+- Charts' internal labels sit on `text` rather than `text-muted` — deliberate
+  at 8–12px inside `ScaleToFit`, but worth a look if the panels are redrawn.
+
+**Copy that is a first draft, not Sakhi's own words:** `site.bio`,
+`hero.opening`, `contact.invite`, `footer.heading`, `footer.subtext`,
+`about.statement`, `about.paragraph`, `about.crochetCurio.paragraph`, and all
+six `about.interests` blurbs.
+
 ## Progress log
 
-Newest first. Add an entry per working session — what shipped, and what the
-next session should pick up.
+Newest first. Add an entry per working session — what shipped. Open TODOs go
+in **Open work** above, not in each entry.
+
+### 2026-07-29 — type consistency audit, line-height bump, background section reorder
+- Audited the whole site against the one-type-system rules below: no stray
+  `leading-*`/`tracking-*` beside a `text-*` size, no `cs-primary`-era tokens
+  left, no ad-hoc hex in components (the chart pixel values and `Doodle.jsx`'s
+  SVG fills are the two sanctioned exceptions — literal frame geometry and
+  token-matching SVG paint, respectively). Confirmed clean via `npm run lint`
+  and `npm run build`.
+- **Line height raised a step across the whole scale** — `tailwind.config.js`
+  `fontSize` and `index.css`'s base `body` rule: `body`/`body-sm` 1.7 → 1.75,
+  `lead`/`caption` 1.6 → 1.65, `h4` 1.45 → 1.5, `h3` 1.4 → 1.45, `h2` 1.25 →
+  1.3, `h1` 1.15 → 1.2. `display` stays at 0.95 — the hero sizes are large
+  enough that tight leading is the point, not a gap to close.
+- **Case study Background section**: the fact rail (My Role / Status / Type /
+  Tools Used) now sits above the badge + heading instead of below them —
+  `BackgroundMeta` renders first in `CaseStudy.jsx`, then `CSLabel` +
+  `CSHeading`, then the body paragraph.
+- **Files touched:** `tailwind.config.js`, `index.css`, `CaseStudy.jsx`.
+
+### 2026-07-29 — one type system across every route
+The case study and the rest of the site had been two separate design systems
+sharing a shell: SF Pro vs Inter, `text-3xl sm:text-4xl` vs `text-cs-l`,
+`#6B6B6B` vs `#575757` vs `#333333` vs `#666666`. They are now one.
+
+- **Two colours.** `text` #1A1A1A for every heading, `text-muted` — retuned
+  from #6B6B6B to **#575757** — for every paragraph, label, list and caption.
+  6.7:1 on the canvas. `body` in `index.css` now *defaults* to the muted ink
+  and the base `h1–h6` rule lifts headings back to `text`, so a component that
+  forgets a colour still lands on a sanctioned one. Deleted the whole
+  `cs-primary / cs-secondary / cs-tertiary / cs-disabled / cs-inverse / cs-bg*
+  / cs-border* / cs-copy / cs-card*` block. Kept: `cs-quote`, `cs-callout`, the
+  sentiment trio and the four friction hues.
+- **One scale.** `display h1 h2 h3 h4 lead body body-sm caption` in
+  `tailwind.config.js`, each carrying its own line height and tracking. The
+  three headline sizes `clamp()` rather than stepping through `sm:` / `md:`
+  variants, which is what makes the ramp identical on every route. Deleted
+  `text-hero`, all thirteen `cs-*` sizes, and the `leading-body` / `leading-hero`
+  tokens; no component sets `leading-*` or `tracking-*` beside a size any more.
+- **One family, two weights.** `font-sans` is Inter; the `font-cs` family and
+  all 39 of its usages are gone, as is Inter 700 — case-study inline emphasis
+  is now Semibold on `text`, the same as `RichText`'s `Rich`.
+- **One rhythm.** `cs-gap` (104px) / `cs-stack` (24px) replaced by the site's
+  `section` / `section-md` / `section-sm` and plain `gap-6`. Every card on the
+  site — About's interests, the case study's literature / signal / result /
+  compare cards, every callout — is now `rounded-2xl border-border bg-surface
+  p-6`.
+- **Case-study section measures** cut from eight (593/880/928/948/1000/1004/
+  1158/1182, so every section started on a different left edge) to three:
+  `cs-prose` 948, `cs-wide` 1003.76, `cs-full` 1182. `CSSection` takes
+  `width="prose|wide|full"`, prose by default.
+- **The Background fact rail** was absolutely positioned 606px left of centre,
+  which only existed at ≥1440 and overhung the Problem section there. It is
+  now a four-up `<dl>` row inside the section, rule-bounded, 2-up on mobile.
+- **`CSLabel` is the site `Badge`.** Case-study section kickers ("Background",
+  "Problem", "Solution 1: The Today Screen") render as the same pill Home /
+  About / Contact put above their headings; the `tone="copy"` variant is gone.
+- Smaller consistency fixes: `ProjectCard`'s hand-rolled "In progress" pill now
+  uses `Badge`; its focus ring and `Figure`'s (which was `ring-mfp-blue/40`)
+  match Header/Footer's `ring-text/25`; Header's duplicated mobile action-link
+  strings reuse `mobileNavLinkClass`; Contact's `<dt>`s were `text-xs` where
+  its `<label>`s were `text-sm` — both are `text-body-sm`; Footer's band picked
+  up the missing `md:py-section-md` step; the charts' off-token `#e9e9e9` and
+  `rgba(129,124,255,0.5)` are `border-border` and `bg-cs-callout/50`.
+- **Verified** with `npm run lint`, `npm run build`, and a Playwright pass over
+  all four routes at 1440 and 390 under `reduced_motion`: zero console errors,
+  and a computed-style probe showing every text node resolving to Inter at one
+  of the nine scale sizes and one of the two inks (plus the three sanctioned
+  exceptions).
+- **Files touched:** `tailwind.config.js`, `index.css`, `index.html`, `App.jsx`,
+  all four pages, `Header Footer Button Badge SectionHeader ProjectCard
+  RichText Figure Lightbox Cursor`, `casestudy/Blocks.jsx`, both charts.
 
 ### 2026-07-29 — footer redesign, literature card overflow
 - **Footer** replaced the dark multi-column sitemap with a centred sign-off
@@ -109,10 +233,6 @@ next session should pick up.
   `md:min-h-[460px]` + grid stretch so all three cards grow together.
 - **Files touched:** `Footer.jsx`, `portfolio.js` (`footer` object),
   `casestudy/Blocks.jsx`, `CaseStudy.jsx`, `CLAUDE.md`.
-- **Next:** connect links are still empty in `portfolio.js`, so the footer
-  link row is hidden until Sakhi adds email / LinkedIn / Behance / résumé.
-  `footer.heading` / `footer.subtext` are first-draft copy. Per-route `<title>`
-  and route-level code splitting remain open.
 
 ### 2026-07-28 — case study rebuilt from the current Figma frame (`case-study`)
 - Replaced the entire case-study page with the current MyFitnessPal frame
@@ -146,9 +266,6 @@ next session should pick up.
   box, because that device frame's stroke sits outside it — it renders at the
   export's size with a matching negative margin so the screen lands exactly
   where the frame puts it.
-- **Next:** the hero is the LCP image on this route and is still a single
-  107KB WebP; a `srcset` would pay for itself. Route-level code splitting is
-  still open, and now matters more — this page is much heavier than the rest.
 
 ### 2026-07-27 — home thumbnail is the brand mark
 - The MyFitnessPal home-card thumbnail is now the product mark on the
@@ -197,36 +314,3 @@ next session should pick up.
   itself when the file is absent. MyFitnessPal uses `app-icon.webp` (3.4KB).
   The same mark on the product's blue is the home-page project thumbnail
   (`thumbnail.webp`).
-
-**Copy that is a first draft, not Sakhi's own words** — worth a read-through
-and edit: `site.bio`, `hero.opening`, `contact.invite`, `footer.heading`,
-`footer.subtext`, `about.statement`, `about.paragraph`,
-`about.crochetCurio.paragraph`, and all six `about.interests` blurbs.
-
-**Next suggested steps**
-
-*Blocked on facts only Sakhi has:*
-1. `contact.email`, `links.linkedin`, `links.behance` in `portfolio.js`. Until
-   these land, the site has no way to reach her except the form — which isn't
-   wired to anything (see 4).
-2. `resume.pdf` into `public/`, then set `links.resume = '/resume.pdf'`. The
-   Resume button is hidden in the header, mobile panel, and footer until then.
-3. `about.education` entries — `{ institution, qualification, years }`.
-4. Case-study `meta` has no timeline; the PDF's Timeline field was blank.
-
-*Doable without her:*
-5. **Wire the contact form.** It's UI-only and says so in its confirmation
-   text. Formspree or a Vercel function is an afternoon.
-6. **Per-route `<title>` and description.** Every route currently shares the
-   index.html title, so a shared case-study link previews as the home page.
-7. **Absolute `og:url` / `og:image`** once the production domain is settled —
-   most scrapers won't resolve the relative path currently in `index.html`.
-8. **Crochet Curio photos** (`about.crochetCurio.images`) — the section reads
-   as copy-only without them, and it's the most visual thing on the page.
-9. **Project two**, still a `coming-soon` placeholder awaiting real content.
-10. **Route-level code splitting.** The bundle is ~355KB / 113KB gzipped, most
-    of it Framer Motion, and the case study is the only page that needs the
-    heavy parts.
-11. `public/logo.png` (gradient wordmark) is unreferenced — `logo-wordmark.png`
-    is the one the header uses. It's a distinct colourway, not a duplicate, so
-    it was kept. Delete it or find it a job.

@@ -28,7 +28,7 @@ export default function Figure({ figure, onOpen, caption, className = '' }) {
         onClick={() => onOpen(figure)}
         data-cursor="Enlarge"
         aria-label={`Enlarge: ${figure.alt}`}
-        className="block w-full overflow-hidden rounded-[10px] outline-none focus-visible:ring-2 focus-visible:ring-mfp-blue/40"
+        className="block w-full overflow-hidden rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
         style={{ maxWidth: figure.width }}
       >
         <img
@@ -42,7 +42,7 @@ export default function Figure({ figure, onOpen, caption, className = '' }) {
         />
       </button>
       {caption && (
-        <figcaption className="font-cs text-cs-caption font-normal text-cs-copy">
+        <figcaption className="text-caption font-normal text-text-muted">
           {caption}
         </figcaption>
       )}

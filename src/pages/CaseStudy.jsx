@@ -24,17 +24,16 @@ import {
   CSCompareColumns,
 } from '../components/casestudy/Blocks'
 
-// The case-study page (/work/:slug), rebuilt from the MyFitnessPal Figma
-// frame — the same eighteen sections in the same order, each on its own
-// measure centred on the frame's 1440 canvas, with the frame's 104px section
-// rhythm and 24px internal rhythm. Type, colour and radii come from the
-// `cs-*` tokens, which are that frame's variables. Every string still lives in
-// portfolio.js.
+// The case-study page (/work/:slug), built from the MyFitnessPal Figma frame —
+// the same fourteen sections in the same order. Type, colour, card shape and
+// section rhythm are the site's own tokens, shared with every other route.
+// What is specific to this page is only its width: four measures (see
+// `MEASURES` in casestudy/Blocks), sized to the artwork exported into them.
+// Every string still lives in portfolio.js.
 //
-// The design is a 1440 desktop frame, so it is reproduced exactly at that
-// width and above. Below it, each section keeps its own measure and stacks;
-// the two research panels, which are drawn geometry rather than reflowable
-// layout, scale as a unit (see ScaleToFit).
+// Below 1440 each section keeps its measure and stacks; the two research
+// panels, which are drawn geometry rather than reflowable layout, scale as a
+// unit (see ScaleToFit).
 export default function CaseStudy() {
   const { slug } = useParams()
   const [lightbox, setLightbox] = useState(null)
@@ -51,23 +50,21 @@ export default function CaseStudy() {
       <ReadingProgress />
       <CaseStudyHero hero={cs.hero} title={cs.title} tagline={cs.tagline} />
 
-      <article className="w-full px-6 pb-cs-gap pt-cs-gap">
-        <div className="flex flex-col gap-cs-gap">
-          {/* 1 — Background, with the fact-sheet rail beside it */}
+      <article className="w-full px-6 py-section-sm md:py-section-md lg:py-section">
+        <div className="flex flex-col gap-section-sm md:gap-section-md lg:gap-section">
+          {/* 1 — Background, opening on the fact sheet */}
           {cs.background && (
-            <div className="relative mx-auto w-full max-w-[1440px]">
+            <CSSection id="background">
               <BackgroundMeta items={cs.background.meta} />
-              <CSSection id="background" width={593}>
-                <CSLabel>{cs.background.badge}</CSLabel>
-                <CSHeading>{cs.background.heading}</CSHeading>
-                <CSBody paragraphs={cs.background.body} />
-              </CSSection>
-            </div>
+              <CSLabel>{cs.background.badge}</CSLabel>
+              <CSHeading>{cs.background.heading}</CSHeading>
+              <CSBody paragraphs={cs.background.body} />
+            </CSSection>
           )}
 
           {/* 2 — Problem */}
           {cs.problem && (
-            <CSSection id="problem" width={593}>
+            <CSSection id="problem">
               <CSLabel>{cs.problem.badge}</CSLabel>
               <CSHeading>{cs.problem.heading}</CSHeading>
               <CSBody paragraphs={cs.problem.body} />
@@ -95,9 +92,9 @@ export default function CaseStudy() {
 
           {/* 5 — Discovery: the two annotated boards */}
           {cs.discovery && (
-            <CSSection id="discovery" width={1000}>
+            <CSSection id="discovery" width="wide">
               <CSLabel>{cs.discovery.badge}</CSLabel>
-              <CSHeading loose>{cs.discovery.heading}</CSHeading>
+              <CSHeading>{cs.discovery.heading}</CSHeading>
               <CSBody paragraphs={cs.discovery.body} />
               {cs.discovery.figures.map((figure) => (
                 <Figure
@@ -133,7 +130,7 @@ export default function CaseStudy() {
               <PanelRow
                 reverse
                 copy={
-                  <div className="flex w-full flex-col gap-cs-stack">
+                  <div className="flex w-full flex-col gap-6">
                     <CSHeading>{cs.research.frictionHeading}</CSHeading>
                     <div className="flex w-full flex-col">
                       <CSBody paragraphs={cs.research.frictionIntro} />
@@ -149,7 +146,7 @@ export default function CaseStudy() {
                 }
               />
 
-              <CSSection id="literature" width={1158}>
+              <CSSection id="literature" width="prose">
                 <CSBody paragraphs={cs.research.literatureIntro} />
                 <CSLiteratureCards items={cs.research.literature} className="w-full" />
                 <CSHeading>{cs.research.synthesisHeading}</CSHeading>
@@ -160,15 +157,15 @@ export default function CaseStudy() {
 
           {/* 7 — Product decision: the Today screen, six moves */}
           {cs.productDecision && (
-            <CSSection id="today-screen" width={1000}>
+            <CSSection id="today-screen" width="wide">
               <CSLabel>{cs.productDecision.badge}</CSLabel>
               <CSHeading>{cs.productDecision.heading}</CSHeading>
-              <CSLabel tone="copy">{cs.productDecision.subLabel}</CSLabel>
-              <ol className="flex w-full flex-col gap-cs-stack">
+              <CSLabel>{cs.productDecision.subLabel}</CSLabel>
+              <ol className="flex w-full flex-col gap-6">
                 {cs.productDecision.steps.map((step, i) => (
                   <li
                     key={step.body}
-                    className={`flex w-full flex-col gap-cs-stack ${
+                    className={`flex w-full flex-col gap-6 ${
                       step.spaced ? 'pt-[30px]' : ''
                     }`}
                   >
@@ -183,7 +180,7 @@ export default function CaseStudy() {
           {/* 8 — Solution 2: what the prediction runs on */}
           {cs.repeatLogging && (
             <CSSection id="repeat-logging">
-              <CSLabel tone="copy">{cs.repeatLogging.label}</CSLabel>
+              <CSLabel>{cs.repeatLogging.label}</CSLabel>
               <CSHeading>{cs.repeatLogging.heading}</CSHeading>
               <CSBody paragraphs={cs.repeatLogging.body} />
               <CSSignalCards items={cs.repeatLogging.signals} className="w-full" />
@@ -192,9 +189,9 @@ export default function CaseStudy() {
 
           {/* 9 — Where the prediction sits, beside the screen it produced */}
           {cs.predictionCard && (
-            <CSSection id="prediction-card" width={1004}>
-              <div className="flex w-full flex-col items-center justify-center gap-cs-stack lg:flex-row">
-                <div className="flex w-full flex-col items-start justify-center gap-cs-stack lg:w-[703px] lg:shrink-0">
+            <CSSection id="prediction-card" width="wide">
+              <div className="flex w-full flex-col items-center justify-center gap-6 lg:flex-row">
+                <div className="flex w-full flex-col items-start justify-center gap-6 lg:w-[703px] lg:shrink-0">
                   <CSHeading>{cs.predictionCard.heading}</CSHeading>
                   <CSBody paragraphs={cs.predictionCard.body} />
                 </div>
@@ -209,7 +206,7 @@ export default function CaseStudy() {
 
           {/* 10 — What Done does */}
           {cs.addMore && (
-            <CSSection id="add-more" width={1000}>
+            <CSSection id="add-more" width="wide">
               <CSBody paragraphs={cs.addMore.body} />
               <Figure figure={cs.addMore.figure} onOpen={open} />
             </CSSection>
@@ -217,7 +214,7 @@ export default function CaseStudy() {
 
           {/* 11 — Strong / weak */}
           {cs.strength && (
-            <CSSection id="strength" width={880}>
+            <CSSection id="strength" width="prose">
               <CSHeading>{cs.strength.heading}</CSHeading>
               <CSCompareColumns columns={cs.strength.columns} className="w-full" />
             </CSSection>
@@ -225,7 +222,7 @@ export default function CaseStudy() {
 
           {/* 12 — Testing outcomes */}
           {cs.testing && (
-            <CSSection id="testing" width={928}>
+            <CSSection id="testing" width="prose">
               <CSLabel>{cs.testing.badge}</CSLabel>
               <CSHeading>{cs.testing.heading}</CSHeading>
               <CSBody paragraphs={cs.testing.intro} />
@@ -238,7 +235,7 @@ export default function CaseStudy() {
 
           {/* 13 — If this shipped */}
           {cs.ifShipped && (
-            <CSSection id="if-shipped" width={928}>
+            <CSSection id="if-shipped" width="prose">
               <CSLabel>{cs.ifShipped.badge}</CSLabel>
               <CSHeading>{cs.ifShipped.heading}</CSHeading>
               <CSBody paragraphs={cs.ifShipped.intro} />
@@ -249,7 +246,7 @@ export default function CaseStudy() {
 
           {/* 14 — Learnings */}
           {cs.learnings && (
-            <CSSection id="learnings" width={928}>
+            <CSSection id="learnings" width="prose">
               <CSLabel>{cs.learnings.badge}</CSLabel>
               <CSHeading>{cs.learnings.heading}</CSHeading>
               <CSBody paragraphs={cs.learnings.body} />
@@ -269,7 +266,7 @@ export default function CaseStudy() {
 function PanelRow({ copy, panel, reverse = false }) {
   return (
     <div
-      className={`mx-auto flex w-full max-w-cs-1182 flex-col items-center justify-center gap-cs-stack ${
+      className={`mx-auto flex w-full max-w-cs-full flex-col items-center justify-center gap-6 ${
         reverse ? 'min-[1280px]:flex-row-reverse' : 'min-[1280px]:flex-row'
       }`}
     >
@@ -279,15 +276,15 @@ function PanelRow({ copy, panel, reverse = false }) {
   )
 }
 
-// One of the six Today-screen moves: a bold ordinal, then the change.
+// One of the six Today-screen moves: the ordinal, then the change.
 function Step({ index, body }) {
   const reveal = useReveal()
   return (
-    <motion.div {...reveal} className="flex w-full items-start gap-2.5 text-cs-copy">
-      <p className="font-cs shrink-0 text-cs-body-xl font-bold">
+    <motion.div {...reveal} className="flex w-full items-start gap-2.5">
+      <p className="shrink-0 text-body font-semibold text-text">
         {String(index + 1).padStart(2, '0')}
       </p>
-      <p className="font-cs min-w-0 flex-1 text-cs-body-xl font-normal">
+      <p className="min-w-0 flex-1 text-body font-normal text-text-muted">
         <CSRich>{body}</CSRich>
       </p>
     </motion.div>
@@ -298,12 +295,16 @@ function Step({ index, body }) {
 // Store screenshot pinned to the left on the product's brand blue, with the
 // title and tagline centred over it. Hides itself without an image so an
 // unfinished project never ships a bare colour band.
+//
+// **Colour exception**: type on a coloured band inverts to `surface`. Sizes
+// are still the shared `display` / `lead` tokens, so this hero and the home
+// hero set at exactly the same scale.
 function CaseStudyHero({ hero, title, tagline }) {
   const reveal = useReveal()
   if (!hero?.image?.src) return null
   return (
     <section className="relative w-full overflow-hidden bg-mfp-blue">
-      <div className="relative mx-auto flex min-h-[380px] w-full max-w-[1440px] flex-col items-center justify-center gap-cs-stack px-6 py-16 text-center sm:min-h-[420px] sm:py-20 lg:h-[514px] lg:min-h-0 lg:py-0">
+      <div className="relative mx-auto flex min-h-[380px] w-full max-w-[1440px] flex-col items-center justify-center gap-6 px-6 py-section-sm text-center sm:min-h-[420px] md:py-section-md lg:h-[514px] lg:min-h-0 lg:py-0">
         <img
           src={hero.image.src}
           alt={hero.image.alt}
@@ -314,14 +315,14 @@ function CaseStudyHero({ hero, title, tagline }) {
         />
         <motion.h1
           {...reveal}
-          className="font-cs relative z-10 text-4xl font-semibold leading-[1.05] tracking-tight text-cs-inverse sm:text-6xl lg:whitespace-nowrap lg:text-cs-5xl"
+          className="relative z-10 text-display font-semibold text-surface lg:whitespace-nowrap"
         >
           {title}
         </motion.h1>
         {tagline && (
           <motion.p
             {...reveal}
-            className="font-cs relative z-10 w-full max-w-[684px] text-lg font-normal leading-snug text-cs-inverse sm:text-2xl lg:text-cs-tagline"
+            className="relative z-10 w-full max-w-[684px] text-lead font-normal text-surface"
           >
             {tagline}
           </motion.p>
@@ -331,24 +332,24 @@ function CaseStudyHero({ hero, title, tagline }) {
   )
 }
 
-// The narrow fact-sheet rail beside Background — my role, status, type and
-// tools. The frame parks it at x=114 on a 1440 canvas, i.e. 606px left of
-// centre, so at 1440 and above it takes exactly that position; below that
-// there is no room for it beside a centred 593px column, so it reads as a
-// fact sheet above the narrative instead.
+// The fact sheet at the top of Background — role, status, type and tools. The
+// Figma frame floated this as a narrow rail 606px left of centre, which only
+// had room to exist at exactly 1440 and overhung the section below it at that
+// width. It reads the same as a four-up row inside the section's own measure,
+// and it now sits on the same left edge as every other section on the page.
 function BackgroundMeta({ items }) {
   const reveal = useReveal()
   if (!items?.length) return null
   return (
     <motion.dl
       {...reveal}
-      className="mx-auto mb-cs-stack flex w-full max-w-cs-593 flex-col gap-10 min-[1440px]:absolute min-[1440px]:left-[calc(50%-606px)] min-[1440px]:top-0 min-[1440px]:mx-0 min-[1440px]:mb-0 min-[1440px]:w-[163px]"
+      className="grid w-full grid-cols-2 gap-x-6 gap-y-8 border-y border-border py-6 sm:grid-cols-4"
     >
       {items.map((item) => (
         <div key={item.label} className="flex flex-col items-start gap-2">
           <CSSubheading as="dt">{item.label}</CSSubheading>
           <dd className="w-full">
-            <ul className="font-cs list-disc pl-6 text-cs-body-xl font-normal text-cs-primary">
+            <ul className="list-disc pl-5 text-body-sm font-normal text-text-muted">
               {item.items.map((value) => (
                 <li key={value}>{value}</li>
               ))}

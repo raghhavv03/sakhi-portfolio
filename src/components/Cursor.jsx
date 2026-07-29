@@ -177,7 +177,7 @@ export default function Cursor() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: reducedMotion ? 0 : 0.15 }}
-            className="flex items-center gap-1.5 whitespace-nowrap px-5 py-2.5 text-base font-normal leading-none text-text"
+            className="flex items-center gap-1.5 whitespace-nowrap px-5 py-2.5 text-body font-normal leading-none text-text"
           >
             {text}
             <CursorIcon type={icon} />

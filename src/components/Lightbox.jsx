@@ -86,7 +86,7 @@ export default function Lightbox({ figure, onClose }) {
           className="fixed inset-0 z-[100] flex flex-col bg-dark-bg/95 p-4 backdrop-blur-sm sm:p-6"
         >
           <div className="flex shrink-0 items-start justify-between gap-6">
-            <p className="max-w-2xl pt-1 text-sm font-normal leading-body text-dark-muted">
+            <p className="max-w-2xl pt-1 text-body-sm font-normal text-dark-muted">
               {figure.caption || figure.alt}
             </p>
             <div
@@ -99,11 +99,11 @@ export default function Lightbox({ figure, onClose }) {
                 disabled={zoom <= ZOOM_MIN}
                 data-cursor=""
                 aria-label="Zoom out"
-                className="rounded-full border border-dark-border px-3 py-2 text-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-dark-text"
+                className="rounded-full border border-dark-border px-3 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-dark-text"
               >
                 −
               </button>
-              <span className="w-11 text-center text-sm font-normal text-dark-muted tabular-nums">
+              <span className="w-11 text-center text-body-sm font-normal text-dark-muted tabular-nums">
                 {Math.round(zoom * 100)}%
               </span>
               <button
@@ -112,7 +112,7 @@ export default function Lightbox({ figure, onClose }) {
                 disabled={zoom >= ZOOM_MAX}
                 data-cursor=""
                 aria-label="Zoom in"
-                className="rounded-full border border-dark-border px-3 py-2 text-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-dark-text"
+                className="rounded-full border border-dark-border px-3 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-dark-text"
               >
                 +
               </button>
@@ -121,7 +121,7 @@ export default function Lightbox({ figure, onClose }) {
                 type="button"
                 onClick={onClose}
                 data-cursor=""
-                className="ml-2 shrink-0 rounded-full border border-dark-border px-4 py-2 text-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text"
+                className="ml-2 shrink-0 rounded-full border border-dark-border px-4 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text"
               >
                 Close
               </button>

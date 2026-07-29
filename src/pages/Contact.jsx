@@ -39,10 +39,10 @@ export default function Contact() {
         {/* Left: headline, invite, direct details */}
         <motion.div {...reveal}>
           <Badge>Contact</Badge>
-          <h1 className="mt-5 text-5xl font-semibold leading-tight sm:text-6xl">
+          <h1 className="mt-5 text-h1 font-semibold text-text">
             Let's connect
           </h1>
-          <p className="mt-5 max-w-md text-lg font-normal leading-body text-text-muted">
+          <p className="mt-5 max-w-md text-lead font-normal text-text-muted">
             {contact.invite}
           </p>
 
@@ -52,12 +52,12 @@ export default function Contact() {
             <dl className="mt-10 space-y-6 border-t border-border pt-8">
               {contact.email && (
                 <div>
-                  <dt className="text-xs font-normal text-text-muted">Email</dt>
+                  <dt className="text-body-sm font-normal text-text-muted">Email</dt>
                   <dd className="mt-1.5">
                     <a
                       href={`mailto:${contact.email}`}
                       data-cursor="Email me"
-                      className="inline-flex min-h-[44px] items-center text-lg font-semibold underline decoration-border underline-offset-4 transition-colors hover:decoration-text"
+                      className="inline-flex min-h-[44px] items-center text-h4 font-semibold text-text underline decoration-border underline-offset-4 transition-colors hover:decoration-text"
                     >
                       {contact.email}
                     </a>
@@ -67,7 +67,7 @@ export default function Contact() {
 
               {links.linkedin && (
                 <div>
-                  <dt className="text-xs font-normal text-text-muted">
+                  <dt className="text-body-sm font-normal text-text-muted">
                     LinkedIn
                   </dt>
                   <dd className="mt-2">
@@ -112,7 +112,7 @@ export default function Contact() {
             <div className="mt-5">
               <label
                 htmlFor="message"
-                className="block text-sm font-normal text-text-muted"
+                className="block text-body-sm font-normal text-text-muted"
               >
                 Message
               </label>
@@ -122,7 +122,7 @@ export default function Contact() {
                 rows={5}
                 required
                 placeholder="Tell me about your project…"
-                className="mt-2 w-full resize-y rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgba(26,26,26,0.07)] focus:outline-none focus:placeholder:opacity-50"
+                className="mt-2 w-full resize-y rounded-xl border border-border bg-bg px-4 py-3 text-body font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgba(26,26,26,0.07)] focus:outline-none focus:placeholder:opacity-50"
               />
             </div>
 
@@ -132,7 +132,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status !== 'idle'}
-                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-text px-6 py-3 text-sm font-semibold text-bg transition-colors duration-200 hover:bg-accent hover:text-text disabled:hover:bg-text disabled:hover:text-bg"
+                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-text px-6 py-3 text-body-sm font-semibold text-bg transition-colors duration-200 hover:bg-accent hover:text-text disabled:hover:bg-text disabled:hover:text-bg"
               >
                 {/* Keyed enter-only swap — the old label unmounts instantly,
                     the new one fades up. No exit animation, so the swap can
@@ -182,7 +182,7 @@ export default function Contact() {
             <p
               role="status"
               aria-live="polite"
-              className={`mt-4 text-sm font-normal text-text-muted ${
+              className={`mt-4 text-body-sm font-normal text-text-muted ${
                 sent ? '' : 'sr-only'
               }`}
             >
@@ -201,7 +201,7 @@ export default function Contact() {
 function Field({ id, label, type, autoComplete, placeholder }) {
   return (
     <div className="mt-5 first:mt-0">
-      <label htmlFor={id} className="block text-sm font-normal text-text-muted">
+      <label htmlFor={id} className="block text-body-sm font-normal text-text-muted">
         {label}
       </label>
       <input
@@ -211,7 +211,7 @@ function Field({ id, label, type, autoComplete, placeholder }) {
         required
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="mt-2 w-full rounded-xl border border-border bg-bg px-4 py-3 text-base font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgba(26,26,26,0.07)] focus:outline-none focus:placeholder:opacity-50"
+        className="mt-2 w-full rounded-xl border border-border bg-bg px-4 py-3 text-body font-normal text-text transition-[border-color,box-shadow] duration-200 placeholder:text-text-muted/70 placeholder:transition-opacity placeholder:duration-200 focus:border-text focus:shadow-[0_0_0_3px_rgba(26,26,26,0.07)] focus:outline-none focus:placeholder:opacity-50"
       />
     </div>
   )

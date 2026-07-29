@@ -27,11 +27,11 @@ export default function RichText({
 }) {
   if (!paragraphs?.length) return null
   const colour = tone === 'muted' ? 'text-text-muted' : 'text-text'
-  const scale = size === 'lg' ? 'text-lg' : 'text-base'
+  const scale = size === 'lg' ? 'text-lead' : 'text-body'
   return (
     <div className={`space-y-4 ${className}`}>
       {paragraphs.map((p, i) => (
-        <p key={i} className={`font-normal leading-body ${scale} ${colour}`}>
+        <p key={i} className={`font-normal ${scale} ${colour}`}>
           <Rich>{p}</Rich>
         </p>
       ))}
