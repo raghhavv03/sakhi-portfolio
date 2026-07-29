@@ -211,8 +211,8 @@ export function CSQuote({ children }) {
 }
 
 // Numbered literature findings — "01 / title / body", a hairline-divided
-// citation pinned to the card's foot. Fixed 460px tall in the frame so the
-// three citations line up regardless of body length.
+// citation pinned to the card's foot. 460px is the frame's minimum height so
+// the three citations line up; cards grow together when a citation wraps.
 export function CSLiteratureCards({ items, className = '' }) {
   return (
     <div className={`grid gap-cs-stack md:grid-cols-3 ${className}`}>
@@ -220,9 +220,9 @@ export function CSLiteratureCards({ items, className = '' }) {
         <CSCard
           key={item.title}
           delay={i * 0.07}
-          className="flex flex-col items-center justify-between gap-4 md:h-[460px]"
+          className="flex h-full min-h-0 flex-col items-center justify-between gap-4 md:min-h-[460px]"
         >
-          <div className="flex w-full flex-col items-start gap-4">
+          <div className="flex w-full min-w-0 flex-col items-start gap-4">
             <p className="font-cs text-cs-body-xl font-bold text-cs-copy">
               {String(i + 1).padStart(2, '0')}
             </p>
@@ -234,7 +234,7 @@ export function CSLiteratureCards({ items, className = '' }) {
             </p>
           </div>
           {item.citation && (
-            <div className="flex w-full items-center justify-center border-t-[0.5px] border-cs-border-2 pt-2.5">
+            <div className="mt-auto flex w-full shrink-0 items-center justify-center border-t-[0.5px] border-cs-border-2 pt-2.5">
               <p className="font-cs min-w-0 flex-1 text-cs-body-m font-normal text-cs-copy">
                 {item.citation}
               </p>

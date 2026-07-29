@@ -15,6 +15,13 @@ export const site = {
   copyright: '© 2026 Sakhi Rana · all rights reserved',
 }
 
+// Footer closing copy — the centred sign-off band at the bottom of every page.
+export const footer = {
+  heading: 'Thanks for stopping by',
+  subtext:
+    "I'd love to talk projects, collaborations, or anything design.",
+}
+
 export const contact = {
   email: '', // e.g. 'hello@example.com' — empty hides every mailto affordance
   invite:

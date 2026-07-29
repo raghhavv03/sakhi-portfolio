@@ -40,6 +40,11 @@ npm run preview    # serve the production build on :4173
   `education` array hides that section, no Crochet Curio images lets the copy
   span full width. So leave a field empty until it's real — never a placeholder
   string, which ships as visible filler.
+- **Footer is a centred sign-off, not a sitemap.** Copy lives in `footer` +
+  `site.copyright`; connect links are assembled from `links` and `contact.email`
+  inside `Footer.jsx` (each hidden until real). Back to top is footer-only — no
+  floating control. The old dark multi-column footer and the case-study
+  `BackHome` buttons are gone.
 
 ```
 src/
@@ -88,6 +93,26 @@ src/
 
 Newest first. Add an entry per working session — what shipped, and what the
 next session should pick up.
+
+### 2026-07-29 — footer redesign, literature card overflow
+- **Footer** replaced the dark multi-column sitemap with a centred sign-off
+  band on the light canvas: back-to-top control, `footer.heading` /
+  `footer.subtext` from `portfolio.js`, a row of connect links (LinkedIn,
+  email, Behance, résumé — each hidden until the fact exists), and
+  `site.copyright`. External links carry the small ↗ arrow; the footer
+  back-to-top uses the same arrow with a hover nudge. No floating back-to-top
+  pill — scroll-up lives in the footer only.
+- Case study's old inline `BackHome` buttons were removed; wayfinding is the
+  header logo / nav plus the footer sign-off.
+- **Literature cards** — `CSLiteratureCards` used a fixed `md:h-[460px]`; card
+  03's wrapped citation spilled outside the border. Switched to
+  `md:min-h-[460px]` + grid stretch so all three cards grow together.
+- **Files touched:** `Footer.jsx`, `portfolio.js` (`footer` object),
+  `casestudy/Blocks.jsx`, `CaseStudy.jsx`, `CLAUDE.md`.
+- **Next:** connect links are still empty in `portfolio.js`, so the footer
+  link row is hidden until Sakhi adds email / LinkedIn / Behance / résumé.
+  `footer.heading` / `footer.subtext` are first-draft copy. Per-route `<title>`
+  and route-level code splitting remain open.
 
 ### 2026-07-28 — case study rebuilt from the current Figma frame (`case-study`)
 - Replaced the entire case-study page with the current MyFitnessPal frame
@@ -174,9 +199,9 @@ next session should pick up.
   (`thumbnail.webp`).
 
 **Copy that is a first draft, not Sakhi's own words** — worth a read-through
-and edit: `site.bio`, `hero.opening`, `contact.invite`, `about.statement`,
-`about.paragraph`, `about.crochetCurio.paragraph`, and all six
-`about.interests` blurbs.
+and edit: `site.bio`, `hero.opening`, `contact.invite`, `footer.heading`,
+`footer.subtext`, `about.statement`, `about.paragraph`,
+`about.crochetCurio.paragraph`, and all six `about.interests` blurbs.
 
 **Next suggested steps**
 

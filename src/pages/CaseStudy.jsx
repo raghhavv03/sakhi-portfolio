@@ -3,8 +3,6 @@ import { useParams, Navigate } from 'react-router-dom'
 import { motion, useScroll } from 'framer-motion'
 import { projects } from '../data/portfolio'
 import { useReveal } from '../lib/hooks'
-import Button from '../components/Button'
-import Magnetic from '../components/Magnetic'
 import Figure from '../components/Figure'
 import Lightbox from '../components/Lightbox'
 import ScaleToFit from '../components/casestudy/ScaleToFit'
@@ -54,11 +52,7 @@ export default function CaseStudy() {
       <CaseStudyHero hero={cs.hero} title={cs.title} tagline={cs.tagline} />
 
       <article className="w-full px-6 pb-cs-gap pt-cs-gap">
-        <div className="mx-auto max-w-cs-1182">
-          <BackHome />
-        </div>
-
-        <div className="mt-cs-gap flex flex-col gap-cs-gap">
+        <div className="flex flex-col gap-cs-gap">
           {/* 1 — Background, with the fact-sheet rail beside it */}
           {cs.background && (
             <div className="relative mx-auto w-full max-w-[1440px]">
@@ -263,11 +257,6 @@ export default function CaseStudy() {
           )}
         </div>
 
-        {/* Closing back-home affordance */}
-        <div className="mx-auto mt-cs-gap max-w-cs-1182">
-          <BackHome />
-        </div>
-
         <Lightbox figure={lightbox} onClose={() => setLightbox(null)} />
       </article>
     </>
@@ -385,21 +374,3 @@ function ReadingProgress() {
   )
 }
 
-// Prominent back-to-home control. Its visible label is self-explanatory, so it
-// carries no custom-cursor pill.
-function BackHome() {
-  return (
-    <Magnetic className="inline-flex">
-      <Button variant="secondary" to="/" className="group">
-        {/* Arrow nudges 2px left on hover — points where you'll go. */}
-        <span
-          aria-hidden="true"
-          className="transition-transform duration-200 group-hover:-translate-x-0.5 motion-reduce:group-hover:translate-x-0"
-        >
-          ←
-        </span>
-        Back to home
-      </Button>
-    </Magnetic>
-  )
-}

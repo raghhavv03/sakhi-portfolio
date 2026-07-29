@@ -1,128 +1,107 @@
-import { Link, useLocation } from 'react-router-dom'
-import { site, contact, links, socials, nav } from '../data/portfolio'
-import Button from './Button'
-import Magnetic from './Magnetic'
+import { site, contact, links, footer as footerCopy } from '../data/portfolio'
+import { useReducedMotion } from '../lib/hooks'
+import { tapHaptic } from '../lib/haptics'
 
-// Global footer — dark band. Repeats every nav action so visitors never have
-// to scroll back up, plus a back-to-home button (hidden on home itself), bio,
-// and copyright.
+// Global footer — centred sign-off band. Back to top lives here for every
+// route; connect links only render when the underlying facts exist.
 export default function Footer() {
-  const isHome = useLocation().pathname === '/'
-  // Text links brighten and slide 2px right on hover — transform + color
-  // only, so it stays GPU-cheap and reads as responsiveness, not decoration.
-  const linkClass =
-    'inline-flex min-h-[44px] items-center text-sm font-normal text-dark-muted transition-[color,transform] duration-200 hover:translate-x-0.5 hover:text-dark-text motion-reduce:hover:translate-x-0'
+  const reducedMotion = useReducedMotion()
+
+  const scrollToTop = () => {
+    tapHaptic()
+    window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' })
+  }
+
+  const connectLinks = [
+    links.linkedin && {
+      label: 'LinkedIn',
+      href: links.linkedin,
+      external: true,
+    },
+    contact.email && {
+      label: contact.email,
+      href: `mailto:${contact.email}`,
+      external: false,
+      cursorLabel: 'Email me',
+    },
+    links.behance && {
+      label: 'Behance',
+      href: links.behance,
+      external: true,
+    },
+    links.resume && {
+      label: 'Resume',
+      href: links.resume,
+      external: true,
+    },
+  ].filter(Boolean)
 
   return (
-    <footer className="bg-dark-bg text-dark-text">
-      <div className="mx-auto max-w-content px-6 py-16">
-        <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
-          {/* Left: identity + bio + back-to-home */}
-          <div className="max-w-sm">
-            <Link
-              to="/"
-              className="inline-flex min-h-[44px] items-center text-xl font-semibold"
-              aria-label={`${site.name} — home`}
-            >
-              {site.name}
-            </Link>
-            <p className="mt-3 text-sm font-normal leading-body text-dark-muted">
-              {site.bio}
-            </p>
-            {!isHome && (
-              <Magnetic className="mt-6 inline-flex">
-                <Button variant="dark" to="/" className="group">
-                  {/* Arrow nudges 2px left on hover — points where you'll go. */}
-                  <span
-                    aria-hidden="true"
-                    className="transition-transform duration-200 group-hover:-translate-x-0.5 motion-reduce:group-hover:translate-x-0"
-                  >
-                    ←
-                  </span>
-                  Back to home
-                </Button>
-              </Magnetic>
-            )}
-          </div>
+    <footer className="border-t border-border bg-bg text-text">
+      <div className="mx-auto flex max-w-content flex-col items-center px-6 py-section-sm text-center md:py-section">
+        <button
+          type="button"
+          onClick={scrollToTop}
+          className="group inline-flex min-h-[44px] items-center gap-2 text-sm font-normal text-text-muted transition-colors duration-200 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
+        >
+          Back to top
+          <ArrowUpRightIcon className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0" />
+        </button>
 
-          {/* Right: navigation + actions. Tidy 2-col group on phone; inline
-              row from sm up. */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:flex sm:flex-wrap sm:gap-x-12">
-            <nav className="flex flex-col gap-1" aria-label="Footer">
-              <span className="mb-1 text-xs font-normal uppercase tracking-wide text-dark-muted/70">
-                Navigate
-              </span>
-              {nav.map((item) => (
-                <Link key={item.to} to={item.to} className={linkClass}>
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+        <h2 className="mt-8 max-w-2xl text-3xl font-semibold leading-tight sm:text-4xl">
+          {footerCopy.heading}
+        </h2>
 
-            {/* Each column disappears entirely when it has nothing real to
-                link to — better an absent column than a dead link. */}
-            {(links.resume || links.linkedin || contact.email) && (
-              <div className="flex flex-col gap-1">
-                <span className="mb-1 text-xs font-normal uppercase tracking-wide text-dark-muted/70">
-                  Connect
-                </span>
-                {links.resume && (
-                  <a
-                    href={links.resume}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={linkClass}
-                  >
-                    Resume
-                  </a>
-                )}
-                {links.linkedin && (
-                  <a
-                    href={links.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={linkClass}
-                  >
-                    LinkedIn
-                  </a>
-                )}
-                {contact.email && (
-                  <a
-                    href={`mailto:${contact.email}`}
-                    data-cursor="Email me"
-                    className={linkClass}
-                  >
-                    {contact.email}
-                  </a>
-                )}
-              </div>
-            )}
+        <p className="mt-4 max-w-lg text-base font-normal italic leading-body text-text-muted">
+          {footerCopy.subtext}
+        </p>
 
-            {socials.length > 0 && (
-              <div className="flex flex-col gap-1">
-                <span className="mb-1 text-xs font-normal uppercase tracking-wide text-dark-muted/70">
-                  Social
-                </span>
-                {socials.map((s) => (
-                  <a
-                    key={s.platform}
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={linkClass}
-                  >
-                    {s.platform}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        {connectLinks.length > 0 && (
+          <nav
+            aria-label="Connect"
+            className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
+          >
+            {connectLinks.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noopener noreferrer' : undefined}
+                data-cursor={item.cursorLabel}
+                className="group inline-flex min-h-[44px] items-center gap-1.5 text-sm font-normal text-text transition-colors duration-200 hover:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
+              >
+                {item.label}
+                <ArrowUpRightIcon className="text-text-muted transition-[color,transform] duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0" />
+              </a>
+            ))}
+          </nav>
+        )}
 
-        <div className="mt-12 border-t border-dark-border pt-6 text-xs font-normal text-dark-muted">
+        <p className="mt-10 text-xs font-normal text-text-muted">
           {site.copyright}
-        </div>
+        </p>
       </div>
     </footer>
+  )
+}
+
+function ArrowUpRightIcon({ className = '' }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      className={`block shrink-0 ${className}`}
+    >
+      <path
+        d="M3.5 8.5 8.5 3.5M8.5 3.5H4.75M8.5 3.5V7.25"
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   )
 }
