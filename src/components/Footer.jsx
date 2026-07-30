@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { site, contact, links, footer as footerCopy } from '../data/portfolio'
 import { useReducedMotion } from '../lib/hooks'
 import { tapHaptic } from '../lib/haptics'
+import { CTA_HOVER, CTA_HOVER_FILL } from '../lib/interactions'
 import Button from './Button'
 
 // Global footer — the centred sign-off band from the Figma frame: a hairline,
@@ -13,6 +14,8 @@ import Button from './Button'
 // button. The contact form is always reachable, so the row is never empty.
 export default function Footer() {
   const reducedMotion = useReducedMotion()
+  const location = useLocation()
+  const onContact = location.pathname === '/contact'
 
   const scrollToTop = () => {
     tapHaptic()
@@ -34,13 +37,25 @@ export default function Footer() {
       cursorLabel: 'Email me',
       icon: <MailIcon />,
     },
-    {
-      key: 'hello',
-      label: footerCopy.sayHello,
-      to: '/contact',
-      cursorLabel: footerCopy.sayHello,
-      icon: <ChatIcon />,
-    },
+    // On every other route this navigates to the contact form. On the contact
+    // page itself there is nowhere to navigate to, and a link that looks
+    // clickable but lands you where you already are reads as broken — so there
+    // it scrolls back up to the form instead.
+    onContact
+      ? {
+          key: 'hello',
+          label: `${footerCopy.sayHello} — back to the form`,
+          onClick: scrollToTop,
+          cursorLabel: footerCopy.sayHello,
+          icon: <ChatIcon />,
+        }
+      : {
+          key: 'hello',
+          label: footerCopy.sayHello,
+          to: '/contact',
+          cursorLabel: footerCopy.sayHello,
+          icon: <ChatIcon />,
+        },
   ].filter(Boolean)
 
   return (
@@ -97,20 +112,28 @@ export default function Footer() {
   )
 }
 
-// A round hairline button carrying one glyph. Rests neutral and fills pastel
-// blue on hover, like every other control on the site.
+// A round hairline button carrying one glyph. Rests neutral, then takes the
+// same accent fill and the same small zoom as every other CTA on the site.
 const connectClass =
   'inline-flex size-14 items-center justify-center rounded-full border border-border text-text ' +
-  'transition-[color,background-color,border-color,box-shadow] duration-200 ' +
-  'hover:border-accent hover:bg-accent hover:shadow-[0_4px_14px_-4px_rgb(var(--shadow)/0.28)] ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2'
+  `${CTA_HOVER} ${CTA_HOVER_FILL}`
 
-function ConnectButton({ label, href, to, external, cursorLabel, icon }) {
+function ConnectButton({ label, href, to, external, cursorLabel, icon, onClick }) {
   const shared = {
     className: connectClass,
     'aria-label': label,
     'data-cursor': cursorLabel ?? label,
     onPointerDown: tapHaptic,
+  }
+
+  // A scroll, not a destination — so it is a real button, not a link with a
+  // dead href.
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} {...shared}>
+        {icon}
+      </button>
+    )
   }
 
   if (to) {

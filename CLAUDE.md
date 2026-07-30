@@ -54,31 +54,39 @@ phone originals are not in the repo.
   `tailwind.config.js` — `display h1 h2 h3 h4 lead body body-sm caption` — and
   each entry carries its own line height and tracking, so a component sets a
   size and nothing else. The family is Inter everywhere. See the conventions
-  section below for the three sanctioned exceptions.
-- **All motion timing lives in `src/lib/animations.js`.** `EASE` and `DUR` are
-  the only curves and durations on the site.
+  section below for the sanctioned exceptions.
+- **All motion timing lives in `src/lib/animations.js`** (`EASE`, `DUR`) and
+  **every CTA's hover lives in `src/lib/interactions.js`** (`CTA_HOVER`,
+  `CTA_HOVER_FILL`). Those are the only curves, durations and hover states.
 - **Empty means "don't render".** Every consumer of `portfolio.js` treats an
   empty string or empty array as a missing value and hides the affordance: no
   résumé URL hides the Resume button, no email hides every mailto, an empty
   `education` array hides that section, a photo with no `caption` simply never
   names itself. So leave a field empty until it's real — never a placeholder
   string, which ships as visible filler.
+  **`PREVIEW_UNPUBLISHED` at the top of `portfolio.js` is the one exception**,
+  and it is temporary: it feeds the outstanding links dead `#` hrefs and an
+  `example.com` address so the placement of the Resume / LinkedIn / Behance /
+  email / shop controls can be reviewed at all. The hiding logic is untouched —
+  flip it to `false` and they all vanish again. **It must be off before the site
+  goes live**, or the site ships buttons that go nowhere.
 - **Footer is a centred sign-off, not a sitemap.** Copy lives in `footer` +
   `site.copyright`; the connect row is a set of round hairline icon buttons
   assembled from `links` and `contact.email` inside `Footer.jsx`, each hidden
   until real. "Say hello" → `/contact` is the one that never hides, so the row
-  is never empty. Résumé stays a `Button`, not an icon — the frame has no glyph
-  for it and a hand-drawn one would be a guess. Back to top is footer-only — no
-  floating control. The old dark multi-column footer and the case-study
-  `BackHome` buttons are gone.
+  is never empty — except on `/contact` itself, where it becomes a real
+  `<button>` that scrolls back to the form, because a link that lands you where
+  you already are reads as broken. Résumé stays a `Button`, not an icon — the
+  frame has no glyph for it and a hand-drawn one would be a guess. Back to top
+  is footer-only — no floating control.
 
 ```
 src/
   App.jsx                    ThemeProvider + Router + Header/Footer/Cursor shell
   pages/                     Home · About · Contact · CaseStudy
   components/
-    Header Footer Cursor Magnetic Button Badge SectionHeader
-    ProjectCard
+    Header Footer Cursor Button Badge SectionHeader ProjectCard
+    Logo.jsx                 the SR monogram, inline SVG on `currentColor`
     ThemeProvider.jsx        owns light/dark; wraps the whole app
     ThemeToggle.jsx          header switch (desktop actions + mobile bar)
     HeroScene.jsx            the two hero frames + the lamp that switches them
@@ -96,6 +104,7 @@ src/
                              useInViewOnce useActiveSection useLargeScreen
     theme.js                 ThemeContext, useTheme, storage + applyTheme
     animations.js            EASE, DUR, fadeUp, stagger
+    interactions.js          CTA_HOVER, CTA_HOVER_FILL — every CTA's hover
   data/portfolio.js          every string on the site
 ```
 
@@ -103,28 +112,75 @@ src/
 
 ## Conventions that are easy to get wrong
 
+- **Every CTA hovers identically, and the hover is one import.** `CTA_HOVER` +
+  `CTA_HOVER_FILL` in `src/lib/interactions.js` are what the pill `Button`, the
+  header `ThemeToggle`, the footer's round icon buttons and the contact form's
+  submit all use. The hover is **a 1.03 zoom and an accent fill, nothing else**
+  — no lift, no shadow, no pointer-tracking drift (the `Magnetic` component is
+  deleted; do not reintroduce a second hover mechanism). Press is
+  `active:scale-[0.98]`, the zoom is off under `motion-reduce:`, and the focus
+  ring rides along in the same string. It is **CSS, not a Framer `whileHover`**,
+  because half those controls are plain `<button>`/`<a>` elements — one
+  mechanism is the only way "consistent" survives the next control someone adds.
+  A new CTA imports the two strings; it does not write its own hover.
 - **Text is never blue.** Pastel blue (`accent`) has one job in both themes:
   hover states. It is never a resting colour and never type. Its *value*
   changes in dark mode (deepened to #3D5C80) precisely so the light ink that
   lands on a hover fill keeps its contrast — the role is what stays fixed, not
-  the hex. Focus rings are the heading ink — `focus-visible:ring-2
-  focus-visible:ring-text/25 focus-visible:ring-offset-2` everywhere.
-- **`lamp` is the hero lamp's own light, not a third accent.** It appears on
-  the lamp toggle's halo, the journey milestones, and the hero's one-line hint
-  dot. Never type, never a surface.
+  the hex. Measured on the hovered fill: 9.8:1 light, 5.9:1 dark. Focus rings
+  are the heading ink — `focus-visible:ring-2 focus-visible:ring-text/25
+  focus-visible:ring-offset-2` everywhere.
+- **`lamp` is the hero lamp's own light, not a third accent.** Its one
+  remaining job is the journey trail's milestone glow. The lamp in the hero is
+  lit by the artwork, not by this token — nothing is painted over the lamp.
+  Never type, never a surface.
 - **Never add a `dark:` colour class.** If something looks wrong in dark mode
-  the token is wrong, not the component. The three sanctioned `dark:` uses are
-  the header wordmark (`dark:brightness-0 dark:invert`, a flat PNG) and
-  nothing else so far.
+  the token is wrong, not the component. There are **no** sanctioned
+  exceptions: the last one was the wordmark PNG, and the mark is an inline SVG
+  on `currentColor` since.
+- **Nothing is painted over the hero lamp.** No halo, no hover ring, no
+  caption pointing it out. The glow in dark mode is the artwork's own, and the
+  cursor label is how the lamp announces itself.
+- **The hero wash is measured, not eyeballed, and it is deliberately partial.**
+  Two frames painted in two lights already do most of the work — the day room's
+  wall is cream, the night room's near-black, so `text` / `text-muted` land the
+  right way round on their own. The gradient only has to carry the copy across
+  the potted plant and the shadowed wall it crosses, so it tops out at 85% and
+  **clears completely by 70% of the width**: the lamp, the shelf and the whole
+  right side of the picture are untouched. At those values the heading holds
+  7.6:1 and the paragraph 4.6:1 at their *worst* pixel, with no part of either
+  box under 4.5:1. If you move the hero copy or reshape the wash, re-measure —
+  draw the live frame to a canvas, composite the gradient's alpha at each x, and
+  check the boxes the copy actually occupies. Do not just make the gradient
+  darker until it looks fine; that is what washes the picture out. Confining it
+  to the left 58% was tried and *hurt*: the paragraph's right end reaches 46%.
+- **The header keeps a frosted bar even over the hero.** The nav sits over the
+  *window*, where the sky is 0.9 luminance and the tree canopy 0.08 — no single
+  ink survives both, and the wash cannot reach that far right without covering
+  the part of the artwork worth showing. Measured without the bar, "Contact"
+  has ~11% of its box under 4.5:1; with it, every nav item clears 6.9:1.
+- **The cursor pill is the site's ink inverted** — `bg-text` with `text-bg`, the
+  same pairing the primary button uses, so it flips with the theme and reads as
+  part of the page. It is not the pastel accent and not a vivid blue; both of
+  those read as an extra colour dropped on top. 15.5:1 in both themes.
 - **Two font weights only** — 400 and 600, no exceptions. Sentence case
   everywhere.
 - **The only text that is neither `text` nor `text-muted`** is: type inverted
   on a coloured brand band (`text-on-brand` over `mfp-blue` — white in both
   themes, because the fill under it does not change), the case study's
-  one blue framing question (`cs-quote`), and the two research panels' data
-  hues. Everything else — including every case-study heading, label and
+  one blue framing question (`cs-quote`), the two research panels' data
+  hues, and About's photo caption pills (`caption-ink` on `caption-1..5`).
+  Everything else — including every case-study heading, label and
   caption — uses the two site colours. A new grey is not an option; if
   something needs to recede further, make it smaller.
+- **The photo caption pills are the Figma frame's five highlighter hues**
+  (#FFFB00 #6FC8FF #54FFA1 #FFA96B #FB80FF on #1E1E1E), fixed in both themes —
+  a highlighter does not change colour when the lights go out, which is why the
+  ink on them is fixed too. They live only in `PhotoStack`, are `lg:` only
+  (below that a caption is plain copy under the photo, not a pill), and each
+  group starts at a different offset into `HUES` so no two open on the same
+  colour. No border: a hairline on a saturated fill is an outline the frame
+  never drew.
 - **Never pair a size class with `leading-*` or `tracking-*`.** The `text-*`
   token already sets both. Adding `leading-tight` next to `text-h2` is how the
   page drifts out of the scale.
@@ -135,10 +191,41 @@ src/
   entirely under `prefers-reduced-motion` (that is what `useReveal` handles).
 - **The custom cursor is decorative.** Every `data-cursor` element must also
   carry real link text or an `aria-label`. It is gated on `(pointer: fine)`.
-- **Charts grow their bars via `useInViewOnce` + a CSS transition**, not a
+- **The cursor pill follows the attribute, not the pointer.** A control that
+  flips state rewrites its own `data-cursor` (the lamp and the header toggle
+  both read "Night mode" / "Day mode" — the theme you would *get*), so
+  `Cursor.jsx` watches `data-cursor` with a `MutationObserver` and re-reads
+  `elementFromPoint` at the last known pointer position. Do not replace that
+  with a click handler: a click fires before React commits, so the pill would
+  show the old label until the pointer next moved. The observer is also why it
+  still works when `requestAnimationFrame` is throttled in a hidden tab.
+- **`Trail` must never key anything off `trackRef` being present.** That ref
+  belongs to an *ancestor* in `Journey`, and React attaches refs bottom-up, so
+  it is still null while `Trail`'s own layout effect runs. So the measurement
+  observes the **rail** — `Trail`'s own node, always attached, and `inset-y-0`
+  inside the track so its height *is* the track's height — and reads the track
+  lazily inside `measure`. The ResizeObserver's first callback is what actually
+  measures; the synchronous call is only an optimisation. `useScroll` needs
+  `layoutEffect: false` for the same reason, or Framer warns that the target
+  "is not yet hydrated" and silently falls back to the whole page. Do not
+  "simplify" this back to an early `if (!track) return` with two stable refs as
+  deps: that bail-out is permanent and the trail never draws.
+- **The trail's curve is four constants**, all in `Journey.jsx`: `BEND_MAX` (96)
+  caps the sweep, `BEND_RATIO` scales it down on a narrow rail, `BELLY` (0.62)
+  is how vertically each belly leaves and rejoins the centre line, and
+  `MAX_SPAN` (620) is when a gap gets subdivided. The rail is `md:w-56` — the
+  full 14rem gap between the card columns — so at 1440 the curve swings 72px off
+  centre and still never runs under a card. Raising `MAX_SPAN` is what stopped
+  it reading as a chain of arcs; more bends is what makes it look busy.
+- **The case study's chart bars are the Figma frame's drawn lengths, not
+  value × a scale.** That chart is drawn, not plotted — don't "fix" the bars to
+  be proportional. Charts grow via `useInViewOnce` + a CSS transition, not a
   Framer in-view gesture — one observer per chart so all bars move together.
   The friction chart grows with `scaleX`, not `width`, because its labels are
   right-aligned in a shared grid and animating width would re-measure them.
+  `casestudy/ScaleToFit` scales both panels as a unit below their natural width.
+- **Prototype screens are shown as-designed and must not be restyled** — they
+  are the deliverable.
 - Every image needs explicit `width`/`height` and `alt`. Below-the-fold images
   lazy-load.
 - **A stacked photo card must not move out from under the pointer.** In
@@ -150,19 +237,41 @@ src/
 
 ---
 
+## Sources
+
+- About page + footer copy and photographs: the "Website changes" Figma file,
+  `dZb2Q6tMIGKgg2Xozpb1Nk`, frame `2023:105`.
+- Case study: the MyFitnessPal frame `46RjVrGHqQvJtK1uPSRdtH`, node `728:2865`
+  (1440 × 16574). Section measures are the frame's own: `cs-prose` 948,
+  `cs-wide` 1003.76, `cs-full` 1182. A few paragraphs wrap one line differently
+  from Figma — the family, size, weight, line height, tracking and box width are
+  all verified identical, Figma's text shaper simply breaks a few pixels
+  differently. Not worth altering extracted values to chase.
+- Hero + Journey structure: a Stitch frame ("The Designer's Odyssey"). The
+  palette is that frame's warm-cream *character* applied to this site's own
+  token roles, not its material palette.
+- The prediction-card phone export is 4.613px larger on every side than its
+  node box (that device frame's stroke sits outside it), so it renders at the
+  export's size with a matching negative margin.
+
+---
+
 ## Open work
 
-Consolidated from the progress log below so it isn't repeated in every entry.
-Update this list, not each session's write-up, when an item is done.
+**Turn this off before launch:**
+- `PREVIEW_UNPUBLISHED` in `portfolio.js` is `true`, which is why Resume,
+  LinkedIn, Behance, the email links and "Visit Crochet Curio" are all visible
+  right now. They are dead `#` hrefs and an `example.com` address, on for layout
+  review only. Setting it to `false` restores the empty-means-hidden behaviour;
+  supplying the real values below makes the switch irrelevant.
 
 **Blocked on facts only Sakhi has:**
 - `contact.email`, `links.linkedin`, `links.behance` in `portfolio.js` — the
   site has no way to reach her except the UI-only contact form until these land.
-- `resume.pdf` into `public/`, then `links.resume = '/resume.pdf'` — the
-  Resume button stays hidden (header, mobile panel, footer) until then.
+- `resume.pdf` into `public/`, then `links.resume = '/resume.pdf'`.
 - `about.education` entries — `{ institution, qualification, years }`. The
-  About copy now says "an MBA in Marketing, 2025", so the institution is the
-  only missing fact.
+  About copy already says "an MBA in Marketing, 2025", so the institution is
+  the only missing fact.
 - Case-study `meta` has no timeline; the source PDF's Timeline field was blank.
 - `about.background.link` — the Crochet Curio shop URL. The copy names
   `@crochetcurioo` but nothing links to it, and inventing the URL is not ours
@@ -177,298 +286,108 @@ Update this list, not each session's write-up, when an item is done.
   shared case-study link previews as the home page.
 - Absolute `og:url` / `og:image` once the production domain is settled.
 - Project two, still a `coming-soon` placeholder.
-- The About section kickers are ours, not hers: the frame gives one heading per
-  section ("Background", "When I'm not designing"), and the site's
-  `SectionHeader` wants a badge above it. "Background" became the badge over
-  "Crochet Curio", and "Beyond design" sits over "When I'm not designing".
-  Worth her confirming.
-- Route-level code splitting — bundle is ~369KB / 119KB gzipped, most of it
+- The "About me" badge over About's intro is ours rather than hers — the two
+  other invented kickers on that page are already gone.
+- Route-level code splitting — bundle is ~378KB / 121KB gzipped, most of it
   Framer Motion; the case study is the only page that needs the heavy parts,
   and it's also the LCP-heaviest route (hero is a single 107KB WebP — a
   `srcset` would pay for itself).
 - Home loads **both** hero scenes (the inactive one lazily). A ~60KB AVIF is
   cheap, but a `<link rel="prefetch">` on the other theme, or dropping the
   eager frame once switched, would be cheaper.
-- `public/logo.png` (gradient wordmark) is unreferenced — `logo-wordmark.png`
-  is the one the header uses, and dark mode inverts it rather than shipping a
-  light variant. Delete it or find it a job.
 - Charts' internal labels sit on `text` rather than `text-muted` — deliberate
   at 8–12px inside `ScaleToFit`, but worth a look if the panels are redrawn.
+- `public/og-image.png` is still the old wordmark set as type, so a shared link
+  previews a mark the site no longer uses. Regenerate it from the monogram.
+- The favicon repeats the monogram's path data and hardcodes both ink values,
+  because a tab icon cannot read `currentColor` or a CSS variable. Two copies of
+  the same paths is the cost of that; if the mark changes, change both.
+- `Button`'s unused `dark` variant and `DUR.tap` are both dead now — harmless,
+  but they can go with the next tidy.
 
 **Copy that is a first draft, not Sakhi's own words:** `site.bio`,
-`hero.opening`, `hero.scene.lampHint`, `contact.invite`, and the whole
-`journey` block — its four chapters are written from the Stitch frame's
-outline (crochet → shop → MBA → UX), so the dates, the order and the wording
-all need her confirmation. **The entire `about` block and `footer` are now
-hers**, lifted verbatim from the "Website changes" Figma file; the only strings
-on that page we wrote are the two section badges and the image `alt` text.
+`hero.opening`, `contact.invite`, and the whole `journey` block — its four
+chapters are written from the Stitch frame's outline (crochet → shop → MBA →
+UX), so the dates, the order and the wording all need her confirmation. **The
+entire `about` block and `footer` are hers**, lifted verbatim from the Figma
+file; the only strings on that page we wrote are the "About me" badge and the
+image `alt` text.
+
+---
 
 ## Progress log
 
-Newest first. Add an entry per working session — what shipped. Open TODOs go
-in **Open work** above, not in each entry.
+Newest first, one entry per session — what shipped, and only what a later
+session could not read off the code.
 
-### 2026-07-30 — About rebuilt from Figma, one footer everywhere, curvier journey trail
-The About page is now Sakhi's own words and her own photographs, from the
-"Website changes" Figma file (`dZb2Q6tMIGKgg2Xozpb1Nk`, frame `2023:105`), and
-the footer is that frame's sign-off on every route.
+### 2026-07-30 — one hover for every CTA
+The buttons were four different controls pretending to be a set: the pill
+`Button` lifted 1px, scaled 1.02 and dropped a shadow via Framer; the header
+`ThemeToggle` only shifted its border and ink; the footer's icon buttons filled
+accent with a shadow and no zoom; and the header's Resume/LinkedIn plus
+Contact's "Open LinkedIn" sat inside `Magnetic`, which added a ≤3px
+pointer-tracking drift the others never had.
 
-- **About** follows the frame's order: intro beside the portrait, the Crochet
-  Curio makes, the background behind them, then what happens off duty.
-  Education keeps its slot and stays hidden. The old placeholder page is gone —
-  `about.statement` / `about.paragraph` / `crochetCurio` / the six `interests`
-  cards were all drafts written for her, and every one is replaced. `Doodle.jsx`
-  was only ever used by those interest cards, so it's deleted along with
-  `public/about-sakhi-saree.png`.
-- **`PhotoStack.jsx`** carries the frame's interaction. A `fan` (the five
-  makes) spreads across the row; a `pile` (three cats, four trip photos) is
-  dealt almost on top of itself and opens while explored. Either way the card
-  under the pointer rises, straightens, scales and names itself in a pill —
-  the frame's yellow caption bubbles, re-drawn as the site's own card
-  (`surface` + `border`), because `#fffb00` is not in this palette. Below `lg`
-  it is a snap-scrolling strip with every caption visible, since a phone has
-  no hover and five 200px cards fanned across 342px would be five slivers.
-  New `useLargeScreen()` in `hooks.js` is what tells the two apart.
-- **Footer** is the frame's: hairline, "Thanks for stopping by!", the subtext,
-  a row of round hairline icon buttons, the copyright. The mail and chat glyphs
-  are the frame's own paths re-pointed at `currentColor`; LinkedIn stays set in
-  type, as the frame sets it, rather than shipping a redrawn brand mark. "Say
-  hello" → `/contact` is always present so the row is never empty.
-- **Journey trail** (home) — the dots were HTML pinned to the column centre
-  while the path was a hardcoded `d` in a stretched viewBox, so wrapped copy
-  walked them off the curve. The path is now measured: a `ResizeObserver` reads
-  each dot's centre and `buildTrail` threads a curve through those exact
-  points (max dot-to-path gap 1.3px at 1440 and 390). It is also much curvier —
-  alternating symmetric bellies, which stay tangent-continuous at every dot, so
-  it reads as one long wave; long gaps subdivide so a tall mobile card doesn't
-  flatten the wave into a line.
-- **Assets**: thirteen photographs exported from the frame's originals into
-  `assets/about/` (downscaled masters, 4.5MB) and `public/images/about/`
-  (WebP, 728KB total, largest 98KB) via the new `npm run optimize:about`.
-- **Verified** with `npm run lint`, `npm run build`, and a Playwright pass over
-  all four routes × light/dark × 1440/390 × normal and reduced motion: no
-  console errors, no horizontal overflow, no broken images, theme class
-  correct, connect row non-empty everywhere. Two real bugs were caught and
-  fixed in that pass — a React key-spread warning in the footer, and a lifted
-  pile card that slid out from under the pointer and flickered.
-- **Files touched:** `About.jsx`, `Footer.jsx`, `Journey.jsx`, `portfolio.js`,
-  `hooks.js`, `package.json`, `CLAUDE.md`, plus new `PhotoStack.jsx` and
-  `scripts/optimize-about.mjs`. Deleted `Doodle.jsx`,
-  `public/about-sakhi-saree.png`.
+- **`src/lib/interactions.js` is now the single source of CTA hover** —
+  `CTA_HOVER` (1.03 zoom, 0.98 press, 200ms, focus ring, `motion-reduce` off
+  switch) and `CTA_HOVER_FILL` (accent fill + matching border + heading ink).
+  `Button`, `ThemeToggle`, `Footer`'s `ConnectButton` and Contact's submit all
+  import both, so there is exactly one hover to change.
+- **`Magnetic.jsx` is deleted** and both call sites unwrapped. The drift was
+  the "extra" animation; a single small zoom replaced it.
+- **`Button` no longer uses Framer at all** — the hover is CSS, which is what
+  lets a plain `<button>`/`<a>` icon control match the pill exactly. It also
+  gained the site's focus ring, which it had been missing. The lift and the
+  hover shadow are gone from every CTA.
+- **Hover colour comes from the `accent` token**, so it is already per-theme:
+  #A7C7E7 with ink #1B1C1A in light (9.8:1), #3D5C80 with #F0EDE6 in dark
+  (5.9:1) — both measured in-page on the hovered element, not estimated.
+- Also fixed in passing: the mobile hamburger had no focus ring.
+- **Deliberately left alone**: nav links, the logo, "Back to top" and the hero
+  lamp. They are text/artwork affordances, not pills — and nothing is ever
+  painted over the lamp.
+- **Verified** with `npm run lint`, `npm run build`, and an audit in the dev
+  server: every pill and icon button on home and contact reports the same three
+  hover classes, and a real pointer hover on the header Resume, the theme
+  toggle and the footer mail button returns `matrix(1.03, …)` with the accent
+  fill in both themes. Console clean.
+- **Files touched:** new `src/lib/interactions.js`; `Button.jsx`,
+  `ThemeToggle.jsx`, `Footer.jsx`, `Header.jsx`, `pages/Contact.jsx`,
+  `CLAUDE.md`. Deleted `Magnetic.jsx`.
 
-### 2026-07-29 — light + dark themes, new hero scene, the Journey section
-Home is now hero → journey → work, and the site has two themes with the hero
-lamp as the switch. Structural inspiration for both came from a Stitch frame
-("The Designer's Odyssey"); the palette is that frame's warm-cream character
-applied to this site's own token roles, not its gold/sage material palette.
+### Earlier sessions — what they settled
+Condensed; the reasoning that still matters is in **Conventions** above.
 
-- **Theme system.** Every themed colour is a CSS variable of RGB channels read
-  by Tailwind as `rgb(var(--x) / <alpha-value>)`, `darkMode: 'class'`. That is
-  why the whole site went dark without a single `dark:` class: the ~120
-  existing `bg-bg` / `text-text` / `border-border` / `ring-text/25` usages were
-  already correct. `ThemeProvider` + `useTheme` own the state; the inline
-  script in `index.html` sets the class pre-paint; `theme-transition` (added
-  for 400ms around a switch, off under reduced motion) cross-fades the change.
-- **Palette.** Light warmed to the scene: canvas #FBF9F5, hairline #E2DCCE,
-  ink #1B1C1A, muted ink #4D4635 (8.9:1). Dark: canvas #0F172A, card #172033,
-  hairline #2A354C, ink #F0EDE6 (15.5:1), muted #AFB6C4 (8.6:1). New tokens:
-  `on-brand` (white, for type on the MyFitnessPal band and the sentiment
-  bars), `lamp`, `shadow`, plus `--shine`/`--shine-alpha` for the card sweep.
-- **Hero** is the Stitch frame's layout: the artwork edge to edge with the copy
-  sitting in its light — full-bleed behind the copy on desktop (left-to-right
-  wash), stacked above it on mobile (bottom-up wash). `HeroScene` cross-fades
-  the day and night frames; the desk lamp is a real `<button>` (aria-pressed,
-  aria-label, `data-cursor` "Lights off"/"Lights on") placed in the artwork's
-  own coordinates — 87.4% / 55.5% of a frame that is never cropped vertically.
-  A one-line hint under the opening says the lamp is a control. The header
-  toggle is the same state, so the two are always in step.
-- **Journey** (`Journey.jsx`, copy in `portfolio.js`): four chapters
-  alternating either side of a trail that draws with scroll — a dashed
-  hairline for the route ahead, a solid path whose `pathLength` is tied to
-  `useScroll` (spring-smoothed) for the route walked. Milestones are HTML dots
-  (the SVG is vertically stretched, so an SVG circle would arrive an ellipse)
-  that light once via `useInViewOnce`. Under reduced motion the trail renders
-  fully drawn and nothing animates.
-- **Superseded and removed:** `HeroImage.jsx`, `scripts/optimize-hero.mjs`,
-  `assets/hero-illustration.png` and the six `public/hero-illustration-*`
-  exports. `Doodle.jsx` now paints from the theme variables instead of hex.
-  Button's hover shadow moved from a Framer value to a CSS token (Framer
-  cannot interpolate a colour held in a variable).
-- **Verified** with `npm run lint`, `npm run build`, and a Playwright pass at
-  1440 and 390 over all four routes in both themes plus a reduced-motion run:
-  no console errors, theme survives reload, both controls report the same
-  `aria-pressed`.
-- **Files touched:** `tailwind.config.js`, `index.css`, `index.html`,
-  `package.json`, `App.jsx`, `Home.jsx`, `Header.jsx`, `Cursor.jsx`,
-  `Button.jsx`, `ProjectCard.jsx`, `Doodle.jsx`, `SentimentPanel.jsx`,
-  `CaseStudy.jsx`, `Contact.jsx`, `portfolio.js`, plus new `ThemeProvider.jsx`,
-  `ThemeToggle.jsx`, `HeroScene.jsx`, `Journey.jsx`, `lib/theme.js`,
-  `scripts/optimize-scene.mjs`.
-
-### 2026-07-29 — type consistency audit, line-height bump, background section reorder
-- Audited the whole site against the one-type-system rules below: no stray
-  `leading-*`/`tracking-*` beside a `text-*` size, no `cs-primary`-era tokens
-  left, no ad-hoc hex in components (the chart pixel values and `Doodle.jsx`'s
-  SVG fills are the two sanctioned exceptions — literal frame geometry and
-  token-matching SVG paint, respectively). Confirmed clean via `npm run lint`
-  and `npm run build`.
-- **Line height raised a step across the whole scale** — `tailwind.config.js`
-  `fontSize` and `index.css`'s base `body` rule: `body`/`body-sm` 1.7 → 1.75,
-  `lead`/`caption` 1.6 → 1.65, `h4` 1.45 → 1.5, `h3` 1.4 → 1.45, `h2` 1.25 →
-  1.3, `h1` 1.15 → 1.2. `display` stays at 0.95 — the hero sizes are large
-  enough that tight leading is the point, not a gap to close.
-- **Case study Background section**: the fact rail (My Role / Status / Type /
-  Tools Used) now sits above the badge + heading instead of below them —
-  `BackgroundMeta` renders first in `CaseStudy.jsx`, then `CSLabel` +
-  `CSHeading`, then the body paragraph.
-- **Files touched:** `tailwind.config.js`, `index.css`, `CaseStudy.jsx`.
-
-### 2026-07-29 — one type system across every route
-The case study and the rest of the site had been two separate design systems
-sharing a shell: SF Pro vs Inter, `text-3xl sm:text-4xl` vs `text-cs-l`,
-`#6B6B6B` vs `#575757` vs `#333333` vs `#666666`. They are now one.
-
-- **Two colours.** `text` #1A1A1A for every heading, `text-muted` — retuned
-  from #6B6B6B to **#575757** — for every paragraph, label, list and caption.
-  6.7:1 on the canvas. `body` in `index.css` now *defaults* to the muted ink
-  and the base `h1–h6` rule lifts headings back to `text`, so a component that
-  forgets a colour still lands on a sanctioned one. Deleted the whole
-  `cs-primary / cs-secondary / cs-tertiary / cs-disabled / cs-inverse / cs-bg*
-  / cs-border* / cs-copy / cs-card*` block. Kept: `cs-quote`, `cs-callout`, the
-  sentiment trio and the four friction hues.
-- **One scale.** `display h1 h2 h3 h4 lead body body-sm caption` in
-  `tailwind.config.js`, each carrying its own line height and tracking. The
-  three headline sizes `clamp()` rather than stepping through `sm:` / `md:`
-  variants, which is what makes the ramp identical on every route. Deleted
-  `text-hero`, all thirteen `cs-*` sizes, and the `leading-body` / `leading-hero`
-  tokens; no component sets `leading-*` or `tracking-*` beside a size any more.
-- **One family, two weights.** `font-sans` is Inter; the `font-cs` family and
-  all 39 of its usages are gone, as is Inter 700 — case-study inline emphasis
-  is now Semibold on `text`, the same as `RichText`'s `Rich`.
-- **One rhythm.** `cs-gap` (104px) / `cs-stack` (24px) replaced by the site's
-  `section` / `section-md` / `section-sm` and plain `gap-6`. Every card on the
-  site — About's interests, the case study's literature / signal / result /
-  compare cards, every callout — is now `rounded-2xl border-border bg-surface
-  p-6`.
-- **Case-study section measures** cut from eight (593/880/928/948/1000/1004/
-  1158/1182, so every section started on a different left edge) to three:
-  `cs-prose` 948, `cs-wide` 1003.76, `cs-full` 1182. `CSSection` takes
-  `width="prose|wide|full"`, prose by default.
-- **The Background fact rail** was absolutely positioned 606px left of centre,
-  which only existed at ≥1440 and overhung the Problem section there. It is
-  now a four-up `<dl>` row inside the section, rule-bounded, 2-up on mobile.
-- **`CSLabel` is the site `Badge`.** Case-study section kickers ("Background",
-  "Problem", "Solution 1: The Today Screen") render as the same pill Home /
-  About / Contact put above their headings; the `tone="copy"` variant is gone.
-- Smaller consistency fixes: `ProjectCard`'s hand-rolled "In progress" pill now
-  uses `Badge`; its focus ring and `Figure`'s (which was `ring-mfp-blue/40`)
-  match Header/Footer's `ring-text/25`; Header's duplicated mobile action-link
-  strings reuse `mobileNavLinkClass`; Contact's `<dt>`s were `text-xs` where
-  its `<label>`s were `text-sm` — both are `text-body-sm`; Footer's band picked
-  up the missing `md:py-section-md` step; the charts' off-token `#e9e9e9` and
-  `rgba(129,124,255,0.5)` are `border-border` and `bg-cs-callout/50`.
-- **Verified** with `npm run lint`, `npm run build`, and a Playwright pass over
-  all four routes at 1440 and 390 under `reduced_motion`: zero console errors,
-  and a computed-style probe showing every text node resolving to Inter at one
-  of the nine scale sizes and one of the two inks (plus the three sanctioned
-  exceptions).
-- **Files touched:** `tailwind.config.js`, `index.css`, `index.html`, `App.jsx`,
-  all four pages, `Header Footer Button Badge SectionHeader ProjectCard
-  RichText Figure Lightbox Cursor`, `casestudy/Blocks.jsx`, both charts.
-
-### 2026-07-29 — footer redesign, literature card overflow
-- **Footer** replaced the dark multi-column sitemap with a centred sign-off
-  band on the light canvas: back-to-top control, `footer.heading` /
-  `footer.subtext` from `portfolio.js`, a row of connect links (LinkedIn,
-  email, Behance, résumé — each hidden until the fact exists), and
-  `site.copyright`. External links carry the small ↗ arrow; the footer
-  back-to-top uses the same arrow with a hover nudge. No floating back-to-top
-  pill — scroll-up lives in the footer only.
-- Case study's old inline `BackHome` buttons were removed; wayfinding is the
-  header logo / nav plus the footer sign-off.
-- **Literature cards** — `CSLiteratureCards` used a fixed `md:h-[460px]`; card
-  03's wrapped citation spilled outside the border. Switched to
-  `md:min-h-[460px]` + grid stretch so all three cards grow together.
-- **Files touched:** `Footer.jsx`, `portfolio.js` (`footer` object),
-  `casestudy/Blocks.jsx`, `CaseStudy.jsx`, `CLAUDE.md`.
-
-### 2026-07-28 — case study rebuilt from the current Figma frame (`case-study`)
-- Replaced the entire case-study page with the current MyFitnessPal frame
-  (`46RjVrGHqQvJtK1uPSRdtH`, node `728:2865`, 1440 × 16574). Seventeen sections
-  in the frame's order, each centred on **its own measure** — 593, 880, 928,
-  948, 1000, 1003.76, 1158, 1182 — with the frame's uniform **104px** section
-  rhythm and **24px** internal rhythm. Verified section-by-section against the
-  frame: every `x` and `width` matches exactly, and every height matches to
-  within 2–3px except the two noted below.
-- Two paragraphs wrap one line differently from Figma: Problem 1 (Figma 3
-  lines, Chrome 4) and the design-challenge question (Figma 3, Chrome 2). The
-  family, size, weight, line height, tracking and box width are all verified
-  identical to the frame's variables — Figma's text shaper simply breaks a few
-  pixels differently. Not worth altering extracted values to chase.
-- Tokens: added `cs-copy` (#575757), `cs-card`/`cs-card-border`, the sentiment
-  and friction hues, the per-section `max-w-cs-*` measures, and `cs-gap` /
-  `cs-stack`. Added Inter 700 (see the weights note above).
-- `charts/SentimentPanel` and `charts/FrictionChart` are rebuilt at the frame's
-  literal geometry (both 591px wide, 8–9px labels, bars in tenths of a pixel).
-  **Their bar lengths are the lengths the frame draws, not value × a scale** —
-  the frame's chart is drawn, not plotted, so don't "fix" them to be
-  proportional. New `casestudy/ScaleToFit` scales those two panels as a unit
-  below their natural width, which is how they stay exact on tablet/mobile.
-- Assets re-exported from the frame at 2–3× into `public/images/myfitnesspal/`:
-  `ui-teardown`, `repeat-journey`, `today-nutrition`, `day-navigation`,
-  `batch-shortcuts`, `inline-diary-edit`, `prediction-card`, `add-more-card`,
-  `hero-app-store`, `quote-mark.svg`. The teardown boards and prototype boards
-  carry the frame's own card/border/radius baked in, which is why `Figure` no
-  longer wraps anything in a card. Deleted the superseded exports.
-- The prediction-card phone exports 4.613px larger on every side than its node
-  box, because that device frame's stroke sits outside it — it renders at the
-  export's size with a matching negative margin so the screen lands exactly
-  where the frame puts it.
-
-### 2026-07-27 — home thumbnail is the brand mark
-- The MyFitnessPal home-card thumbnail is now the product mark on the
-  product's blue (`thumbnail.webp`, 1600×900), not a prototype screenshot.
-  Saturated blue is allowed here because it is the *subject's* colour on a
-  project card — not Sakhi's palette, and not a full-bleed band on the case
-  study page.
-- Removed the case-study `cover` band entirely. The case study keeps only the
-  small `appIcon` tile beside the title. Deleted the old phone-mockup
-  thumbnail and the unused `cover.webp` path (content folded into
-  `thumbnail.webp`).
-
-### 2026-07-27 — MyFitnessPal case study
-- Replaced the placeholder case-study template with the real MyFitnessPal case
-  study, authored from the Figma PDF export. Nine sections: background,
-  problem, design challenge, solution, discovery, research, the Today screen,
-  repeat logging, testing outcomes.
-- Built the pieces that case study needed: `RichText`, `Figure`, `Lightbox`,
-  `casestudy/Blocks.jsx`, `charts/SentimentPanel`, `charts/FrictionChart`, plus
-  `useInViewOnce` and `useActiveSection` in `lib/hooks.js`.
-- Charts are rebuilt in the site's own palette (monochrome ramp + one pastel
-  callout) rather than lifted from the PDF. **Prototype screens are shown
-  as-designed and must not be restyled** — they are the deliverable.
-- Prototype and journey figures extracted from the PDF into
-  `public/images/myfitnesspal/` as WebP (each under 90KB).
-- Home: third project removed, so the grid is two-up and the cards are larger;
-  `ProjectCard` now renders a real thumbnail when a project has one.
-- Removed `build-prompt.md` — the original build spec is superseded by this
-  file and the `sakhi-portfolio-frontend` skill.
-
-### 2026-07-27 — placeholder sweep, metadata, graceful gaps
-- Every `[square bracket]` placeholder is gone from the rendered site. Real
-  copy for `site`, `hero`, `work`, and the whole About page. Section headings
-  that were hardcoded in JSX (`Explore my work`, `Where I studied`, `The things
-  that define me`) now come from `portfolio.js` like everything else.
-- Introduced the empty-means-hidden rule above and applied it across Header,
-  Footer, Contact, and About, so the unknown facts below degrade to *absent*
-  rather than to a dead link or an empty section.
-- `index.html`: real title and description, plus Open Graph / Twitter card tags
-  and a generated `public/og-image.png` (1200×630, set as type — the wordmark
-  PNG is only 261px wide and upscales soft).
-- Fixed the `fetchPriority` React 18 warning in `HeroImage` — lowercase
-  attribute, spread so it's absent rather than `"auto"` off the LCP image.
-  Console is now clean on every route.
-- Added `caseStudy.appIcon` — a 64px rounded tile beside the title that hides
-  itself when the file is absent. MyFitnessPal uses `app-icon.webp` (3.4KB).
-  The same mark on the product's blue is the home-page project thumbnail
-  (`thumbnail.webp`).
+- **2026-07-30** — the hero wash re-tuned by measurement and the copy centred
+  again; cursor pill switched to `bg-text`/`text-bg`; the trail's four curve
+  constants tuned to their current values (verified by sampling the rendered
+  path: every milestone within 0.3px, largest tangent turn 8.5°, never under a
+  card); two `Trail` ref-timing bugs fixed; `PREVIEW_UNPUBLISHED` added; the
+  case-study thumbnail became the two-phone render on MyFitnessPal blue.
+- **2026-07-30** — everything painted over the hero artwork removed (lamp halo,
+  breathing animation, hover ring, tooltip, the "tap the lamp" hint); cursor
+  labels became the destination state and flip via `MutationObserver`; the
+  header mark became `Logo.jsx` (inline SVG on `currentColor`), retiring the
+  site's last `dark:` class and both logo PNGs; About's caption pills took the
+  Figma frame's five hues.
+- **2026-07-30** — About rebuilt from the Figma frame in Sakhi's own words and
+  photographs; `PhotoStack` (fan / pile / lift-to-name, scrolling strip below
+  `lg`) and `useLargeScreen()` added; footer became the frame's centred
+  sign-off; the journey trail's path became measured rather than a hardcoded
+  `d`; `optimize:about` added. Deleted `Doodle.jsx`.
+- **2026-07-29** — light + dark themes (CSS-variable palette, `darkMode:
+  'class'`, `ThemeProvider`, pre-paint inline script, 400ms cross-fade), the new
+  two-frame hero with the lamp as the switch, and the Journey section.
+  Superseded `HeroImage.jsx` and the old hero exports.
+- **2026-07-29** — the case study and the rest of the site stopped being two
+  design systems: two inks, one nine-step scale, one family, two weights, one
+  rhythm, three section measures. Deleted the whole `cs-*` colour/size block
+  and `font-cs`. Line heights raised a step across the scale.
+- **2026-07-28** — the case study rebuilt section-by-section against the current
+  Figma frame, with both research charts redrawn at the frame's literal
+  geometry and all assets re-exported at 2–3×.
+- **2026-07-27** — the MyFitnessPal case study first authored; `RichText`,
+  `Figure`, `Lightbox`, `casestudy/Blocks.jsx` and both charts built for it;
+  home's grid dropped to two-up. Every `[square bracket]` placeholder removed
+  site-wide and the empty-means-hidden rule introduced; real metadata + OG tags
+  added.

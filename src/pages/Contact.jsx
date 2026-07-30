@@ -3,9 +3,9 @@ import { motion } from 'framer-motion'
 import { contact, links } from '../data/portfolio'
 import { useReducedMotion, useReveal } from '../lib/hooks'
 import { successHaptic } from '../lib/haptics'
+import { CTA_HOVER, CTA_HOVER_FILL } from '../lib/interactions'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
-import Magnetic from '../components/Magnetic'
 
 // Contact — short and direct: headline + invite, direct email / LinkedIn,
 // and a minimal (UI-only) form.
@@ -71,16 +71,14 @@ export default function Contact() {
                     LinkedIn
                   </dt>
                   <dd className="mt-2">
-                    <Magnetic>
-                      <Button
-                        variant="secondary"
-                        href={links.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Open LinkedIn
-                      </Button>
-                    </Magnetic>
+                    <Button
+                      variant="secondary"
+                      href={links.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open LinkedIn
+                    </Button>
                   </dd>
                 </div>
               )}
@@ -132,7 +130,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status !== 'idle'}
-                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-text px-6 py-3 text-body-sm font-semibold text-bg transition-colors duration-200 hover:bg-accent hover:text-text disabled:hover:bg-text disabled:hover:text-bg"
+                className={`inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-text px-6 py-3 text-body-sm font-semibold text-bg ${CTA_HOVER} ${CTA_HOVER_FILL} disabled:hover:scale-100 disabled:hover:bg-text disabled:hover:text-bg`}
               >
                 {/* Keyed enter-only swap — the old label unmounts instantly,
                     the new one fades up. No exit animation, so the swap can

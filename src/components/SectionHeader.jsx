@@ -10,7 +10,11 @@ export default function SectionHeader({ badge, heading, subhead, className = '' 
     <motion.div {...reveal} className={`max-w-2xl ${className}`}>
       {badge && <Badge>{badge}</Badge>}
       {heading && (
-        <h2 className="mt-4 text-h2 font-semibold text-text">{heading}</h2>
+        <h2
+          className={`text-h2 font-semibold text-text ${badge ? 'mt-4' : ''}`}
+        >
+          {heading}
+        </h2>
       )}
       {subhead && (
         <p className="mt-3 text-body font-normal text-text-muted">

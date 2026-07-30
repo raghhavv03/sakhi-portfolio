@@ -28,8 +28,6 @@
   --shadow: 26 26 26; /* elevation ink */
   --shine: 255 255 255; /* card hover sweep */
   --shine-alpha: 0.35;
-
-  --cursor: #2563eb;
 }
 
 html.dark {

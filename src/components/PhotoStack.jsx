@@ -26,6 +26,21 @@ const TILT = [-6.4, 4.8, -4.6, 2.3, -5.2, 11.7, -0.7, -4.7]
 // A fan's cards also sit at slightly different heights (px, `lg` only).
 const DRIFT = [16, -12, 6, -22, 12]
 
+// Caption pill fills, cycled — the frame's five highlighter hues. Read in the
+// order the frame labels the makes in (coasters yellow, bucket hat sky, custom
+// top mint, cardigan orange, tote pink), so the fan matches it card for card.
+// Each shape starts at a different offset below, so no two groups open on the
+// same colour.
+// `lg:` only — below that the caption is plain copy under the photo, not a
+// pill, and a fill behind unpadded text would read as a highlight gone wrong.
+const HUES = [
+  'lg:bg-caption-1',
+  'lg:bg-caption-2',
+  'lg:bg-caption-3',
+  'lg:bg-caption-4',
+  'lg:bg-caption-5',
+]
+
 // How far a lifted card rises, and how much bigger it gets.
 const LIFT = -14
 const LIFT_SCALE = 1.06
@@ -39,6 +54,7 @@ const SPLAY = 1.8
 
 // Per-shape card geometry. `width`/`height` are the exported pixel size of the
 // image — see scripts/optimize-about.mjs, which crops to exactly these ratios.
+// `hue` is where this group starts reading HUES.
 const SHAPES = {
   make: {
     width: 440,
@@ -46,6 +62,7 @@ const SHAPES = {
     aspect: 'aspect-[440/477]',
     card: 'lg:w-[196px]',
     overlap: 'lg:-ml-6',
+    hue: 0,
   },
   cat: {
     width: 460,
@@ -53,6 +70,7 @@ const SHAPES = {
     aspect: 'aspect-square',
     card: 'lg:w-[204px]',
     overlap: 'lg:-ml-[188px]',
+    hue: 1,
   },
   trip: {
     width: 480,
@@ -60,6 +78,7 @@ const SHAPES = {
     aspect: 'aspect-[480/639]',
     card: 'lg:w-[224px]',
     overlap: 'lg:-ml-[208px]',
+    hue: 3,
   },
 }
 
@@ -72,7 +91,7 @@ export default function PhotoStack({ items, shape, layout = 'fan', label }) {
 
   if (!items?.length) return null
 
-  const { width, height, aspect, card, overlap } = SHAPES[shape]
+  const { width, height, aspect, card, overlap, hue } = SHAPES[shape]
   // A pile opens when the pointer reaches the group, not when it reaches a
   // card: at rest every card but the top one is buried, so opening on the
   // card would leave the ones underneath permanently out of reach.
@@ -135,11 +154,16 @@ export default function PhotoStack({ items, shape, layout = 'fan', label }) {
               />
             </div>
 
+            {/* Below `lg` this is plain muted copy under the photo — there is
+                no hover to reveal it with, so it is simply always there. At
+                `lg` it becomes the frame's own highlighter pill: its own hue,
+                fixed dark ink, and no hairline, because a border on a
+                saturated fill reads as an outline the frame never drew. */}
             {item.caption && (
               <figcaption
-                className={`mt-3 text-center text-caption font-normal text-text-muted lg:pointer-events-none lg:absolute lg:left-1/2 lg:top-0 lg:mt-0 lg:-translate-x-1/2 lg:-translate-y-[calc(100%+12px)] lg:whitespace-nowrap lg:rounded-full lg:border lg:border-border lg:bg-surface lg:px-3 lg:py-1 lg:shadow-[0_6px_20px_-10px_rgb(var(--shadow)/0.4)] lg:transition-opacity lg:duration-200 lg:motion-reduce:transition-none ${
-                  lifted ? 'lg:opacity-100' : 'lg:opacity-0'
-                }`}
+                className={`mt-3 text-center text-caption font-normal text-text-muted lg:pointer-events-none lg:absolute lg:left-1/2 lg:top-0 lg:mt-0 lg:-translate-x-1/2 lg:-translate-y-[calc(100%+12px)] lg:whitespace-nowrap lg:rounded-full lg:px-3 lg:py-1 lg:text-caption-ink lg:shadow-[0_6px_20px_-10px_rgb(var(--shadow)/0.4)] lg:transition-opacity lg:duration-200 lg:motion-reduce:transition-none ${
+                  HUES[(hue + i) % HUES.length]
+                } ${lifted ? 'lg:opacity-100' : 'lg:opacity-0'}`}
               >
                 {item.caption}
               </figcaption>

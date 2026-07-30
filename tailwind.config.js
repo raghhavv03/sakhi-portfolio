@@ -47,9 +47,10 @@ export default {
         accent: themed('accent'),
         'accent-hover': themed('accent-hover'),
 
-        // Lamp amber — the hero lamp's own light. Used only where that light
-        // is the subject: the lamp toggle's halo and the journey trail's
-        // milestone glow. Never type, never a surface.
+        // Lamp amber — the hero lamp's own light, borrowed by the one place
+        // that echoes it: the journey trail's milestone glow. The lamp in the
+        // artwork is lit by the artwork, not by this token. Never type, never
+        // a surface.
         lamp: themed('lamp'),
 
         // Neutral elevation ink (off-black in light, true black in dark), so
@@ -61,8 +62,18 @@ export default {
         // thumbnail's saturated blue).
         'mfp-blue': '#0279FF',
 
-        // Cursor — vivid blue (attention color, cursor only)
-        cursor: '#2563EB',
+        // About's photo caption pills — the five highlighter hues the Figma
+        // frame labels its photographs with, in the frame's own order. Fixed
+        // in both themes, because a highlighter does not change colour when
+        // the lights go out, which is also why the ink on them is fixed:
+        // `caption-ink`, dark in both themes for the same reason `on-brand`
+        // is white in both. These live only inside PhotoStack.
+        'caption-1': '#FFFB00', // yellow
+        'caption-2': '#6FC8FF', // sky
+        'caption-3': '#54FFA1', // mint
+        'caption-4': '#FFA96B', // orange
+        'caption-5': '#FB80FF', // pink
+        'caption-ink': '#1E1E1E',
 
         // ── Case-study colour exceptions. Everything else on that page now
         //    uses `text` / `text-muted` / `surface` / `border` like the rest
@@ -149,16 +160,9 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
-        // The hero lamp's "I am a control" hint: the halo breathes rather
-        // than blinks. Opacity only, and it stops on hover/focus.
-        'lamp-breathe': {
-          '0%, 100%': { opacity: '0.35', transform: 'scale(1)' },
-          '50%': { opacity: '0.8', transform: 'scale(1.08)' },
-        },
       },
       animation: {
         marquee: 'marquee 28s linear infinite',
-        'lamp-breathe': 'lamp-breathe 3.2s ease-in-out infinite',
       },
     },
   },

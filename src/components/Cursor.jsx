@@ -46,7 +46,7 @@ function CursorIcon({ type }) {
 
 // Labels that describe a state rather than a destination take no arrow —
 // nothing is being navigated to.
-const NO_ICON = new Set(['Coming soon', 'Lights on', 'Lights off'])
+const NO_ICON = new Set(['Coming soon', 'Night mode', 'Day mode'])
 
 function parseCursorLabel(label) {
   if (!label) return { text: '', icon: null }
@@ -131,22 +131,44 @@ export default function Cursor() {
       applyLabelAt(e.clientX, e.clientY)
     }
 
-    const onScroll = () => {
+    // Re-read the label under a stationary pointer. The element there can
+    // change without the pointer moving — the page scrolls under it, or a
+    // toggle it is sitting on relabels itself after being pressed.
+    const rereadUnderPointer = () => {
       const { x: px, y: py } = pointerRef.current
       if (px < 0 || py < 0) return
       applyLabelAt(px, py)
     }
 
+    // A control that flips state (the lamp, the theme toggle) rewrites its own
+    // data-cursor, so the pill has to follow the attribute, not the pointer —
+    // otherwise "Night mode" sits under a stationary cursor until it next
+    // moves. Watching the attribute is what makes that instant, and it is why
+    // this is an observer rather than a click handler: hooking the click means
+    // guessing when React's commit lands (a microtask queued from the capture
+    // phase still runs before it), whereas the mutation record *is* the
+    // commit. `attributeFilter` keeps it to the one attribute we care about.
+    const observer = new MutationObserver(rereadUnderPointer)
+    observer.observe(document.body, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['data-cursor'],
+    })
+
     const onLeave = () => setVisible(false)
     const onEnter = () => setVisible(true)
 
     window.addEventListener('pointermove', onMove)
-    window.addEventListener('scroll', onScroll, { passive: true, capture: true })
+    window.addEventListener('scroll', rereadUnderPointer, {
+      passive: true,
+      capture: true,
+    })
     document.addEventListener('pointerleave', onLeave)
     document.addEventListener('pointerenter', onEnter)
     return () => {
+      observer.disconnect()
       window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('scroll', onScroll, { capture: true })
+      window.removeEventListener('scroll', rereadUnderPointer, { capture: true })
       document.removeEventListener('pointerleave', onLeave)
       document.removeEventListener('pointerenter', onEnter)
     }
@@ -167,13 +189,15 @@ export default function Cursor() {
         className="absolute left-0 top-0"
         style={{ x: ringX, y: ringY, opacity: visible && expanded ? 1 : 0 }}
       >
+        {/* The pill is the site's own ink inverted — `bg-text` with `text-bg`,
+            the same pairing the primary button uses. It reads as part of the
+            theme in both modes and flips with it, where the pastel accent read
+            as a fifth colour dropped on top of the page. The fill is a class
+            rather than a Framer value because there is nothing to interpolate
+            and Framer cannot tween a colour held in a CSS variable. */}
         <motion.div
-          className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full"
-          animate={{
-            width: 'auto',
-            height: 'auto',
-            backgroundColor: 'rgb(var(--accent-hover))',
-          }}
+          className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center rounded-full bg-text"
+          animate={{ width: 'auto', height: 'auto' }}
           transition={
             reducedMotion
               ? { duration: 0 }
@@ -185,7 +209,7 @@ export default function Cursor() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: reducedMotion ? 0 : 0.15 }}
-            className="flex items-center gap-1.5 whitespace-nowrap px-5 py-2.5 text-body font-normal leading-none text-text"
+            className="flex items-center gap-1.5 whitespace-nowrap px-5 py-2.5 text-body font-normal leading-none text-bg"
           >
             {text}
             <CursorIcon type={icon} />

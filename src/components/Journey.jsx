@@ -28,12 +28,19 @@ import { EASE, DUR } from '../lib/animations'
 // is introducing. Short segments (the lead-in above the first dot) get a
 // proportionally smaller bend rather than a tight hook.
 const BEND_RATIO = 0.44
-const BEND_MAX = 68
+// The rail is as wide as the gap between the two card columns, so the bend can
+// go most of the way across it — a wide, slow sweep rather than a ripple.
+const BEND_MAX = 96
 const FULL_BEND_SPAN = 240
 // Above ~0.5 the bellies round out and the crossings flatten — a parabola
-// strung between the dots rather than a sine through them.
-const BELLY = 0.55
-const MAX_SPAN = 420
+// strung between the dots rather than a sine through them. Pushed further here
+// so each belly leaves and rejoins the centre line almost vertically, which is
+// what stops the curve reading as a chain of arcs.
+const BELLY = 0.62
+// One belly per gap for as long as a gap can hold one. Subdividing is the
+// fallback for a very tall card, not the normal case: two bends in the space of
+// one is what makes the trail look busy instead of smooth.
+const MAX_SPAN = 620
 
 function buildTrail({ width, height, stops }) {
   const cx = width / 2
@@ -69,11 +76,17 @@ function useTrailGeometry(trackRef, railRef) {
   const [geometry, setGeometry] = useState(null)
 
   useLayoutEffect(() => {
-    const track = trackRef.current
+    // The rail is this component's own node, so it is always attached by the
+    // time this runs. The track is an *ancestor's* ref, and React attaches refs
+    // bottom-up, so that one can still be null here — which is why nothing is
+    // keyed off it directly.
     const rail = railRef.current
-    if (!track || !rail) return
+    if (!rail) return
 
     const measure = () => {
+      const track = trackRef.current
+      if (!track) return
+
       const trackBox = track.getBoundingClientRect()
       const stops = Array.from(
         track.querySelectorAll('[data-milestone]'),
@@ -89,9 +102,16 @@ function useTrailGeometry(trackRef, railRef) {
       })
     }
 
+    // Observing the rail rather than the track is what makes this reliable.
+    // A ResizeObserver delivers one callback as soon as it starts observing,
+    // after layout and after every ref in the tree is attached — so that first
+    // callback is the measurement, and the synchronous attempt above is only an
+    // optimisation. The rail is `inset-y-0` inside the track, so its height is
+    // the track's height and it reports every reflow the track has. Nothing
+    // here depends on requestAnimationFrame, which a background tab throttles.
     measure()
     const observer = new ResizeObserver(measure)
-    observer.observe(track)
+    observer.observe(rail)
     return () => observer.disconnect()
   }, [trackRef, railRef])
 
@@ -103,10 +123,15 @@ function Trail({ trackRef, railRef }) {
   const geometry = useTrailGeometry(trackRef, railRef)
 
   // Starts drawing as the first card reaches the lower third of the viewport
-  // and completes as the last one clears the middle.
+  // and completes as the last one clears the middle. `layoutEffect: false` for
+  // the same reason the measurement above observes the rail: `trackRef` is an
+  // ancestor's ref and is not attached yet during the layout phase, so Framer
+  // has to resolve the target after paint instead (it warns about exactly this
+  // otherwise, and the target silently falls back to the whole page).
   const { scrollYProgress } = useScroll({
     target: trackRef,
     offset: ['start 85%', 'end 55%'],
+    layoutEffect: false,
   })
   const drawn = useSpring(scrollYProgress, {
     stiffness: 90,
@@ -116,11 +141,14 @@ function Trail({ trackRef, railRef }) {
 
   const d = geometry ? buildTrail(geometry) : null
 
+  // 14rem is the full gap between the card columns (the 10rem middle column
+  // plus its two 2rem gutters), so the sweep uses every pixel that isn't a
+  // card without ever running under one.
   return (
     <div
       ref={railRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-y-0 left-0 w-12 md:left-1/2 md:-ml-20 md:w-40"
+      className="pointer-events-none absolute inset-y-0 left-0 w-12 md:left-1/2 md:-ml-28 md:w-56"
     >
       {d && (
         <svg

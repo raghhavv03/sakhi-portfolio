@@ -61,8 +61,9 @@ export default function HeroScene({ className = '' }) {
         priority={isDark}
       />
 
-      {/* The lamp. A real button with a real label — the halo is only the
-          affordance that says it can be pressed. */}
+      {/* The lamp. An invisible hotspot over the lamp head — no halo, no ring,
+          no tooltip. The only light in the picture is the light the artwork
+          paints, and the cursor label is what says the lamp is a control. */}
       <button
         type="button"
         onClick={() => {
@@ -71,20 +72,10 @@ export default function HeroScene({ className = '' }) {
         }}
         aria-label={isDark ? 'Turn the lamp off — switch to light mode' : 'Turn the lamp on — switch to dark mode'}
         aria-pressed={isDark}
-        data-cursor={isDark ? 'Lights on' : 'Lights off'}
-        title={hero.scene.lampHint}
+        data-cursor={isDark ? 'Day mode' : 'Night mode'}
         style={{ left: `${LAMP.x}%`, top: `${LAMP.y}%` }}
-        className="group absolute z-10 h-[9%] min-h-[44px] w-[9%] min-w-[44px] -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
-      >
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 rounded-full bg-lamp/30 blur-md animate-lamp-breathe group-hover:animate-none group-hover:bg-lamp/50 group-focus-visible:animate-none motion-reduce:animate-none"
-        />
-        <span
-          aria-hidden="true"
-          className="absolute inset-[18%] rounded-full border border-lamp/70 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
-        />
-      </button>
+        className="absolute z-10 h-[9%] min-h-[44px] w-[9%] min-w-[44px] -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
+      />
     </div>
   )
 }

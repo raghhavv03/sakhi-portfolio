@@ -80,7 +80,9 @@ function Background() {
 
   return (
     <section className="mt-section-sm md:mt-section-md lg:mt-section">
-      <SectionHeader badge="Background" heading={heading} />
+      {/* No badge. The frame gives this section one heading and nothing above
+          it, and "Background" over "Background" was ours, not hers. */}
+      <SectionHeader heading={heading} />
       <motion.div {...reveal} className="mt-8 max-w-3xl">
         {paragraphs.map((paragraph) => (
           <p
@@ -168,9 +170,9 @@ function OffDuty() {
           />
         </div>
 
+        {/* Heading only, same as Background — the frame has no kicker here. */}
         <motion.div {...reveal}>
-          <Badge>Beyond design</Badge>
-          <h2 className="mt-4 text-h2 font-semibold text-text">{heading}</h2>
+          <h2 className="text-h2 font-semibold text-text">{heading}</h2>
           <p className="mt-4 text-body font-normal text-text-muted">
             {paragraph}
           </p>

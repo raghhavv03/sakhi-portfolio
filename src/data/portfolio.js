@@ -8,6 +8,25 @@
 // placeholder string, which would render as visible filler.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// PREVIEW SWITCH — layout review only. DO NOT SHIP WITH THIS ON.
+//
+// Because the site hides an affordance until its fact is real, none of the
+// Resume / LinkedIn / Behance / email / shop controls can be *seen* while those
+// facts are outstanding — which makes their placement impossible to review.
+// This fills them with deliberately fake stand-ins so every button renders.
+// The `#` hrefs go nowhere and the address is on the reserved `example.com`
+// domain, on purpose: a plausible-looking invented URL is worse than an
+// obviously fake one, because it might belong to somebody.
+//
+// Set to `false` and every one of them disappears again — the hiding logic
+// itself is untouched. Replace the real values below as they arrive, then
+// delete this block.
+// ---------------------------------------------------------------------------
+const PREVIEW_UNPUBLISHED = true
+const preview = (real, stand_in = '#') =>
+  real || (PREVIEW_UNPUBLISHED ? stand_in : '')
+
 export const site = {
   name: 'Sakhi Rana',
   role: 'UI/UX & Product Designer',
@@ -26,15 +45,16 @@ export const footer = {
 }
 
 export const contact = {
-  email: '', // e.g. 'hello@example.com' — empty hides every mailto affordance
+  // Empty hides every mailto affordance. Real value goes here.
+  email: preview('', 'hello@example.com'),
   invite:
     "Open to product design roles, freelance work, and the occasional interesting problem. Tell me what you're building and I'll come back to you.",
 }
 
 export const links = {
-  resume: '', // path to a PDF in /public — opens in a new tab for viewing
-  linkedin: '',
-  behance: '',
+  resume: preview(''), // path to a PDF in /public — opens in a new tab for viewing
+  linkedin: preview(''),
+  behance: preview(''),
 }
 
 // Footer/contact social links. `label` doubles as the data-cursor label.
@@ -56,13 +76,14 @@ export const hero = {
     "Hi, I'm Sakhi — a UI/UX designer who digs into why a product is hard to use, then designs the version that isn't.",
   // The hero artwork is the same desk in two lights, and the lamp in it is
   // the site's theme switch. Both frames need their own alt text, because
-  // which one you are looking at is itself the state of the control.
+  // which one you are looking at is itself the state of the control. There is
+  // no hint copy: the lamp is left to be found, which is what the cursor
+  // label is for.
   scene: {
     altLight:
       'Illustration of a designer at a sunlit desk — laptop, sketchbook of wireframes, coffee and plants, with a park and city skyline through the window.',
     altDark:
       'The same desk at night — the desk lamp is lit, the laptop glows, and the park outside sits under a moonlit sky.',
-    lampHint: 'Tap the lamp to change the light',
   },
 }
 
@@ -672,7 +693,7 @@ export const about = {
       'I have a habit of diving headfirst into things that spark my curiosity. Crochet was one of them. What began as learning a few stitches eventually turned into a small online business where I designed and sold handmade accessories and clothing through (@crochetcurioo). It taught me that the most rewarding projects usually start with simply being willing to learn.',
       "I approach product design with that same curiosity. I'm always exploring new ideas, refining my thinking, and paying attention to the details that make experiences feel effortless. Outside of design, that curiosity finds its way into other parts of my life too. Right now, I'm learning German, working on my pickleball game, and probably adding another unexpected skill to the list.",
     ],
-    link: '', // the shop's page — empty hides the Visit button
+    link: preview(''), // the shop's page — empty hides the Visit button
   },
 
   educationHeading: 'Where I studied',

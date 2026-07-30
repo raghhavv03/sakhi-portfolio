@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { nav, links } from '../data/portfolio'
 import Button from './Button'
-import Magnetic from './Magnetic'
+import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
 import { useReducedMotion } from '../lib/hooks'
 import { EASE, DUR } from '../lib/animations'
@@ -108,31 +108,24 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ${
         transparent
-          ? 'bg-transparent'
-          : 'border-b border-border bg-bg/80 backdrop-blur-md'
+          ? 'border-transparent bg-bg/70 backdrop-blur-md'
+          : 'border-border bg-bg/80 backdrop-blur-md'
       }`}
     >
       <div className="mx-auto flex max-w-content items-center justify-between px-6 py-4">
-        {/* Logo — accessible name lives on the link itself; the image is
-            decorative (alt="") so it isn't announced a second time. */}
+        {/* Logo — accessible name lives on the link itself; the mark is
+            decorative (aria-hidden) so it isn't announced a second time. */}
         <Link
           to="/"
           onClick={goHome}
           className="inline-flex min-h-[44px] items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
           aria-label="Sakhi Rana — home"
         >
-          {/* The wordmark is a flat off-black PNG, so dark mode flips it to
-              the light ink rather than shipping a second file. */}
-          <img
-            src="/logo-wordmark.png"
-            alt=""
-            aria-hidden="true"
-            width="261"
-            height="67"
-            className="h-8 w-auto dark:brightness-0 dark:invert"
-          />
+          {/* Inline SVG on `currentColor`, so the mark is the same ink as the
+              nav links next to it and changes with the theme on its own. */}
+          <Logo className="h-10 w-auto text-text" />
         </Link>
 
         {/* Desktop nav */}
@@ -179,35 +172,31 @@ export default function Header() {
           )}
         </nav>
 
-        {/* Desktop right-side actions — Magnetic adds a ≤3px cursor-aware
-            drift; the Button itself carries hover lift + tap press. */}
+        {/* Desktop right-side actions — the toggle and both buttons carry the
+            one shared CTA hover, so the three read as one row. */}
         <div className="hidden items-center gap-2 md:flex">
           {/* Same switch the hero lamp is — one shared state, so the two can
               never show different things. */}
           <ThemeToggle />
           {links.resume && (
-            <Magnetic>
-              <Button
-                variant="secondary"
-                href={links.resume}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Resume
-              </Button>
-            </Magnetic>
+            <Button
+              variant="secondary"
+              href={links.resume}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Resume
+            </Button>
           )}
           {links.linkedin && (
-            <Magnetic>
-              <Button
-                variant="primary"
-                href={links.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                LinkedIn
-              </Button>
-            </Magnetic>
+            <Button
+              variant="primary"
+              href={links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </Button>
           )}
         </div>
 
@@ -217,7 +206,7 @@ export default function Header() {
           <ThemeToggle />
           <button
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
