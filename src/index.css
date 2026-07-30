@@ -11,6 +11,11 @@
 
    Light is the warm cream studio of the daytime hero scene; dark is the same
    room at night — a navy-ink canvas with warm off-white ink on it.
+
+   There is no accent hue. A CTA hovers into the theme's own ink (`text`, or
+   `text-muted` for the one that already rests on `text`), so hover is a
+   value change inside the palette rather than a colour that exists nowhere
+   else on the page.
 --------------------------------------------------------------------------- */
 :root {
   color-scheme: light;
@@ -21,8 +26,6 @@
   --text: 27 28 26; /* #1B1C1A every heading, everywhere */
   --text-muted: 77 70 53; /* #4D4635 every paragraph, label, caption */
 
-  --accent: 167 199 231; /* #A7C7E7 pastel blue — hover only */
-  --accent-hover: 143 184 222; /* #8FB8DE */
   --lamp: 212 175 55; /* #D4AF37 the lamp's own light */
 
   --shadow: 26 26 26; /* elevation ink */
@@ -39,11 +42,6 @@ html.dark {
   --text: 240 237 230; /* #F0EDE6 warm off-white — 15.5:1 on the canvas */
   --text-muted: 175 182 196; /* #AFB6C4 — 8.6:1 on the canvas */
 
-  /* Pastel blue keeps its role (hover states, never resting colour, never
-     type) but not its value: a hover fill here carries light ink, so the
-     accent deepens instead of staying pastel. */
-  --accent: 61 92 128; /* #3D5C80 */
-  --accent-hover: 78 115 156; /* #4E739C */
   --lamp: 245 196 92; /* #F5C45C the lit lamp, warmer and brighter */
 
   --shadow: 0 0 0;

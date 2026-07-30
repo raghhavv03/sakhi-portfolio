@@ -1,6 +1,6 @@
 import { useTheme } from '../lib/theme'
 import { tapHaptic } from '../lib/haptics'
-import { CTA_HOVER, CTA_HOVER_FILL } from '../lib/interactions'
+import { CTA_HOVER, CTA_HOVER_FILL, CTA_ICON } from '../lib/interactions'
 
 // Header theme control — the same switch the hero lamp throws, so the two are
 // always showing the same state. Icon shows the theme you would get, which is
@@ -19,7 +19,7 @@ export default function ThemeToggle({ className = '' }) {
       aria-label={toDark ? 'Switch to dark mode' : 'Switch to light mode'}
       aria-pressed={!toDark}
       data-cursor={toDark ? 'Night mode' : 'Day mode'}
-      className={`inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-text-muted ${CTA_HOVER} ${CTA_HOVER_FILL} ${className}`}
+      className={`${CTA_ICON} border border-border text-text ${CTA_HOVER} ${CTA_HOVER_FILL} ${className}`}
     >
       {toDark ? <MoonIcon /> : <SunIcon />}
     </button>

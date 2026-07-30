@@ -56,8 +56,10 @@ phone originals are not in the repo.
   size and nothing else. The family is Inter everywhere. See the conventions
   section below for the sanctioned exceptions.
 - **All motion timing lives in `src/lib/animations.js`** (`EASE`, `DUR`) and
-  **every CTA's hover lives in `src/lib/interactions.js`** (`CTA_HOVER`,
-  `CTA_HOVER_FILL`). Those are the only curves, durations and hover states.
+  **every CTA's size, motion and hover live in `src/lib/interactions.js`**
+  (`CTA_SHAPE`, `CTA_ICON`, `CTA_HOVER`, `CTA_HOVER_FILL`,
+  `CTA_HOVER_FILL_SOLID`). Those are the only durations, box sizes and hover
+  states.
 - **Empty means "don't render".** Every consumer of `portfolio.js` treats an
   empty string or empty array as a missing value and hides the affordance: no
   résumé URL hides the Resume button, no email hides every mailto, an empty
@@ -65,20 +67,33 @@ phone originals are not in the repo.
   names itself. So leave a field empty until it's real — never a placeholder
   string, which ships as visible filler.
   **`PREVIEW_UNPUBLISHED` at the top of `portfolio.js` is the one exception**,
-  and it is temporary: it feeds the outstanding links dead `#` hrefs and an
-  `example.com` address so the placement of the Resume / LinkedIn / Behance /
-  email / shop controls can be reviewed at all. The hiding logic is untouched —
-  flip it to `false` and they all vanish again. **It must be off before the site
-  goes live**, or the site ships buttons that go nowhere.
+  and it is temporary: it feeds the still-outstanding links dead `#` hrefs so
+  the placement of the Resume / Behance / shop controls can be reviewed at all.
+  The hiding logic is untouched — flip it to `false` and they all vanish again.
+  **It must be off before the site goes live**, or the site ships buttons that
+  go nowhere. Email and LinkedIn are real values now and no longer pass through
+  it.
+- **The contact form posts to Formspree, and degrades to UI-only.**
+  `contact.formEndpoint` in `portfolio.js` holds the `https://formspree.io/f/…`
+  URL; Formspree forwards the fields to `contact.email`. There is no backend and
+  no secret — the endpoint id is public by design. **Empty means UI-only**: the
+  same form still validates and acknowledges, and its confirmation says nothing
+  was delivered, rather than posting into nowhere and claiming success. A
+  failed POST leaves the typed message in place, re-enables the button as "Try
+  again", and names the mailto fallback. The hidden `_subject` / `_gotcha`
+  inputs are Formspree's own (notification subject, honeypot).
 - **Footer is a centred sign-off, not a sitemap.** Copy lives in `footer` +
   `site.copyright`; the connect row is a set of round hairline icon buttons
   assembled from `links` and `contact.email` inside `Footer.jsx`, each hidden
   until real. "Say hello" → `/contact` is the one that never hides, so the row
   is never empty — except on `/contact` itself, where it becomes a real
   `<button>` that scrolls back to the form, because a link that lands you where
-  you already are reads as broken. Résumé stays a `Button`, not an icon — the
-  frame has no glyph for it and a hand-drawn one would be a guess. Back to top
-  is footer-only — no floating control.
+  you already are reads as broken. Back to top is footer-only — no floating
+  control. **It is the one band that does not take the page's section rhythm**
+  (`py-10 md:py-12`, not `py-section*`): a full section band under a page that
+  has already ended reads as a second empty screen. **The résumé is not in the
+  footer** — the header already carries it, and repeating a header action in
+  the sign-off is redundancy, not convenience.
 
 ```
 src/
@@ -104,7 +119,8 @@ src/
                              useInViewOnce useActiveSection useLargeScreen
     theme.js                 ThemeContext, useTheme, storage + applyTheme
     animations.js            EASE, DUR, fadeUp, stagger
-    interactions.js          CTA_HOVER, CTA_HOVER_FILL — every CTA's hover
+    interactions.js          CTA_SHAPE, CTA_ICON, CTA_HOVER, CTA_HOVER_FILL,
+                             CTA_HOVER_FILL_SOLID — every CTA's size + hover
   data/portfolio.js          every string on the site
 ```
 
@@ -112,25 +128,47 @@ src/
 
 ## Conventions that are easy to get wrong
 
-- **Every CTA hovers identically, and the hover is one import.** `CTA_HOVER` +
-  `CTA_HOVER_FILL` in `src/lib/interactions.js` are what the pill `Button`, the
-  header `ThemeToggle`, the footer's round icon buttons and the contact form's
-  submit all use. The hover is **a 1.03 zoom and an accent fill, nothing else**
-  — no lift, no shadow, no pointer-tracking drift (the `Magnetic` component is
-  deleted; do not reintroduce a second hover mechanism). Press is
-  `active:scale-[0.98]`, the zoom is off under `motion-reduce:`, and the focus
-  ring rides along in the same string. It is **CSS, not a Framer `whileHover`**,
-  because half those controls are plain `<button>`/`<a>` elements — one
-  mechanism is the only way "consistent" survives the next control someone adds.
-  A new CTA imports the two strings; it does not write its own hover.
-- **Text is never blue.** Pastel blue (`accent`) has one job in both themes:
-  hover states. It is never a resting colour and never type. Its *value*
-  changes in dark mode (deepened to #3D5C80) precisely so the light ink that
-  lands on a hover fill keeps its contrast — the role is what stays fixed, not
-  the hex. Measured on the hovered fill: 9.8:1 light, 5.9:1 dark. Focus rings
-  are the heading ink — `focus-visible:ring-2 focus-visible:ring-text/25
-  focus-visible:ring-offset-2` everywhere.
-- **`lamp` is the hero lamp's own light, not a third accent.** Its one
+- **Every CTA is the same box, and the box is one import.** `CTA_SHAPE` (a
+  44px-minimum pill: `min-h-[44px] px-6 py-2 text-body-sm font-semibold`) and
+  `CTA_ICON` (the same 44px made square) in `src/lib/interactions.js` are what
+  the pill `Button`, the header `ThemeToggle`, the footer's round icon buttons
+  and the contact form's submit all size themselves from — so the header's
+  toggle, Resume and LinkedIn are one 44px row rather than three near-misses.
+  `CTA_SHAPE`'s `py-2` sits *under* the 44px floor on purpose: at `body-sm` the
+  padding alone makes a 47px pill, three taller than the icon buttons beside
+  it. Let `min-h` set the height.
+- **Every CTA hovers identically, and the hover is one import.** `CTA_HOVER`
+  carries the motion — **a colour move only: no zoom, no lift, no shadow, no
+  pointer-tracking drift** (the `Magnetic` component is deleted; do not
+  reintroduce a second hover mechanism, and do not reintroduce a
+  `hover:scale`/`active:scale` transform — it was tried and removed because it
+  read as a "magnifying" effect the buttons didn't need). The focus ring rides
+  along in the same string. It is **CSS, not a Framer `whileHover`**, because
+  half those controls are plain `<button>`/`<a>` elements — one mechanism is
+  the only way "consistent" survives the next control someone adds. A new CTA
+  imports the strings; it does not write its own hover.
+- **There is no accent colour, and a CTA hovers into the theme's own ink.**
+  The palette is two inks and its surfaces; hover is a move *inside* it, not a
+  hue that exists nowhere else on the page. `CTA_HOVER_FILL` fills with `text`
+  and flips the label to `bg` — the same pairing the primary pill and the
+  cursor pill already rest at. The primary pill already rests there, so it
+  cannot hover to it: `CTA_HOVER_FILL_SOLID` softens it to `text-muted`
+  instead. Measured on the hovered fill: **16.3:1 light / 15.3:1 dark**
+  (outline) and **8.9:1 light / 8.8:1 dark** (solid). The `accent` /
+  `accent-hover` tokens are **gone** from `index.css` and `tailwind.config.js`
+  — do not reintroduce a pastel-blue hover, in either theme. Focus rings are
+  the heading ink — `focus-visible:ring-2 focus-visible:ring-text/25
+  focus-visible:ring-offset-2` everywhere. The lightbox is the one control set
+  outside this, because it sits on the fixed dark band: it hovers to
+  `dark-text` with `dark-bg` ink, the same rule in that band's fixed tokens.
+- **The header's LinkedIn and Resume pills are the exact same control.** Both
+  render `Button` with `variant="secondary"` — same rest colour, same hover
+  fill, same everything. `Button`'s `primary` variant (solid ink fill) still
+  exists in `interactions.js`/`Button.jsx` as the filled option, but nothing
+  currently uses it; don't reach for it in the header without a reason, since
+  the whole point here is that the two pills read as one pair, not two
+  different weights of emphasis.
+- **`lamp` is the hero lamp's own light, not an accent.** Its one
   remaining job is the journey trail's milestone glow. The lamp in the hero is
   lit by the artwork, not by this token — nothing is painted over the lamp.
   Never type, never a surface.
@@ -161,8 +199,9 @@ src/
   has ~11% of its box under 4.5:1; with it, every nav item clears 6.9:1.
 - **The cursor pill is the site's ink inverted** — `bg-text` with `text-bg`, the
   same pairing the primary button uses, so it flips with the theme and reads as
-  part of the page. It is not the pastel accent and not a vivid blue; both of
-  those read as an extra colour dropped on top. 15.5:1 in both themes.
+  part of the page — the same pairing every outlined CTA now hovers into. It is
+  not a pastel and not a vivid blue; both read as an extra colour dropped on
+  top. 15.5:1 in both themes.
 - **Two font weights only** — 400 and 600, no exceptions. Sentence case
   everywhere.
 - **The only text that is neither `text` nor `text-muted`** is: type inverted
@@ -260,14 +299,21 @@ src/
 
 **Turn this off before launch:**
 - `PREVIEW_UNPUBLISHED` in `portfolio.js` is `true`, which is why Resume,
-  LinkedIn, Behance, the email links and "Visit Crochet Curio" are all visible
-  right now. They are dead `#` hrefs and an `example.com` address, on for layout
-  review only. Setting it to `false` restores the empty-means-hidden behaviour;
-  supplying the real values below makes the switch irrelevant.
+  Behance and "Visit Crochet Curio" are all visible right now. They are dead
+  `#` hrefs, on for layout review only. Setting it to `false` restores the
+  empty-means-hidden behaviour; supplying the real values below makes the
+  switch irrelevant. Email and LinkedIn are real and no longer go through it.
+
+**Needs one paste, then the form delivers:**
+- `contact.formEndpoint` in `portfolio.js` is empty, so the contact form is
+  still UI-only. Create a Formspree form pointed at `sakhiiirana@gmail.com`,
+  confirm the address in the email Formspree sends, and paste the
+  `https://formspree.io/f/<id>` URL in. Both branches of the submit are already
+  built and tested — nothing else changes.
 
 **Blocked on facts only Sakhi has:**
-- `contact.email`, `links.linkedin`, `links.behance` in `portfolio.js` — the
-  site has no way to reach her except the UI-only contact form until these land.
+- `links.behance` in `portfolio.js`. (`contact.email` and `links.linkedin` are
+  in — `sakhiiirana@gmail.com` and the `sakhi-rana-717548212` profile.)
 - `resume.pdf` into `public/`, then `links.resume = '/resume.pdf'`.
 - `about.education` entries — `{ institution, qualification, years }`. The
   About copy already says "an MBA in Marketing, 2025", so the institution is
@@ -281,7 +327,6 @@ src/
   words.
 
 **Doable without her:**
-- Wire the contact form (Formspree or a Vercel function).
 - Per-route `<title>` / description — every route shares `index.html`'s, so a
   shared case-study link previews as the home page.
 - Absolute `og:url` / `og:image` once the production domain is settled.
@@ -302,8 +347,8 @@ src/
 - The favicon repeats the monogram's path data and hardcodes both ink values,
   because a tab icon cannot read `currentColor` or a CSS variable. Two copies of
   the same paths is the cost of that; if the mark changes, change both.
-- `Button`'s unused `dark` variant and `DUR.tap` are both dead now — harmless,
-  but they can go with the next tidy.
+- `DUR.tap` is dead now — harmless, but it can go with the next tidy.
+  (`Button`'s unused `dark` variant is already gone.)
 
 **Copy that is a first draft, not Sakhi's own words:** `site.bio`,
 `hero.opening`, `contact.invite`, and the whole `journey` block — its four
@@ -320,44 +365,33 @@ image `alt` text.
 Newest first, one entry per session — what shipped, and only what a later
 session could not read off the code.
 
-### 2026-07-30 — one hover for every CTA
-The buttons were four different controls pretending to be a set: the pill
-`Button` lifted 1px, scaled 1.02 and dropped a shadow via Framer; the header
-`ThemeToggle` only shifted its border and ink; the footer's icon buttons filled
-accent with a shadow and no zoom; and the header's Resume/LinkedIn plus
-Contact's "Open LinkedIn" sat inside `Magnetic`, which added a ≤3px
-pointer-tracking drift the others never had.
+### 2026-07-30 — CTA hover loses its zoom, LinkedIn becomes Resume's twin
+The zoom (`hover:scale-[1.03]`, `active:scale-[0.98]`) came out of `CTA_HOVER`
+site-wide — it read as a magnifying effect the buttons didn't need, and every
+CTA shares the one import so removing it there was the whole fix. The header's
+LinkedIn pill switched from `Button`'s `primary` variant (solid ink fill) to
+`secondary` — the exact same variant Resume already uses, so the two pills are
+now one control rendered twice: identical rest colour, identical hover fill,
+nothing left to compare.
 
-- **`src/lib/interactions.js` is now the single source of CTA hover** —
-  `CTA_HOVER` (1.03 zoom, 0.98 press, 200ms, focus ring, `motion-reduce` off
-  switch) and `CTA_HOVER_FILL` (accent fill + matching border + heading ink).
-  `Button`, `ThemeToggle`, `Footer`'s `ConnectButton` and Contact's submit all
-  import both, so there is exactly one hover to change.
-- **`Magnetic.jsx` is deleted** and both call sites unwrapped. The drift was
-  the "extra" animation; a single small zoom replaced it.
-- **`Button` no longer uses Framer at all** — the hover is CSS, which is what
-  lets a plain `<button>`/`<a>` icon control match the pill exactly. It also
-  gained the site's focus ring, which it had been missing. The lift and the
-  hover shadow are gone from every CTA.
-- **Hover colour comes from the `accent` token**, so it is already per-theme:
-  #A7C7E7 with ink #1B1C1A in light (9.8:1), #3D5C80 with #F0EDE6 in dark
-  (5.9:1) — both measured in-page on the hovered element, not estimated.
-- Also fixed in passing: the mobile hamburger had no focus ring.
-- **Deliberately left alone**: nav links, the logo, "Back to top" and the hero
-  lamp. They are text/artwork affordances, not pills — and nothing is ever
-  painted over the lamp.
-- **Verified** with `npm run lint`, `npm run build`, and an audit in the dev
-  server: every pill and icon button on home and contact reports the same three
-  hover classes, and a real pointer hover on the header Resume, the theme
-  toggle and the footer mail button returns `matrix(1.03, …)` with the accent
-  fill in both themes. Console clean.
-- **Files touched:** new `src/lib/interactions.js`; `Button.jsx`,
-  `ThemeToggle.jsx`, `Footer.jsx`, `Header.jsx`, `pages/Contact.jsx`,
-  `CLAUDE.md`. Deleted `Magnetic.jsx`.
+- **Verified** with `npm run lint`, `npm run build`, and a dev-server pass:
+  read the live computed classes on both header pills (byte-identical
+  `className`; no `scale`/`transform` anywhere on any CTA site-wide) and
+  screenshotted the header.
+- **Files touched:** `src/lib/interactions.js`, `Button.jsx`, `Header.jsx`,
+  `pages/Contact.jsx` (dropped a now-dead `disabled:hover:scale-100`),
+  `CLAUDE.md`.
 
 ### Earlier sessions — what they settled
 Condensed; the reasoning that still matters is in **Conventions** above.
 
+- **2026-07-30** — every CTA's size and hover unified behind
+  `src/lib/interactions.js` (`CTA_SHAPE`/`CTA_ICON` for a shared 44px box,
+  `CTA_HOVER`/`CTA_HOVER_FILL`/`CTA_HOVER_FILL_SOLID` for one hover
+  mechanism); `Magnetic.jsx` deleted; the `accent` token removed in favour of
+  hovering into the theme's own ink; the contact form wired to Formspree
+  (endpoint still blank, pending Sakhi); real email/LinkedIn facts landed; the
+  footer shrank ~165px and lost its Resume button.
 - **2026-07-30** — the hero wash re-tuned by measurement and the copy centred
   again; cursor pill switched to `bg-text`/`text-bg`; the trail's four curve
   constants tuned to their current values (verified by sampling the rendered

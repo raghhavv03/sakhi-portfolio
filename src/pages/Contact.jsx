@@ -1,36 +1,75 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { contact, links } from '../data/portfolio'
+import { contact, links, site } from '../data/portfolio'
 import { useReducedMotion, useReveal } from '../lib/hooks'
 import { successHaptic } from '../lib/haptics'
-import { CTA_HOVER, CTA_HOVER_FILL } from '../lib/interactions'
+import {
+  CTA_HOVER,
+  CTA_HOVER_FILL_SOLID,
+  CTA_SHAPE,
+} from '../lib/interactions'
 import Badge from '../components/Badge'
 import Button from '../components/Button'
 
 // Contact — short and direct: headline + invite, direct email / LinkedIn,
-// and a minimal (UI-only) form.
+// and a minimal form.
+//
+// Delivery is Formspree: a POST of the form's own fields to the endpoint in
+// `contact.formEndpoint`, which forwards them to `contact.email`. No backend,
+// no key in the bundle — the endpoint id is public by design and rate-limited
+// on their side.
+//
+// With no endpoint set the same form stays UI-only: it validates and
+// acknowledges, and the confirmation says so, rather than posting into
+// nowhere and claiming it sent.
 export default function Contact() {
   const reveal = useReveal()
   const reducedMotion = useReducedMotion()
 
-  // Submit state machine: idle → sending → sent. The form is UI-only, so
-  // "sending" is a brief acknowledgement beat, not a network wait; under
-  // reduced motion we jump straight to the confirmation.
+  // Submit state machine: idle → sending → sent | error. `error` is the only
+  // state that returns to idle, so a failed message can be sent again without
+  // retyping it.
   const [status, setStatus] = useState('idle')
   const sent = status === 'sent'
+  const failed = status === 'error'
+  const wired = Boolean(contact.formEndpoint)
   const timeoutRef = useRef(null)
   useEffect(() => () => clearTimeout(timeoutRef.current), [])
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
-    if (status !== 'idle') return
-    successHaptic()
-    if (reducedMotion) {
-      setStatus('sent')
+    if (status === 'sending' || sent) return
+
+    // Not wired yet — acknowledge without pretending to deliver. Under
+    // reduced motion, skip the beat and confirm straight away.
+    if (!wired) {
+      successHaptic()
+      if (reducedMotion) {
+        setStatus('sent')
+        return
+      }
+      setStatus('sending')
+      timeoutRef.current = setTimeout(() => setStatus('sent'), 650)
       return
     }
+
+    const form = e.currentTarget
+    const body = new FormData(form)
     setStatus('sending')
-    timeoutRef.current = setTimeout(() => setStatus('sent'), 650)
+
+    try {
+      const response = await fetch(contact.formEndpoint, {
+        method: 'POST',
+        body,
+        headers: { Accept: 'application/json' },
+      })
+      if (!response.ok) throw new Error(`Formspree responded ${response.status}`)
+      successHaptic()
+      setStatus('sent')
+      form.reset()
+    } catch {
+      setStatus('error')
+    }
   }
 
   return (
@@ -124,13 +163,32 @@ export default function Contact() {
               />
             </div>
 
+            {/* Formspree's own fields: `_subject` names the notification
+                email, `_gotcha` is the honeypot it drops silently when a bot
+                fills it. Both are inert when no endpoint is set. */}
+            <input
+              type="hidden"
+              name="_subject"
+              value={`New message from ${site.name}'s portfolio`}
+            />
+            <input
+              type="text"
+              name="_gotcha"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
+
             <div className="mt-6">
               {/* Submit swaps label → spinner → check, fading 4px between
-                  states. Disabled while in flight so it can't double-fire. */}
+                  states. Disabled only while in flight and after success — a
+                  failure has to stay pressable so the message can be retried
+                  without retyping it. */}
               <button
                 type="submit"
-                disabled={status !== 'idle'}
-                className={`inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-text px-6 py-3 text-body-sm font-semibold text-bg ${CTA_HOVER} ${CTA_HOVER_FILL} disabled:hover:scale-100 disabled:hover:bg-text disabled:hover:text-bg`}
+                disabled={status === 'sending' || sent}
+                className={`w-full ${CTA_SHAPE} ${CTA_HOVER} border border-text bg-text text-bg ${CTA_HOVER_FILL_SOLID} disabled:hover:border-text disabled:hover:bg-text disabled:hover:text-bg`}
               >
                 {/* Keyed enter-only swap — the old label unmounts instantly,
                     the new one fades up. No exit animation, so the swap can
@@ -172,21 +230,36 @@ export default function Contact() {
                         Thanks!
                       </>
                     )}
+                    {failed && 'Try again'}
                 </motion.span>
               </button>
             </div>
 
-            {/* Polite, accessible confirmation — UI-only acknowledgement. */}
+            {/* Polite, accessible confirmation. A failure names the fallback
+                rather than leaving the message stranded in the textarea. */}
             <p
               role="status"
               aria-live="polite"
               className={`mt-4 text-body-sm font-normal text-text-muted ${
-                sent ? '' : 'sr-only'
+                sent || failed ? '' : 'sr-only'
               }`}
             >
-              {sent
-                ? 'Thanks — your message is ready to send. (Form is not yet wired to a backend.)'
-                : ''}
+              {sent &&
+                (wired
+                  ? "Thanks — your message is on its way. I'll come back to you."
+                  : 'Thanks — your message is ready to send. (The form is not yet connected, so nothing was delivered.)')}
+              {failed && (
+                <>
+                  That didn't send. Try again, or email me directly at{' '}
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="font-semibold text-text underline decoration-border underline-offset-4 transition-colors hover:decoration-text"
+                  >
+                    {contact.email}
+                  </a>
+                  .
+                </>
+              )}
             </p>
           </form>
         </motion.div>

@@ -99,7 +99,7 @@ export default function Lightbox({ figure, onClose }) {
                 disabled={zoom <= ZOOM_MIN}
                 data-cursor=""
                 aria-label="Zoom out"
-                className="rounded-full border border-dark-border px-3 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-dark-text"
+                className="rounded-full border border-dark-border px-3 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-dark-text hover:text-dark-bg focus-visible:outline-dark-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-dark-text"
               >
                 −
               </button>
@@ -112,7 +112,7 @@ export default function Lightbox({ figure, onClose }) {
                 disabled={zoom >= ZOOM_MAX}
                 data-cursor=""
                 aria-label="Zoom in"
-                className="rounded-full border border-dark-border px-3 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-dark-text"
+                className="rounded-full border border-dark-border px-3 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-dark-text hover:text-dark-bg focus-visible:outline-dark-text disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-dark-text"
               >
                 +
               </button>
@@ -121,7 +121,7 @@ export default function Lightbox({ figure, onClose }) {
                 type="button"
                 onClick={onClose}
                 data-cursor=""
-                className="ml-2 shrink-0 rounded-full border border-dark-border px-4 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-accent hover:text-text focus-visible:outline-dark-text"
+                className="ml-2 shrink-0 rounded-full border border-dark-border px-4 py-2 text-body-sm font-normal text-dark-text transition-colors duration-200 hover:bg-dark-text hover:text-dark-bg focus-visible:outline-dark-text"
               >
                 Close
               </button>

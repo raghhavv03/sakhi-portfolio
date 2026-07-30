@@ -2,12 +2,16 @@ import { Link, useLocation } from 'react-router-dom'
 import { site, contact, links, footer as footerCopy } from '../data/portfolio'
 import { useReducedMotion } from '../lib/hooks'
 import { tapHaptic } from '../lib/haptics'
-import { CTA_HOVER, CTA_HOVER_FILL } from '../lib/interactions'
-import Button from './Button'
+import { CTA_HOVER, CTA_HOVER_FILL, CTA_ICON } from '../lib/interactions'
 
 // Global footer — the centred sign-off band from the Figma frame: a hairline,
 // the sign-off, a row of round connect buttons, the copyright. Back to top is
 // this site's own addition and lives here for every route.
+//
+// It is a sign-off, not a section, so it does not take the page's section
+// rhythm: a full `py-section` band under a page that already ended reads as a
+// second empty screen. The résumé is not here either — the header already
+// carries it, and a footer is the wrong place to repeat a header action.
 //
 // Every button but "say hello" depends on a fact we may not have yet, so the
 // row is assembled rather than written out: no LinkedIn URL, no LinkedIn
@@ -60,7 +64,7 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-border bg-bg">
-      <div className="mx-auto flex max-w-content flex-col items-center px-6 py-section-sm text-center md:py-section-md lg:py-section">
+      <div className="mx-auto flex max-w-content flex-col items-center px-6 py-10 text-center md:py-12">
         <button
           type="button"
           onClick={scrollToTop}
@@ -70,41 +74,24 @@ export default function Footer() {
           <ArrowUpRightIcon className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0" />
         </button>
 
-        <h2 className="mt-8 max-w-2xl text-h2 font-semibold text-text">
+        <h2 className="mt-6 max-w-2xl text-h2 font-semibold text-text">
           {footerCopy.heading}
         </h2>
 
-        <p className="mt-4 max-w-lg text-body font-normal text-text-muted">
+        <p className="mt-3 max-w-lg text-body font-normal text-text-muted">
           {footerCopy.subtext}
         </p>
 
         <nav
           aria-label="Connect"
-          className="mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6"
+          className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
         >
           {connectLinks.map(({ key, ...item }) => (
             <ConnectButton key={key} {...item} />
           ))}
         </nav>
 
-        {/* The résumé has no glyph in the frame, and a hand-drawn one would be
-            a guess — so it keeps the site's own button instead of joining the
-            icon row. Absent until there is a PDF to point at. */}
-        {links.resume && (
-          <div className="mt-8">
-            <Button
-              variant="secondary"
-              href={links.resume}
-              target="_blank"
-              rel="noopener noreferrer"
-              cursorLabel="Open résumé"
-            >
-              Resume
-            </Button>
-          </div>
-        )}
-
-        <p className="mt-10 text-caption font-normal text-text-muted">
+        <p className="mt-8 text-caption font-normal text-text-muted">
           {site.copyright}
         </p>
       </div>
@@ -112,11 +99,9 @@ export default function Footer() {
   )
 }
 
-// A round hairline button carrying one glyph. Rests neutral, then takes the
-// same accent fill and the same small zoom as every other CTA on the site.
-const connectClass =
-  'inline-flex size-14 items-center justify-center rounded-full border border-border text-text ' +
-  `${CTA_HOVER} ${CTA_HOVER_FILL}`
+// A round hairline button carrying one glyph — the same 44px box, the same
+// ink fill and the same small zoom as every other CTA on the site.
+const connectClass = `${CTA_ICON} border border-border text-text ${CTA_HOVER} ${CTA_HOVER_FILL}`
 
 function ConnectButton({ label, href, to, external, cursorLabel, icon, onClick }) {
   const shared = {

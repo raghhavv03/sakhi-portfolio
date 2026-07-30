@@ -40,12 +40,10 @@ export default {
         'dark-muted': '#A1A1A1',
         'dark-border': '#2A2A2C',
 
-        // Accent — pastel blue. Its job is unchanged in dark mode: hover
-        // states only, never resting colour and never type. The value is
-        // deepened there so the light ink that lands on a hover fill keeps
-        // its contrast (a pastel fill under light type would not).
-        accent: themed('accent'),
-        'accent-hover': themed('accent-hover'),
+        // There is no accent colour. Every CTA hovers into `text` (or
+        // `text-muted`, for the pill that already rests on `text`), so the
+        // hover is the theme's own ink and the palette has no hue that only
+        // appears on hover. See src/lib/interactions.js.
 
         // Lamp amber — the hero lamp's own light, borrowed by the one place
         // that echoes it: the journey trail's milestone glow. The lamp in the

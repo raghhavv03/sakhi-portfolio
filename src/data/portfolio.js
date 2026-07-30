@@ -12,12 +12,13 @@
 // PREVIEW SWITCH — layout review only. DO NOT SHIP WITH THIS ON.
 //
 // Because the site hides an affordance until its fact is real, none of the
-// Resume / LinkedIn / Behance / email / shop controls can be *seen* while those
-// facts are outstanding — which makes their placement impossible to review.
-// This fills them with deliberately fake stand-ins so every button renders.
-// The `#` hrefs go nowhere and the address is on the reserved `example.com`
-// domain, on purpose: a plausible-looking invented URL is worse than an
+// Resume / Behance / shop controls can be *seen* while those facts are
+// outstanding — which makes their placement impossible to review. This fills
+// them with deliberately fake stand-ins so every button renders. The `#` hrefs
+// go nowhere on purpose: a plausible-looking invented URL is worse than an
 // obviously fake one, because it might belong to somebody.
+//
+// Email and LinkedIn are real now, so they no longer pass through this.
 //
 // Set to `false` and every one of them disappears again — the hiding logic
 // itself is untouched. Replace the real values below as they arrive, then
@@ -45,15 +46,19 @@ export const footer = {
 }
 
 export const contact = {
-  // Empty hides every mailto affordance. Real value goes here.
-  email: preview('', 'hello@example.com'),
+  email: 'sakhiiirana@gmail.com',
+  // Formspree form endpoint — https://formspree.io/f/<id>. Empty means the
+  // contact form stays UI-only: it still validates and acknowledges, and says
+  // so, rather than posting into nowhere. Paste the endpoint here and the same
+  // form starts delivering to the inbox above with no code change.
+  formEndpoint: '',
   invite:
     "Open to product design roles, freelance work, and the occasional interesting problem. Tell me what you're building and I'll come back to you.",
 }
 
 export const links = {
   resume: preview(''), // path to a PDF in /public — opens in a new tab for viewing
-  linkedin: preview(''),
+  linkedin: 'https://www.linkedin.com/in/sakhi-rana-717548212',
   behance: preview(''),
 }
 

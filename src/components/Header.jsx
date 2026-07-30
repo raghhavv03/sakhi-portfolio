@@ -190,7 +190,7 @@ export default function Header() {
           )}
           {links.linkedin && (
             <Button
-              variant="primary"
+              variant="secondary"
               href={links.linkedin}
               target="_blank"
               rel="noopener noreferrer"
