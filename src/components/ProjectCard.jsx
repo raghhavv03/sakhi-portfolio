@@ -53,16 +53,18 @@ export default function ProjectCard({ project, delay = 0 }) {
           />
         )}
 
-        {/* Scrim keeps the name legible over artwork without tinting it. */}
-        {project.thumbnail && (
-          <div
-            aria-hidden="true"
-            className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-bg/85 to-transparent"
-          />
-        )}
-
+        {/* No scrim. A thumbnail that carries its own flat field behind the
+            name says so with `nameInk`, and the name is set in that ink
+            instead — a fade over the artwork only washed the picture out to
+            buy contrast the artwork already had. */}
         <div className="absolute inset-0 flex items-end p-6 sm:p-7">
-          <span className="text-h2 font-semibold text-text">{project.name}</span>
+          <span
+            className={`text-h2 font-semibold ${
+              project.nameInk === 'on-brand' ? 'text-on-brand' : 'text-text'
+            }`}
+          >
+            {project.name}
+          </span>
         </div>
 
         {!isLive && (

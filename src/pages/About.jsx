@@ -81,7 +81,10 @@ function Background() {
   return (
     <section className="mt-section-sm md:mt-section-md lg:mt-section">
       {/* No badge. The frame gives this section one heading and nothing above
-          it, and "Background" over "Background" was ours, not hers. */}
+          it. The heading is "Background" rather than the frame's "Crochet
+          Curio" because the section is only half about the shop — the second
+          paragraph is how she works now — and the makes above it already say
+          whose they are. The button under it is what names the shop. */}
       <SectionHeader heading={heading} />
       <motion.div {...reveal} className="mt-8 max-w-3xl">
         {paragraphs.map((paragraph) => (

@@ -46,7 +46,7 @@ export const footer = {
 }
 
 export const contact = {
-  email: 'sakhiiirana@gmail.com',
+  email: 'sakhirana03@gmail.com',
   // Formspree form endpoint — https://formspree.io/f/<id>. Empty means the
   // contact form stays UI-only: it still validates and acknowledges, and says
   // so, rather than posting into nowhere. Paste the endpoint here and the same
@@ -143,6 +143,12 @@ export const projects = [
     description:
       'Taking the effort back out of food logging — restoring what a redesign removed, and removing the repetition the product never did.',
     thumbnail: '/images/myfitnesspal/thumbnail.webp',
+    // The thumbnail is the product's own brand blue edge to edge, so the name
+    // sits on it as inverse type rather than under a scrim. Same rule as the
+    // case study's blue hero band: `on-brand` is white in both themes because
+    // the fill under it does not change. Measured on the artwork's #0071FB:
+    // 4.4:1 — AA for the h2 size it is set at, in both themes.
+    nameInk: 'on-brand',
     status: 'live',
     caseStudy: {
       title: 'MyFitnessPal',
@@ -693,12 +699,14 @@ export const about = {
   ],
 
   background: {
-    heading: 'Crochet Curio',
+    heading: 'Background',
     paragraphs: [
       'I have a habit of diving headfirst into things that spark my curiosity. Crochet was one of them. What began as learning a few stitches eventually turned into a small online business where I designed and sold handmade accessories and clothing through (@crochetcurioo). It taught me that the most rewarding projects usually start with simply being willing to learn.',
       "I approach product design with that same curiosity. I'm always exploring new ideas, refining my thinking, and paying attention to the details that make experiences feel effortless. Outside of design, that curiosity finds its way into other parts of my life too. Right now, I'm learning German, working on my pickleball game, and probably adding another unexpected skill to the list.",
     ],
-    link: preview(''), // the shop's page — empty hides the Visit button
+    // The shop's own page — the Instagram the copy already names. Empty would
+    // hide the Visit button; it is real now, so it no longer needs `preview`.
+    link: 'https://www.instagram.com/crochetcurioo?igsh=MTY0MzNkcjRiaWhldg==',
   },
 
   educationHeading: 'Where I studied',

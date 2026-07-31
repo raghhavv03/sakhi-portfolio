@@ -161,6 +161,14 @@ src/
   focus-visible:ring-offset-2` everywhere. The lightbox is the one control set
   outside this, because it sits on the fixed dark band: it hovers to
   `dark-text` with `dark-bg` ink, the same rule in that band's fixed tokens.
+- **The contact form's submit runs that hover backwards, and it is the only
+  one.** It rests where every other CTA *hovers to* — `border-text bg-text
+  text-bg` — so the only move left inside the palette is the return trip:
+  `CTA_HOVER_UNFILL` empties it to `bg-transparent` + `text-text`, the outlined
+  rest state everything else starts from. Same two inks, same one mechanism,
+  read in reverse; measured on the form's `surface` card, 17.1:1 light / 14.0:1
+  dark. It is not `CTA_HOVER_FILL_SOLID` any more — softening a filled pill to
+  `text-muted` was a third value where the palette only has two.
 - **The header's LinkedIn and Resume pills are the exact same control.** Both
   render `Button` with `variant="secondary"` — same rest colour, same hover
   fill, same everything. `Button`'s `primary` variant (solid ink fill) still
@@ -179,24 +187,28 @@ src/
 - **Nothing is painted over the hero lamp.** No halo, no hover ring, no
   caption pointing it out. The glow in dark mode is the artwork's own, and the
   cursor label is how the lamp announces itself.
-- **The hero wash is measured, not eyeballed, and it is deliberately partial.**
-  Two frames painted in two lights already do most of the work — the day room's
-  wall is cream, the night room's near-black, so `text` / `text-muted` land the
-  right way round on their own. The gradient only has to carry the copy across
-  the potted plant and the shadowed wall it crosses, so it tops out at 85% and
-  **clears completely by 70% of the width**: the lamp, the shelf and the whole
-  right side of the picture are untouched. At those values the heading holds
-  7.6:1 and the paragraph 4.6:1 at their *worst* pixel, with no part of either
-  box under 4.5:1. If you move the hero copy or reshape the wash, re-measure —
-  draw the live frame to a canvas, composite the gradient's alpha at each x, and
-  check the boxes the copy actually occupies. Do not just make the gradient
-  darker until it looks fine; that is what washes the picture out. Confining it
-  to the left 58% was tried and *hurt*: the paragraph's right end reaches 46%.
+- **There is no hero wash. The hero copy speaks from a card.** The artwork is
+  shown as painted, edge to edge — no gradient, no scrim, nothing dimmed — and
+  the copy sits in a speech bubble built from the site's own tokens (`surface`
+  fill, `border` hairline, 28px radius, a rotated-square tail at bottom-left).
+  Because the card is opaque, contrast is the token pairing and nothing else:
+  `text` on `surface` is 17.1:1 light / 14.0:1 dark, `text-muted` 9.5:1 / 8.0:1.
+  That is the point of the change — the old wash bought its contrast by washing
+  the picture out, and had to be re-measured pixel by pixel every time the copy
+  moved. **Do not reintroduce a gradient over the artwork to "help" the copy.**
+  If the copy needs help, it belongs inside the card. The card overlays the wall
+  on desktop; on mobile it lifts up over the bottom of the frame (`-mt-20`), so
+  the artwork is never cut by a hard edge against the page.
+- **The hero art stays cropped the way it is on mobile.** The scene is
+  `h-[62svh]` with the copy below it, not full-bleed: at a phone's aspect ratio
+  a full-height `object-cover` of a 16:9 frame keeps only a sliver of the right
+  edge. The reference mock shows the bubble over a full-height photo; that is
+  the one part of it not to copy.
 - **The header keeps a frosted bar even over the hero.** The nav sits over the
   *window*, where the sky is 0.9 luminance and the tree canopy 0.08 — no single
-  ink survives both, and the wash cannot reach that far right without covering
-  the part of the artwork worth showing. Measured without the bar, "Contact"
-  has ~11% of its box under 4.5:1; with it, every nav item clears 6.9:1.
+  ink survives both, and nothing else is painted over the artwork any more.
+  Measured without the bar, "Contact" has ~11% of its box under 4.5:1; with it,
+  every nav item clears 6.9:1.
 - **The cursor pill is the site's ink inverted** — `bg-text` with `text-bg`, the
   same pairing the primary button uses, so it flips with the theme and reads as
   part of the page — the same pairing every outlined CTA now hovers into. It is
@@ -265,6 +277,24 @@ src/
   `casestudy/ScaleToFit` scales both panels as a unit below their natural width.
 - **Prototype screens are shown as-designed and must not be restyled** — they
   are the deliverable.
+- **The lightbox pans by transform, never by scroll.** Past the fit the image
+  keeps its fitted layout size and is moved with `translate3d(…) scale(z)`,
+  clamped to half the overhang on each axis. It used to be an `overflow-auto`
+  box that grew the image's pixel width, and that box **cannot reach the
+  overflow above and to the left of centre in any browser** — centring a
+  scroll container's content clips that side away. That was the "zoomed in and
+  can't move" bug; do not put it back. One pointer pans, two pinch, and the
+  frame is `touch-none` so the browser doesn't claim the drag as a page scroll.
+  `setPointerCapture` is wrapped in a `try` — it is the nicety that keeps a
+  fast drag alive past the frame edge, not the mechanism.
+- **A card whose artwork carries its own flat field names its ink, not a
+  scrim.** `ProjectCard` no longer fades the bottom of a thumbnail to `bg` to
+  make the project name readable — that dimmed the artwork to buy contrast the
+  artwork already had. A thumbnail like MyFitnessPal's, which is the product's
+  brand blue edge to edge, sets `nameInk: 'on-brand'` in `portfolio.js` and the
+  name is set in that fixed white instead (4.4:1 on the artwork's #0071FB, AA
+  at the `h2` size, in both themes). No `nameInk` means the name stays
+  `text-text`.
 - Every image needs explicit `width`/`height` and `alt`. Below-the-fold images
   lazy-load.
 - **A stacked photo card must not move out from under the pointer.** In
@@ -298,30 +328,28 @@ src/
 ## Open work
 
 **Turn this off before launch:**
-- `PREVIEW_UNPUBLISHED` in `portfolio.js` is `true`, which is why Resume,
-  Behance and "Visit Crochet Curio" are all visible right now. They are dead
-  `#` hrefs, on for layout review only. Setting it to `false` restores the
-  empty-means-hidden behaviour; supplying the real values below makes the
-  switch irrelevant. Email and LinkedIn are real and no longer go through it.
+- `PREVIEW_UNPUBLISHED` in `portfolio.js` is `true`, which is why Resume and
+  Behance are visible right now. They are dead `#` hrefs, on for layout review
+  only. Setting it to `false` restores the empty-means-hidden behaviour;
+  supplying the real values below makes the switch irrelevant. Email, LinkedIn
+  and the Crochet Curio link are real and no longer go through it.
 
 **Needs one paste, then the form delivers:**
 - `contact.formEndpoint` in `portfolio.js` is empty, so the contact form is
-  still UI-only. Create a Formspree form pointed at `sakhiiirana@gmail.com`,
+  still UI-only. Create a Formspree form pointed at `sakhirana03@gmail.com`,
   confirm the address in the email Formspree sends, and paste the
   `https://formspree.io/f/<id>` URL in. Both branches of the submit are already
   built and tested — nothing else changes.
 
 **Blocked on facts only Sakhi has:**
 - `links.behance` in `portfolio.js`. (`contact.email` and `links.linkedin` are
-  in — `sakhiiirana@gmail.com` and the `sakhi-rana-717548212` profile.)
+  in — `sakhirana03@gmail.com` and the `sakhi-rana-717548212` profile, and
+  `about.background.link` is the `@crochetcurioo` Instagram.)
 - `resume.pdf` into `public/`, then `links.resume = '/resume.pdf'`.
 - `about.education` entries — `{ institution, qualification, years }`. The
   About copy already says "an MBA in Marketing, 2025", so the institution is
   the only missing fact.
 - Case-study `meta` has no timeline; the source PDF's Timeline field was blank.
-- `about.background.link` — the Crochet Curio shop URL. The copy names
-  `@crochetcurioo` but nothing links to it, and inventing the URL is not ours
-  to do. Fills the "Visit Crochet Curio" button.
 - Two of the three cats and two of the four trip photos have an empty
   `caption`, so those cards never name themselves. Fine as-is; better with her
   words.
@@ -348,15 +376,18 @@ src/
   because a tab icon cannot read `currentColor` or a CSS variable. Two copies of
   the same paths is the cost of that; if the mark changes, change both.
 - `DUR.tap` is dead now — harmless, but it can go with the next tidy.
-  (`Button`'s unused `dark` variant is already gone.)
+  (`Button`'s unused `dark` variant is already gone.) `CTA_HOVER_FILL_SOLID` is
+  now reachable only through `Button`'s `primary` variant, which nothing
+  renders; both go together or neither does.
 
 **Copy that is a first draft, not Sakhi's own words:** `site.bio`,
 `hero.opening`, `contact.invite`, and the whole `journey` block — its four
 chapters are written from the Stitch frame's outline (crochet → shop → MBA →
 UX), so the dates, the order and the wording all need her confirmation. **The
 entire `about` block and `footer` are hers**, lifted verbatim from the Figma
-file; the only strings on that page we wrote are the "About me" badge and the
-image `alt` text.
+file; the only strings on that page we wrote are the "About me" badge, the
+"Background" heading (the frame's own was "Crochet Curio") and the image `alt`
+text.
 
 ---
 
@@ -364,6 +395,43 @@ image `alt` text.
 
 Newest first, one entry per session — what shipped, and only what a later
 session could not read off the code.
+
+### 2026-08-01 — nothing is dimmed to make type readable any more
+Three separate fades came out on the same principle: a gradient over artwork is
+paying for legibility with the picture. The hero wash is gone — the copy now
+sits in an opaque speech-bubble card (`surface` + `border` + a rotated-square
+tail), so its contrast is a token pairing rather than a per-pixel measurement,
+and the room is shown as painted in both lights. The project card's bottom
+scrim is gone — a thumbnail that carries its own flat field declares
+`nameInk: 'on-brand'` and the name is set in that white instead, and the
+MyFitnessPal thumbnail was re-exported from a wider master with more blue
+around the phones so the name lands on the field, not on a device. The contact
+form's submit now hovers *out* (`CTA_HOVER_UNFILL`) rather than softening to
+`text-muted`: it already rests where the other CTAs hover to, so the return
+trip is the only move left inside a two-ink palette.
+
+The lightbox's pan was rebuilt on transforms. The old viewer grew the image's
+pixel width inside a centred `overflow-auto` box, which is unpannable above and
+left of centre in every browser — that was the "zoomed to 200% and stuck" bug.
+It now translates and scales a fitted image, clamped to the overhang, with
+one-pointer drag and two-pointer pinch over a `touch-none` frame.
+
+- **Verified** on the dev server: dragged the teardown board at 200% and read
+  the transform clamp at exactly half the overhang (−214.5px on a 429px frame);
+  pinched 80px → 160px and watched it land on 200%, then lifted one finger and
+  confirmed the pan continues from the remaining pointer; confirmed a drag
+  released outside the frame no longer closes the viewer. Read the submit's
+  live class list, the two `mailto:` hrefs, the About heading and the Crochet
+  Curio href off the page. Screenshotted the hero in both themes and the work
+  card. `npm run lint` and `npm run build` clean.
+- **Files touched:** `pages/Home.jsx`, `pages/Contact.jsx`, `pages/About.jsx`,
+  `components/Lightbox.jsx`, `components/ProjectCard.jsx`,
+  `lib/interactions.js`, `data/portfolio.js`,
+  `public/images/myfitnesspal/thumbnail.webp` + `assets/mfp-thumbnail.png`,
+  `CLAUDE.md`.
+- **Facts that landed:** `contact.email` is `sakhirana03@gmail.com`;
+  `about.background.link` is the `@crochetcurioo` Instagram; the About
+  background heading is "Background", not the frame's "Crochet Curio".
 
 ### 2026-07-30 — CTA hover loses its zoom, LinkedIn becomes Resume's twin
 The zoom (`hover:scale-[1.03]`, `active:scale-[0.98]`) came out of `CTA_HOVER`

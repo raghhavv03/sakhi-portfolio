@@ -35,34 +35,54 @@ export default function Home() {
         data-cursor="Scroll ↓"
         className="relative -mt-20 overflow-hidden md:min-h-[100svh]"
       >
+        {/* No wash. The artwork is shown as painted, edge to edge — the copy
+            no longer needs the picture to be dimmed, because it now sits on a
+            surface of its own. */}
         <div className="relative md:absolute md:inset-0">
           <HeroScene className="h-[62svh] min-h-[300px] w-full md:h-full" />
-          {/* Legibility wash — as thin as the numbers allow, and no wider than
-              the copy. The two frames already do most of the work (the day
-              room's wall is cream, the night room's near-black, so both inks
-              land the right way round on their own); this only has to carry the
-              copy across the potted plant and the shadowed wall it crosses.
-              So it never reaches full opacity, and it clears completely by 70%
-              — the lamp, the shelf and the whole right side of the picture are
-              untouched, and the window behind the copy keeps three-quarters of
-              its detail. Measured against the rendered frame, the heading holds
-              7.6:1 and the paragraph 4.6:1 at their *worst* pixel, with none of
-              either box under 4.5:1. Bottom-up on mobile (copy sits below the
-              art), left-to-right on desktop (copy sits on the wall). */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-bg/10 to-bg/80 md:bg-gradient-to-r md:from-bg/85 md:via-bg/60 md:via-45% md:to-transparent md:to-70%"
-          />
         </div>
 
-        <div className="relative mx-auto flex max-w-content items-center px-6 pb-section-sm pt-8 md:min-h-[100svh] md:pb-0 md:pt-20">
-          <div className="md:w-[52%] lg:w-[46%]">
-            <h1 className="text-display font-semibold text-text">
-              {hero.name}
-            </h1>
-            <p className="mt-6 max-w-md text-lead font-normal text-text-muted">
-              {hero.opening}
-            </p>
+        {/* The copy speaks from a card — the site's own `surface`, hairline and
+            radius, with a tail, so the hero reads as the room saying hello
+            rather than as type dropped on a photograph. Being opaque is the
+            whole point: contrast is the token pairing (`text` / `text-muted`
+            on `surface`, 17.1:1 and 9.5:1 light, 14.0:1 and 8.0:1 dark), not a
+            measurement of whatever pixel of the painting sits behind it.
+            On desktop it floats over the wall; on mobile it lifts up over the
+            bottom of the frame, so the artwork is never cut by a hard edge. */}
+        <div className="relative mx-auto -mt-20 flex max-w-content items-center px-6 pb-section-sm pt-0 md:mt-0 md:min-h-[100svh] md:pb-0 md:pt-20">
+          <div className="md:w-[54%] lg:w-[48%]">
+            <div className="relative max-w-[34rem] rounded-[28px] border border-border bg-surface p-6 shadow-[0_24px_56px_-24px_rgb(var(--shadow)/0.35)] sm:p-8">
+              <h1 className="text-display font-semibold text-text">
+                {hero.name}
+              </h1>
+              <hr className="my-5 border-0 border-t border-border" />
+              <p className="text-lead font-normal text-text-muted">
+                {hero.opening}
+              </p>
+              {/* The sign-off the frame draws in the corner of the bubble.
+                  Decorative — it says nothing the copy doesn't. */}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="mt-5 ml-auto block h-6 w-6 text-text-muted"
+              >
+                <path
+                  d="M12 20.5s-7.5-4.6-7.5-9.7A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 3.2c0 5.1-7.5 9.7-7.5 9.7Z"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              {/* The tail. A rotated square in the same fill, half of it under
+                  the card so only the two outer edges keep their hairline. */}
+              <span
+                aria-hidden="true"
+                className="absolute -bottom-3 left-9 h-6 w-6 rotate-45 border-b border-r border-border bg-surface"
+              />
+            </div>
           </div>
         </div>
       </section>

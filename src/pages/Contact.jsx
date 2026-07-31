@@ -5,7 +5,7 @@ import { useReducedMotion, useReveal } from '../lib/hooks'
 import { successHaptic } from '../lib/haptics'
 import {
   CTA_HOVER,
-  CTA_HOVER_FILL_SOLID,
+  CTA_HOVER_UNFILL,
   CTA_SHAPE,
 } from '../lib/interactions'
 import Badge from '../components/Badge'
@@ -184,11 +184,15 @@ export default function Contact() {
               {/* Submit swaps label → spinner → check, fading 4px between
                   states. Disabled only while in flight and after success — a
                   failure has to stay pressable so the message can be retried
-                  without retyping it. */}
+                  without retyping it.
+
+                  It is the one CTA on the site that runs the hover backwards:
+                  it rests filled — exactly where every other CTA hovers to —
+                  and hovers *out* to their outlined rest state. */}
               <button
                 type="submit"
                 disabled={status === 'sending' || sent}
-                className={`w-full ${CTA_SHAPE} ${CTA_HOVER} border border-text bg-text text-bg ${CTA_HOVER_FILL_SOLID} disabled:hover:border-text disabled:hover:bg-text disabled:hover:text-bg`}
+                className={`w-full ${CTA_SHAPE} ${CTA_HOVER} border border-text bg-text text-bg ${CTA_HOVER_UNFILL} disabled:hover:border-text disabled:hover:bg-text disabled:hover:text-bg`}
               >
                 {/* Keyed enter-only swap — the old label unmounts instantly,
                     the new one fades up. No exit animation, so the swap can

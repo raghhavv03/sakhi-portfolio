@@ -42,3 +42,14 @@ export const CTA_HOVER_FILL =
 // of travel, still no new hue. Measured: 8.9:1 light, 8.8:1 dark.
 export const CTA_HOVER_FILL_SOLID =
   'hover:border-text-muted hover:bg-text-muted hover:text-bg'
+
+// The contact form's submit runs the same pairing backwards. It *rests* where
+// every other CTA hovers — filled with `text`, label in `bg` — so the only
+// move left that stays inside the palette is the return trip: hover empties it
+// back to the outlined state the rest of the site rests at. Same two inks, one
+// mechanism, read in reverse.
+//
+// Measured on the hovered (outlined) state over the form's `surface` card:
+// 17.1:1 light, 14.0:1 dark.
+export const CTA_HOVER_UNFILL =
+  'hover:border-text hover:bg-transparent hover:text-text'
