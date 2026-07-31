@@ -53,10 +53,11 @@ export default function ProjectCard({ project, delay = 0 }) {
           />
         )}
 
-        {/* No scrim. A thumbnail that carries its own flat field behind the
-            name says so with `nameInk`, and the name is set in that ink
-            instead — a fade over the artwork only washed the picture out to
-            buy contrast the artwork already had. */}
+        {/* No scrim. The name is the site's heading ink — same `text-text`
+            every other heading uses — so the card does not invent a third
+            colour just because the artwork is saturated. Optional
+            `nameInk: 'on-brand'` still flips to inverse white for a future
+            card that needs it; nothing uses that today. */}
         <div className="absolute inset-0 flex items-end p-6 sm:p-7">
           <span
             className={`text-h2 font-semibold ${

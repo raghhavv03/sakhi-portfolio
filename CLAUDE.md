@@ -187,18 +187,20 @@ src/
 - **Nothing is painted over the hero lamp.** No halo, no hover ring, no
   caption pointing it out. The glow in dark mode is the artwork's own, and the
   cursor label is how the lamp announces itself.
-- **There is no hero wash. The hero copy speaks from a card.** The artwork is
-  shown as painted, edge to edge — no gradient, no scrim, nothing dimmed — and
-  the copy sits in a speech bubble built from the site's own tokens (`surface`
-  fill, `border` hairline, 28px radius, a rotated-square tail at bottom-left).
-  Because the card is opaque, contrast is the token pairing and nothing else:
-  `text` on `surface` is 17.1:1 light / 14.0:1 dark, `text-muted` 9.5:1 / 8.0:1.
-  That is the point of the change — the old wash bought its contrast by washing
-  the picture out, and had to be re-measured pixel by pixel every time the copy
-  moved. **Do not reintroduce a gradient over the artwork to "help" the copy.**
-  If the copy needs help, it belongs inside the card. The card overlays the wall
-  on desktop; on mobile it lifts up over the bottom of the frame (`-mt-20`), so
-  the artwork is never cut by a hard edge against the page.
+- **There is no hero wash. The hero copy sits on a frosted card.** The
+  artwork is shown as painted, edge to edge — no gradient, no scrim, nothing
+  dimmed — and the copy sits on a card that uses the **same fill as the
+  header over this scene**: `bg-bg/70 backdrop-blur-md`, plus a `border`
+  hairline and `rounded-2xl`. No speech-bubble tail — just a rounded card.
+  Matching the nav keeps one frosted material over the artwork rather than a
+  second opaque surface. Type is still the two site inks (`text` /
+  `text-muted`). The card is sized one step under the case-study banner —
+  `h1` + `body`, `max-w-[26rem]`, `p-5 sm:p-6` — so the room stays the hero
+  and the greeting does not billboard. **Do not reintroduce a gradient over
+  the artwork to "help" the copy.** If the copy needs help, it belongs inside
+  the card. The card overlays the wall on desktop; on mobile it lifts up over
+  the bottom of the frame (`-mt-20`), so the artwork is never cut by a hard
+  edge against the page.
 - **The hero art stays cropped the way it is on mobile.** The scene is
   `h-[62svh]` with the copy below it, not full-bleed: at a phone's aspect ratio
   a full-height `object-cover` of a 16:9 frame keeps only a sliver of the right
@@ -287,14 +289,12 @@ src/
   frame is `touch-none` so the browser doesn't claim the drag as a page scroll.
   `setPointerCapture` is wrapped in a `try` — it is the nicety that keeps a
   fast drag alive past the frame edge, not the mechanism.
-- **A card whose artwork carries its own flat field names its ink, not a
-  scrim.** `ProjectCard` no longer fades the bottom of a thumbnail to `bg` to
-  make the project name readable — that dimmed the artwork to buy contrast the
-  artwork already had. A thumbnail like MyFitnessPal's, which is the product's
-  brand blue edge to edge, sets `nameInk: 'on-brand'` in `portfolio.js` and the
-  name is set in that fixed white instead (4.4:1 on the artwork's #0071FB, AA
-  at the `h2` size, in both themes). No `nameInk` means the name stays
-  `text-text`.
+- **A project name on a thumbnail uses the site's heading ink.** `ProjectCard`
+  no longer fades the bottom of a thumbnail to `bg` to make the name readable,
+  and MyFitnessPal no longer flips to inverse white either — the name is
+  `text-text` like every other heading. Optional `nameInk: 'on-brand'` still
+  exists for a future card that needs inverse type on a saturated field; nothing
+  sets it today.
 - Every image needs explicit `width`/`height` and `alt`. Below-the-fold images
   lazy-load.
 - **A stacked photo card must not move out from under the pointer.** In
@@ -395,6 +395,24 @@ text.
 
 Newest first, one entry per session — what shipped, and only what a later
 session could not read off the code.
+
+### 2026-08-01 — hero bubble matches the nav; work card name is site ink
+Three follow-ups on the "nothing is dimmed" pass. The MyFitnessPal work-card
+name drops `nameInk: 'on-brand'` and uses `text-text` like every other heading
+(black in day mode, warm off-white in night). The home hero card stops being
+an opaque `surface` panel and takes the header's own frosted recipe over this
+artwork — `bg-bg/70 backdrop-blur-md` — so the nav and the greeting read as one
+material. No speech-bubble tail. The card also steps down a size: `h1` +
+`body` instead of `display` + `lead`, `max-w-[26rem]`, `p-5 sm:p-6`,
+`rounded-2xl`, narrower column — still on the shared type scale and card
+padding, just not billboard-sized. Case-study banner keeps `display` / `lead`
+/ `on-brand` on the blue band.
+
+- **Verified** with `npm run lint` and `npm run build` clean. Day-mode name
+  ink on the thumbnail blue measures 3.87:1 (AA large at `h2`).
+- **Files touched:** `pages/Home.jsx`, `components/ProjectCard.jsx`,
+  `data/portfolio.js`, `pages/CaseStudy.jsx` (comment), `tailwind.config.js`
+  (display/h1 comments), `CLAUDE.md`.
 
 ### 2026-08-01 — nothing is dimmed to make type readable any more
 Three separate fades came out on the same principle: a gradient over artwork is

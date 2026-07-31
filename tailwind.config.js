@@ -125,11 +125,11 @@ export default {
         display: [
           'clamp(2.75rem, 8vw, 4.5rem)',
           { lineHeight: '0.95', letterSpacing: '-0.02em' },
-        ], // hero — home + case-study banner
+        ], // case-study banner only — home hero uses h1
         h1: [
           'clamp(2rem, 4.5vw, 3rem)',
           { lineHeight: '1.2', letterSpacing: '-0.02em' },
-        ], // page title
+        ], // page title + home hero name
         h2: [
           'clamp(1.75rem, 3vw, 2rem)',
           { lineHeight: '1.3', letterSpacing: '-0.02em' },

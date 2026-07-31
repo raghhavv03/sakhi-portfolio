@@ -296,9 +296,9 @@ function Step({ index, body }) {
 // title and tagline centred over it. Hides itself without an image so an
 // unfinished project never ships a bare colour band.
 //
-// **Colour exception**: type on a coloured band inverts to `surface`. Sizes
-// are still the shared `display` / `lead` tokens, so this hero and the home
-// hero set at exactly the same scale.
+// **Colour exception**: type on a coloured band inverts to `on-brand`.
+// Sizes stay on the shared `display` / `lead` tokens — the home hero is a
+// step smaller (`h1` / `body`) so the room, not the greeting, leads.
 function CaseStudyHero({ hero, title, tagline }) {
   const reveal = useReveal()
   if (!hero?.image?.src) return null

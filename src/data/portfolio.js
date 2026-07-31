@@ -143,12 +143,9 @@ export const projects = [
     description:
       'Taking the effort back out of food logging — restoring what a redesign removed, and removing the repetition the product never did.',
     thumbnail: '/images/myfitnesspal/thumbnail.webp',
-    // The thumbnail is the product's own brand blue edge to edge, so the name
-    // sits on it as inverse type rather than under a scrim. Same rule as the
-    // case study's blue hero band: `on-brand` is white in both themes because
-    // the fill under it does not change. Measured on the artwork's #0071FB:
-    // 4.4:1 — AA for the h2 size it is set at, in both themes.
-    nameInk: 'on-brand',
+    // Name uses the site's heading ink (`text-text`) — same as every other
+    // heading — rather than inverse white. The blue field stays; the type
+    // does not invent a third colour for this one card.
     status: 'live',
     caseStudy: {
       title: 'MyFitnessPal',

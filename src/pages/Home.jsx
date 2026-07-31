@@ -36,37 +36,35 @@ export default function Home() {
         className="relative -mt-20 overflow-hidden md:min-h-[100svh]"
       >
         {/* No wash. The artwork is shown as painted, edge to edge — the copy
-            no longer needs the picture to be dimmed, because it now sits on a
-            surface of its own. */}
+            sits on the same frosted `bg` the header uses over this scene. */}
         <div className="relative md:absolute md:inset-0">
           <HeroScene className="h-[62svh] min-h-[300px] w-full md:h-full" />
         </div>
 
-        {/* The copy speaks from a card — the site's own `surface`, hairline and
-            radius, with a tail, so the hero reads as the room saying hello
-            rather than as type dropped on a photograph. Being opaque is the
-            whole point: contrast is the token pairing (`text` / `text-muted`
-            on `surface`, 17.1:1 and 9.5:1 light, 14.0:1 and 8.0:1 dark), not a
-            measurement of whatever pixel of the painting sits behind it.
-            On desktop it floats over the wall; on mobile it lifts up over the
-            bottom of the frame, so the artwork is never cut by a hard edge. */}
+        {/* The copy sits on a frosted card — the same `bg-bg/70
+            backdrop-blur-md` recipe the header uses over this artwork — so
+            the two bands read as one material. Hairline border only; no
+            speech-bubble tail. Sized one step under the display/lead pair
+            (`h1` + `body`) so the room stays the hero and the card stays a
+            greeting, not a billboard. On desktop it floats over the wall; on
+            mobile it lifts up over the bottom of the frame, so the artwork
+            is never cut by a hard edge. */}
         <div className="relative mx-auto -mt-20 flex max-w-content items-center px-6 pb-section-sm pt-0 md:mt-0 md:min-h-[100svh] md:pb-0 md:pt-20">
-          <div className="md:w-[54%] lg:w-[48%]">
-            <div className="relative max-w-[34rem] rounded-[28px] border border-border bg-surface p-6 shadow-[0_24px_56px_-24px_rgb(var(--shadow)/0.35)] sm:p-8">
-              <h1 className="text-display font-semibold text-text">
+          <div className="md:w-[40%] lg:w-[36%]">
+            <div className="max-w-[26rem] rounded-2xl border border-border bg-bg/70 p-5 backdrop-blur-md sm:p-6">
+              <h1 className="text-h1 font-semibold text-text">
                 {hero.name}
               </h1>
-              <hr className="my-5 border-0 border-t border-border" />
-              <p className="text-lead font-normal text-text-muted">
+              <hr className="my-4 border-0 border-t border-border" />
+              <p className="text-body font-normal text-text-muted">
                 {hero.opening}
               </p>
-              {/* The sign-off the frame draws in the corner of the bubble.
-                  Decorative — it says nothing the copy doesn't. */}
+              {/* Decorative sign-off — it says nothing the copy doesn't. */}
               <svg
                 aria-hidden="true"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="mt-5 ml-auto block h-6 w-6 text-text-muted"
+                className="mt-4 ml-auto block h-5 w-5 text-text-muted"
               >
                 <path
                   d="M12 20.5s-7.5-4.6-7.5-9.7A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 3.2c0 5.1-7.5 9.7-7.5 9.7Z"
@@ -76,12 +74,6 @@ export default function Home() {
                   strokeLinejoin="round"
                 />
               </svg>
-              {/* The tail. A rotated square in the same fill, half of it under
-                  the card so only the two outer edges keep their hairline. */}
-              <span
-                aria-hidden="true"
-                className="absolute -bottom-3 left-9 h-6 w-6 rotate-45 border-b border-r border-border bg-surface"
-              />
             </div>
           </div>
         </div>
