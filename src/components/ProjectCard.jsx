@@ -54,16 +54,9 @@ export default function ProjectCard({ project, delay = 0 }) {
         )}
 
         {/* No scrim. The name is the site's heading ink — same `text-text`
-            every other heading uses — so the card does not invent a third
-            colour just because the artwork is saturated. Optional
-            `nameInk: 'on-brand'` still flips to inverse white for a future
-            card that needs it; nothing uses that today. */}
+            every other heading uses. */}
         <div className="absolute inset-0 flex items-end p-6 sm:p-7">
-          <span
-            className={`text-h2 font-semibold ${
-              project.nameInk === 'on-brand' ? 'text-on-brand' : 'text-text'
-            }`}
-          >
+          <span className="text-h2 font-semibold text-text">
             {project.name}
           </span>
         </div>

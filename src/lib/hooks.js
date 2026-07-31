@@ -74,39 +74,3 @@ export function useInViewOnce(ref) {
 
   return reducedMotion || seen
 }
-
-// Id of the section currently being read, for the case-study contents rail.
-// Sections are taller than the viewport, so "in view" is decided by a band near
-// the top rather than by intersection ratio — the last heading to cross that
-// band is the one you're reading.
-export function useActiveSection(ids) {
-  const [active, setActive] = useState(ids[0] ?? null)
-  const key = ids.join('|')
-
-  useEffect(() => {
-    const sections = key
-      .split('|')
-      .map((id) => document.getElementById(id))
-      .filter(Boolean)
-    if (!sections.length) return
-
-    const onScroll = () => {
-      const band = window.innerHeight * 0.3
-      let current = sections[0].id
-      for (const section of sections) {
-        if (section.getBoundingClientRect().top <= band) current = section.id
-      }
-      setActive(current)
-    }
-
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
-  }, [key])
-
-  return active
-}

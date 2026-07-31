@@ -27,29 +27,14 @@ export const CTA_SHAPE =
 export const CTA_ICON =
   'inline-flex size-11 shrink-0 items-center justify-center rounded-full'
 
-// ── The hover paint. It is the theme's own ink, not a third colour: an
-//    outlined control fills with `text` and flips its label to `bg`, which is
-//    exactly the pairing the primary pill and the cursor pill already rest at.
-//    So the hover follows the theme without a single `dark:` class, and the
-//    site never grows a hover hue that only exists on hover.
-//
-//    Measured on the hovered fill: 16.3:1 light, 15.3:1 dark.
+// Outlined control fills with `text` and flips its label to `bg` on hover —
+// the theme's own ink, not a third colour. Measured: 16.3:1 light, 15.3:1 dark.
 export const CTA_HOVER_FILL =
   'hover:border-text hover:bg-text hover:text-bg'
 
-// The filled pill already rests on that pairing, so it cannot hover *to* it.
-// It softens to the body ink instead — same two-colour palette, same direction
-// of travel, still no new hue. Measured: 8.9:1 light, 8.8:1 dark.
-export const CTA_HOVER_FILL_SOLID =
-  'hover:border-text-muted hover:bg-text-muted hover:text-bg'
-
-// The contact form's submit runs the same pairing backwards. It *rests* where
-// every other CTA hovers — filled with `text`, label in `bg` — so the only
-// move left that stays inside the palette is the return trip: hover empties it
-// back to the outlined state the rest of the site rests at. Same two inks, one
-// mechanism, read in reverse.
-//
-// Measured on the hovered (outlined) state over the form's `surface` card:
-// 17.1:1 light, 14.0:1 dark.
+// The contact form's submit runs the same pairing backwards. It rests where
+// every other CTA hovers — filled with `text`, label in `bg` — so hover
+// empties it back to the outlined rest state. Measured on the form's
+// `surface` card: 17.1:1 light, 14.0:1 dark.
 export const CTA_HOVER_UNFILL =
   'hover:border-text hover:bg-transparent hover:text-text'

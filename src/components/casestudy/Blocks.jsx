@@ -15,9 +15,8 @@ import Badge from '../Badge'
 // where they appear: the blue framing question (CSQuote) and the two research
 // panels' data hues.
 
-// Inline emphasis for case-study prose — the same treatment `RichText`'s
-// `Rich` gives the rest of the site: Semibold, lifted to the heading ink so
-// the emphasis reads against the muted paragraph around it.
+// Inline emphasis for case-study prose: **double asterisks** become
+// semibold heading ink so the emphasis reads against the muted paragraph.
 export function CSRich({ children }) {
   if (typeof children !== 'string') return children
   return children.split(/\*\*(.+?)\*\*/g).map((part, i) =>

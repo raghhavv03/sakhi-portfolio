@@ -135,7 +135,7 @@ export const work = {
 //
 // A `caseStudy` is a sequence of named sections rendered by CaseStudy.jsx.
 // Prose is written as an array of paragraphs; **double asterisks** mark the
-// only inline emphasis the renderer understands (see RichText.jsx).
+// only inline emphasis the renderer understands (see CSRich in Blocks.jsx).
 export const projects = [
   {
     slug: 'myfitnesspal',

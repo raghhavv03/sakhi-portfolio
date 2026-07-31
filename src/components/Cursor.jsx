@@ -190,7 +190,7 @@ export default function Cursor() {
         style={{ x: ringX, y: ringY, opacity: visible && expanded ? 1 : 0 }}
       >
         {/* The pill is the site's own ink inverted — `bg-text` with `text-bg`,
-            the same pairing the primary button uses. It reads as part of the
+            the same pairing outlined CTAs hover into. It reads as part of the
             theme in both modes and flips with it, where the pastel accent read
             as a fifth colour dropped on top of the page. The fill is a class
             rather than a Framer value because there is nothing to interpolate
