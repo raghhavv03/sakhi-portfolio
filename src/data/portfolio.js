@@ -53,7 +53,7 @@ export const contact = {
   // form starts delivering to the inbox above with no code change.
   formEndpoint: 'https://formspree.io/f/xlgqyjlr',
   invite:
-    "Open to product design roles, freelance work, and the occasional interesting problem. Tell me what you're building and I'll come back to you.",
+    "Open to product design roles, collaborations, and meaningful conversations. Tell me what you're building, and I'll get back to you.",
 }
 
 export const links = {
@@ -69,9 +69,9 @@ export const nav = [
 ]
 
 export const hero = {
-  name: 'Sakhi Rana',
+  name: "Hey, I'm Sakhi!",
   opening:
-    "Hi, I'm Sakhi — a UI/UX designer who digs into why a product is hard to use, then designs the version that isn't.",
+    'I design products that are useful, intuitive and built around people.',
   // The hero artwork is the same desk in two lights, and the lamp in it is
   // the site's theme switch. Both frames need their own alt text, because
   // which one you are looking at is itself the state of the control. There is
@@ -134,7 +134,7 @@ export const projects = [
     slug: 'myfitnesspal',
     name: 'MyFitnessPal',
     description:
-      'Taking the effort back out of food logging — restoring what a redesign removed, and removing the repetition the product never did.',
+      'Turned repetitive logging into a recognition-first experience.',
     thumbnail: '/images/myfitnesspal/thumbnail.webp',
     // Name uses the site's heading ink (`text-text`) — same as every other
     // heading — rather than inverse white. The blue field stays; the type
