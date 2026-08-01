@@ -43,7 +43,8 @@ into `public/images/about/*.webp`, cover-cropped to `make` / `cat` / `trip` /
   and 600 only.
 - **Motion** — `src/lib/animations.js` (`EASE`, `DUR`). **CTAs** —
   `src/lib/interactions.js` (`CTA_SHAPE`, `CTA_ICON`, `CTA_HOVER`,
-  `CTA_HOVER_FILL`, `CTA_HOVER_UNFILL`).
+  `CTA_HOVER_FILL`). **Contact submit** uses `ACTION_HOVER_GLASS` (action
+  button, not a nav CTA).
 - **Empty means don't render** — empty string/array hides the affordance.
   `PREVIEW_UNPUBLISHED` in `portfolio.js` is a temporary exception for dead
   `#` hrefs; **off before launch** (see PRD).
@@ -61,7 +62,8 @@ src/
     Header Footer Cursor Button Badge SectionHeader ProjectCard
     Logo ThemeProvider ThemeToggle HeroScene Journey PhotoStack
     Figure Lightbox
-    casestudy/Blocks.jsx  section primitives + CSRich
+    casestudy/            Blocks.jsx (section primitives + CSRich),
+                          ScaleToFit.jsx
     charts/               SentimentPanel, FrictionChart
   lib/
     hooks.js              useFinePointer useReducedMotion useReveal
@@ -78,17 +80,18 @@ src/
   no `hover:scale`, lift, shadow, or pointer-tracking drift. CSS, not Framer
   `whileHover`. Focus: `focus-visible:ring-2 focus-visible:ring-text/25
   focus-visible:ring-offset-2`. Lightbox uses the fixed dark-band tokens.
-- **Contact submit** is the only reverse hover (`CTA_HOVER_UNFILL`) — it rests
-  filled and empties on hover.
+- **Contact submit** is an action button (`ACTION_HOVER_GLASS`) — it rests
+  filled and softens to a glassy `text/70` wash on hover (not an outline
+  unfill).
 - **Header LinkedIn + Resume** are both `Button` (outlined). Do not split their
   visual weight.
 - **`lamp`** is for the journey trail glow only — never type, never a surface.
   Nothing is painted over the hero lamp (no halo, ring, or caption).
-- **No hero wash.** Artwork edge to edge; copy on a frosted card matching the
-  nav: `bg-bg/70 backdrop-blur-md`, `border`, `rounded-2xl`. Home uses `h1` +
-  `body` (case-study banner keeps `display` + `lead`). Do not reintroduce a
-  gradient over the artwork. Mobile scene stays `h-[62svh]`, not full-bleed
-  cover.
+- **No hero wash.** Artwork edge to edge; copy on a solid card (`bg-bg`, full
+  opacity — not the nav's `bg-bg/70` frost), `border`, `rounded-2xl`. Home uses
+  `h1` + `body` (case-study banner keeps `display` + `lead`). Do not
+  reintroduce a gradient over the artwork. Mobile scene stays `h-[62svh]`,
+  not full-bleed cover.
 - **Header** keeps the frosted bar even over the hero.
 - **Cursor pill** is `bg-text` / `text-bg`. Labels follow `data-cursor` via
   `MutationObserver` (not click) so theme flips update immediately.
@@ -108,7 +111,9 @@ src/
 - **Prototype screens** — show as-designed; do not restyle.
 - **Lightbox** pans by transform (`translate3d` + scale), never by
   `overflow-auto` scroll. One pointer pans, two pinch; frame is `touch-none`.
-- **Project card names** use `text-text`. No bottom scrim over the thumbnail.
+- **Project card names** sit below the thumbnail as `font-semibold text-text`
+  in the same `text-body` size/family as the description, continued in the
+  same paragraph. No name overlay on the thumb; no bottom scrim.
 - Images need explicit `width` / `height` and `alt`; below-fold lazy-load.
 - **PhotoStack** — lifted card keeps its `x` (no slide-to-centre flicker);
   pile opens on the group’s `pointerenter`, not a buried card’s.

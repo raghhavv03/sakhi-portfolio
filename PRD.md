@@ -106,10 +106,10 @@ These are product rules, not implementation trivia.
 | **Two type colours** | Headings = `text`; body / labels / captions = `text-muted` |
 | **One type scale** | Named sizes (`display` … `caption`); never pair a size with extra `leading-*` / `tracking-*` |
 | **Two weights** | 400 and 600 only; sentence case |
-| **Shared CTAs** | One size (44px min) and one hover (colour move only — no scale/lift) |
+| **Shared CTAs** | One size (44px min) and one hover (colour move only — no scale/lift). Contact submit is an action button: glassy opacity hover, not CTA unfill |
 | **No accent hue** | Hover uses the theme’s own ink |
 | **Empty means hidden** | Empty strings/arrays hide Resume, mailto, education, captions, etc. |
-| **Mobile-first hero** | Scene is cropped height on small screens; frosted copy card matches the nav fill (`bg-bg/70` + blur) |
+| **Mobile-first hero** | Scene is cropped height on small screens; solid copy card (`bg-bg`) — not the nav frost |
 | **Sanctioned colour exceptions** | Brand band inverse type (`on-brand`), case-study quote/chart hues, About caption highlighter pills |
 
 Full agent-facing implementation rules live in [CLAUDE.md](CLAUDE.md).
@@ -126,12 +126,14 @@ Components do not hardcode marketing strings.
 | About body + footer + About photos | Sakhi’s (from Figma) |
 | Email, LinkedIn, Crochet Curio Instagram | Real |
 | Case study (MyFitnessPal) | Authored against Figma frame |
-| `site.bio`, `hero.opening`, `contact.invite`, `journey` | First draft — needs Sakhi’s confirmation |
-| Resume PDF, Behance URL, education institution, Formspree endpoint | Missing — see launch checklist |
+| Formspree endpoint | Wired (`contact.formEndpoint`) |
+| `site.bio`, `hero.opening`, `contact.invite`, `journey` | First draft — needs Sakhi’s confirmation (`site.bio` not yet on-page) |
+| Resume PDF, Behance URL, education institution | Missing — see launch checklist |
 | Project two | `coming-soon` placeholder |
 
 **Temporary layout flag:** `PREVIEW_UNPUBLISHED` in `portfolio.js` feeds dead
-`#` hrefs for Resume / Behance so placement can be reviewed. **Must be `false`
+`#` hrefs for Resume / Behance so placement can be reviewed. Behance has no UI
+consumer yet (footer builds its own connect row). **Must be `false`
 (or replaced with real URLs) before launch.**
 
 ---
@@ -156,7 +158,7 @@ Components do not hardcode marketing strings.
 - [ ] Set `PREVIEW_UNPUBLISHED` to `false`, **or** supply real Resume + Behance URLs
 - [ ] Add `public/resume.pdf` and set `links.resume = '/resume.pdf'`
 - [ ] Set `links.behance` to the real profile URL
-- [ ] Create Formspree form for `sakhirana03@gmail.com`, confirm email, paste
+- [x] Create Formspree form for `sakhirana03@gmail.com`, confirm email, paste
       `https://formspree.io/f/<id>` into `contact.formEndpoint`
 - [ ] Confirm draft copy with Sakhi (`hero.opening`, `journey`, `site.bio`,
       `contact.invite`)

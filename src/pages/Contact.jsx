@@ -4,8 +4,8 @@ import { contact, links, site } from '../data/portfolio'
 import { useReducedMotion, useReveal } from '../lib/hooks'
 import { successHaptic } from '../lib/haptics'
 import {
+  ACTION_HOVER_GLASS,
   CTA_HOVER,
-  CTA_HOVER_UNFILL,
   CTA_SHAPE,
 } from '../lib/interactions'
 import Badge from '../components/Badge'
@@ -186,13 +186,13 @@ export default function Contact() {
                   failure has to stay pressable so the message can be retried
                   without retyping it.
 
-                  It is the one CTA on the site that runs the hover backwards:
-                  it rests filled — exactly where every other CTA hovers to —
-                  and hovers *out* to their outlined rest state. */}
+                  Action button — rests filled like a pressed CTA, but hover
+                  softens to a glassy wash of the same fill (not an outline
+                  swap). Disabled states lock the solid rest fill. */}
               <button
                 type="submit"
                 disabled={status === 'sending' || sent}
-                className={`w-full ${CTA_SHAPE} ${CTA_HOVER} border border-text bg-text text-bg ${CTA_HOVER_UNFILL} disabled:hover:border-text disabled:hover:bg-text disabled:hover:text-bg`}
+                className={`w-full ${CTA_SHAPE} ${CTA_HOVER} border border-text bg-text text-bg ${ACTION_HOVER_GLASS} disabled:hover:border-text disabled:hover:bg-text disabled:hover:text-bg disabled:hover:backdrop-blur-none`}
               >
                 {/* Keyed enter-only swap — the old label unmounts instantly,
                     the new one fades up. No exit animation, so the swap can

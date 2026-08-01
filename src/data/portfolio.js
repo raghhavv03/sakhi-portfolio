@@ -51,7 +51,7 @@ export const contact = {
   // contact form stays UI-only: it still validates and acknowledges, and says
   // so, rather than posting into nowhere. Paste the endpoint here and the same
   // form starts delivering to the inbox above with no code change.
-  formEndpoint: '',
+  formEndpoint: 'https://formspree.io/f/xlgqyjlr',
   invite:
     "Open to product design roles, freelance work, and the occasional interesting problem. Tell me what you're building and I'll come back to you.",
 }
@@ -61,13 +61,6 @@ export const links = {
   linkedin: 'https://www.linkedin.com/in/sakhi-rana-717548212',
   behance: preview(''),
 }
-
-// Footer/contact social links. `label` doubles as the data-cursor label.
-// Filtered, so a platform with no URL simply doesn't appear.
-export const socials = [
-  { platform: 'LinkedIn', label: 'LinkedIn', href: links.linkedin },
-  { platform: 'Behance', label: 'Behance', href: links.behance },
-].filter((s) => s.href)
 
 export const nav = [
   { label: 'Home', to: '/' },

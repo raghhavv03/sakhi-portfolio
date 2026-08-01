@@ -1,6 +1,6 @@
 // Hero scene (light + dark room) → responsive AVIF + WebP at three widths.
-// These are photographic artwork, not line art, so — unlike optimize-hero —
-// nothing is keyed out: the frame is shown edge to edge behind the hero copy.
+// Photographic artwork shown edge to edge behind the hero copy — nothing is
+// keyed out.
 //
 // Run: npm run optimize:scene
 import sharp from 'sharp'

@@ -4,8 +4,8 @@ import { useReducedMotion, useReveal } from '../lib/hooks'
 import { EASE, DUR } from '../lib/animations'
 import Badge from './Badge'
 
-// Project card: a thumbnail with the project name on it, and a short
-// description below it. Live projects link to their case study ("View case
+// Project card: thumbnail, then a bold name continued by the short
+// description underneath. Live projects link to their case study ("View case
 // study" cursor); the in-progress project is non-clickable, shows an
 // "In progress" badge + "Coming soon" cursor, and carries an aria-label so the
 // state is conveyed without relying on the cursor.
@@ -53,14 +53,6 @@ export default function ProjectCard({ project, delay = 0 }) {
           />
         )}
 
-        {/* No scrim. The name is the site's heading ink — same `text-text`
-            every other heading uses. */}
-        <div className="absolute inset-0 flex items-end p-6 sm:p-7">
-          <span className="text-h2 font-semibold text-text">
-            {project.name}
-          </span>
-        </div>
-
         {!isLive && (
           <Badge className="absolute right-4 top-4 bg-bg/90 backdrop-blur">
             In progress
@@ -70,8 +62,11 @@ export default function ProjectCard({ project, delay = 0 }) {
     )
   }
 
+  // Name sits below the thumb in the same body size/family as the
+  // description — semibold heading ink only, then the muted copy continues.
   const body = (
     <p className="mt-4 max-w-xl text-body font-normal text-text-muted">
+      <span className="font-semibold text-text">{project.name}</span>{' '}
       {project.description}
     </p>
   )

@@ -64,7 +64,7 @@ function parseCursorLabel(label) {
 
 // Custom label cursor — desktop (fine pointer) only.
 //   • leaves the native arrow/hand cursor untouched
-//   • shows a labelled blue pill over any [data-cursor] element
+//   • shows a labelled pill over any [data-cursor] element
 //
 // Gated entirely on (pointer: fine): on touch/coarse devices nothing renders
 // and the native cursor is left untouched. Labels are decorative — every

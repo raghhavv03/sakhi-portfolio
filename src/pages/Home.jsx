@@ -41,17 +41,13 @@ export default function Home() {
           <HeroScene className="h-[62svh] min-h-[300px] w-full md:h-full" />
         </div>
 
-        {/* The copy sits on a frosted card — the same `bg-bg/70
-            backdrop-blur-md` recipe the header uses over this artwork — so
-            the two bands read as one material. Hairline border only; no
-            speech-bubble tail. Sized one step under the display/lead pair
-            (`h1` + `body`) so the room stays the hero and the card stays a
-            greeting, not a billboard. On desktop it floats over the wall; on
-            mobile it lifts up over the bottom of the frame, so the artwork
-            is never cut by a hard edge. */}
+        {/* Hero copy — solid `bg` (full opacity, not the nav frost). Sized
+            one step under display/lead (`h1` + `body`) so the room stays the
+            hero. On desktop it floats over the wall; on mobile it lifts over
+            the bottom of the frame. */}
         <div className="relative mx-auto -mt-20 flex max-w-content items-center px-6 pb-section-sm pt-0 md:mt-0 md:min-h-[100svh] md:pb-0 md:pt-20">
           <div className="md:w-[40%] lg:w-[36%]">
-            <div className="max-w-[26rem] rounded-2xl border border-border bg-bg/70 p-5 backdrop-blur-md sm:p-6">
+            <div className="max-w-[26rem] rounded-2xl border border-border bg-bg p-5 sm:p-6">
               <h1 className="text-h1 font-semibold text-text">
                 {hero.name}
               </h1>
