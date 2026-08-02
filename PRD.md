@@ -16,9 +16,9 @@ part of the pitch.
 | **Primary visitors** | Hiring managers and recruiters |
 | **Hosting** | Static (Vite build; Vercel-ready) |
 
-The site presents who Sakhi is, how she got here, a deep case study, and a way
-to get in touch — without marketing clutter or a second design system for the
-case study.
+The site presents who Sakhi is, a deep case study, and a way to get in touch —
+without marketing clutter or a second design system for the case study. (The
+journey / origin story section is parked on `journey-branch` until ready.)
 
 ---
 
@@ -62,21 +62,23 @@ case study.
 
 | Path | Purpose |
 |---|---|
-| `/` | Hero (illustrated room + theme lamp), journey trail, work grid |
+| `/` | Hero (illustrated room + theme lamp), work grid |
 | `/about` | Bio, background, photo stacks, education when present |
 | `/contact` | Invite + form (Formspree when endpoint set) |
 | `/work/:slug` | Case study (live projects only) |
 
+Journey (scroll-drawn trail + chapters) is parked on git branch
+`journey-branch` until ready; main Home is hero → work only.
 ### In scope features
 
 - **Light / dark theme** — OS preference by default; explicit choice in
   `localStorage`. Hero lamp and header toggle share one switch.
 - **Custom label cursor** — decorative; gated on `(pointer: fine)`; every
   `data-cursor` control also has real text or `aria-label`.
-- **Journey** — scroll-drawn trail + four chapters on Home.
+- **Journey** — parked on `journey-branch` (not on the shipped Home). Trail +
+  four chapters return when that branch merges.
 - **Work cards** — live projects link to case studies; coming-soon projects
-  are non-clickable with clear state.
-- **About PhotoStack** — fan / pile on large screens; horizontal strip below
+  are non-clickable with clear state.- **About PhotoStack** — fan / pile on large screens; horizontal strip below
   `lg`.
 - **Case study** — structured sections, figures with lightbox (transform pan /
   pinch), research charts.
@@ -146,7 +148,7 @@ consumer yet (footer builds its own connect row). **Must be `false`
 | Backend | None |
 | Contact delivery | Formspree (`contact.formEndpoint`); public endpoint id by design |
 | Theming | Class on `<html>`; pre-paint script in `index.html` must stay in sync with `src/lib/theme.js` |
-| Assets | Masters in `assets/`; optimized outputs in `public/` via `npm run optimize:scene` / `optimize:about` |
+| Assets | Masters in `assets/` (incl. `favicon.svg`); optimized outputs in `public/` via `npm run optimize:scene` / `optimize:about` |
 | Deploy | Static `dist/`; `vercel.json` present |
 
 ---

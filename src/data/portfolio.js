@@ -85,8 +85,8 @@ export const hero = {
   },
 }
 
-// Home's journey section — the route from crochet to product design, drawn as
-// a trail that fills in as you scroll. Order is the order of the trail.
+// Home's journey section — parked on `journey-branch` until ready. Not rendered
+// on main; restore by bringing back `Journey.jsx` and mounting it on Home.
 export const journey = {
   badge: 'Journey',
   heading: 'The long way round to design',

@@ -25,6 +25,8 @@ at 840 / 1280 / 1672.
 into `public/images/about/*.webp`, cover-cropped to `make` / `cat` / `trip` /
 `portrait`.
 
+Favicon master is `assets/favicon.svg` (Frame 17); served copies are
+`public/favicon.svg` + `public/favicon.ico`.
 ---
 
 ## Architecture
@@ -60,7 +62,7 @@ src/
   pages/                  Home · About · Contact · CaseStudy
   components/
     Header Footer Cursor Button Badge SectionHeader ProjectCard
-    Logo ThemeProvider ThemeToggle HeroScene Journey PhotoStack
+    Logo ThemeProvider ThemeToggle HeroScene PhotoStack
     Figure Lightbox
     casestudy/            Blocks.jsx (section primitives + CSRich),
                           ScaleToFit.jsx
@@ -72,6 +74,9 @@ src/
   data/portfolio.js       every string on the site
 ```
 
+Home is hero → work. The Journey section (trail + chapters) lives on
+`journey-branch` with `Journey.jsx` until it ships; `journey` copy stays in
+`portfolio.js` for that restore.
 ---
 
 ## Hard conventions
@@ -85,8 +90,9 @@ src/
   unfill).
 - **Header LinkedIn + Resume** are both `Button` (outlined). Do not split their
   visual weight.
-- **`lamp`** is for the journey trail glow only — never type, never a surface.
-  Nothing is painted over the hero lamp (no halo, ring, or caption).
+- **`lamp`** is for the journey trail glow only (on `journey-branch`) — never
+  type, never a surface. Nothing is painted over the hero lamp (no halo, ring,
+  or caption).
 - **No hero wash.** Artwork edge to edge; copy on a solid card (`bg-bg`, full
   opacity — not the nav's `bg-bg/70` frost), `border`, `rounded-2xl`. Home uses
   `h1` + `body` (case-study banner keeps `display` + `lead`). Do not
@@ -102,11 +108,10 @@ src/
   (`useReveal`).
 - **Custom cursor is decorative** — every `data-cursor` needs real text or
   `aria-label`; gated on `(pointer: fine)`.
-- **`Trail` in Journey** — never key measurement off `trackRef` (ancestor,
-  still null on first layout). Observe the rail; `useScroll` with
-  `layoutEffect: false`. Curve constants: `BEND_MAX`, `BEND_RATIO`, `BELLY`,
-  `MAX_SPAN` — all in `Journey.jsx`.
-- **Charts** — bar lengths are the Figma frame’s drawn lengths, not value ×
+- **`Trail` in Journey** (`journey-branch`) — never key measurement off
+  `trackRef` (ancestor, still null on first layout). Observe the rail;
+  `useScroll` with `layoutEffect: false`. Curve constants: `BEND_MAX`,
+  `BEND_RATIO`, `BELLY`, `MAX_SPAN` — all in `Journey.jsx`.- **Charts** — bar lengths are the Figma frame’s drawn lengths, not value ×
   scale. Grow via `useInViewOnce` + CSS; friction chart uses `scaleX`.
 - **Prototype screens** — show as-designed; do not restyle.
 - **Lightbox** pans by transform (`translate3d` + scale), never by
