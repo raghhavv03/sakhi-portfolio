@@ -12,7 +12,6 @@ import {
   CSSection,
   CSLabel,
   CSHeading,
-  CSSubheading,
   CSBody,
   CSList,
   CSRich,
@@ -337,6 +336,8 @@ function CaseStudyHero({ hero, title, tagline }) {
 // had room to exist at exactly 1440 and overhung the section below it at that
 // width. It reads the same as a four-up row inside the section's own measure,
 // and it now sits on the same left edge as every other section on the page.
+// Labels are plain <dt>s (no per-field whileInView): nested reveals inside this
+// opacity-animating dl left "Type" stuck invisible on mobile Safari.
 function BackgroundMeta({ items }) {
   const reveal = useReveal()
   if (!items?.length) return null
@@ -347,7 +348,7 @@ function BackgroundMeta({ items }) {
     >
       {items.map((item) => (
         <div key={item.label} className="flex flex-col items-start gap-2">
-          <CSSubheading as="dt">{item.label}</CSSubheading>
+          <dt className="text-h3 font-semibold text-text">{item.label}</dt>
           <dd className="w-full">
             <ul className="list-disc pl-5 text-body-sm font-normal text-text-muted">
               {item.items.map((value) => (
