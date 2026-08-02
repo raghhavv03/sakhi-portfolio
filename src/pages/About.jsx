@@ -88,15 +88,20 @@ function Background() {
           paragraph is how she works now — and the makes above it already say
           whose they are. The button under it is what names the shop. */}
       <SectionHeader heading={heading} />
-      <motion.div {...reveal} className="mt-8 max-w-3xl">
-        {paragraphs.map((paragraph) => (
-          <p
-            key={paragraph}
-            className="mt-5 text-body font-normal text-text-muted first:mt-0"
-          >
-            {paragraph}
-          </p>
-        ))}
+      {/* The two paragraphs sit side by side from `md`, the same two-column
+          move the Intro and Off-duty sections make. One column at this width
+          left half the page empty and the measure over-long. */}
+      <motion.div {...reveal} className="mt-8">
+        <div className="grid gap-x-12 md:grid-cols-2">
+          {paragraphs.map((paragraph) => (
+            <p
+              key={paragraph}
+              className="mt-5 text-body font-normal text-text-muted first:mt-0 md:mt-0"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
         {link && (
           <div className="mt-6">
             <Button
@@ -105,12 +110,41 @@ function Background() {
               target="_blank"
               rel="noopener noreferrer"
             >
+              <InstagramIcon />
               Visit Crochet Curio
             </Button>
           </div>
         )}
       </motion.div>
     </section>
+  )
+}
+
+// The shop only exists on Instagram, so the button carries the mark rather
+// than making "Visit" the only clue about where it goes. Stroked in
+// currentColor, so it fills with the label on hover like any other CTA glyph.
+function InstagramIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="block shrink-0"
+    >
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" />
+    </svg>
   )
 }
 

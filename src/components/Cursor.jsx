@@ -49,9 +49,9 @@ function CursorIcon({ type }) {
 // nothing is being navigated to.
 const NO_ICON = new Set(['Coming soon', 'Night mode', 'Day mode'])
 
-// The theme switches — the hero lamp and the header toggle — say what they do
-// with the same glyph the toggle wears, not with a word. The cursor becomes
-// the button: a `bg-text` disc the size of the toggle, glyph in `text-bg`.
+// The hero lamp says what it does with the same glyph the header toggle
+// wears, not with a word. The cursor becomes the button: a `bg-text` disc the
+// size of the toggle, glyph in `text-bg`.
 const THEME_GLYPH = { 'Night mode': MoonIcon, 'Day mode': SunIcon }
 
 function parseCursorLabel(label) {

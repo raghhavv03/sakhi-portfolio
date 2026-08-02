@@ -11,26 +11,26 @@ import { tapHaptic } from '../../lib/haptics'
 //
 // Two states, driven by the same `useNavCollapsed` the header reads:
 //
-//   scrolling up   — the header is back, so this is a row of seven dots
-//                    riding just above it: position without furniture.
+//   scrolling up   — the header is back, so this is a row of dots riding just
+//                    above it: position without furniture.
 //   scrolling down — the header lifts away and the rail expands into the spot
-//                    it left, naming the seven parts with a wash that slides
+//                    it left, naming the parts with a wash that slides
 //                    between them (one `layoutId`).
 //
 // The two layers are stacked in one grid cell and cross-fade, so nothing
 // reflows when the mode changes.
 
-// The page ships fourteen sections; a reader needs seven. Each group is
+// The page ships fourteen sections; a reader needs five. Each group is
 // anchored to the id of the section that opens it — the rail activates a
 // group once that section's top passes under the floating band, which is what
 // keeps the groups contiguous and the highlight monotonic while scrolling.
 const GROUPS = [
-  { label: 'Overview', id: 'background' },
-  { label: 'Problem', id: 'problem' }, // + challenge, solution preview
+  { label: 'Overview', id: 'background' }, // + problem, challenge, solution
   { label: 'Research', id: 'discovery' }, // + research, literature
-  { label: 'Process', id: 'today-screen' },
-  { label: 'Solution', id: 'repeat-logging' }, // + prediction-card, add-more
-  { label: 'Results', id: 'strength' }, // + testing, if-shipped
+  // Product design, through to where the prediction is strong and where it
+  // is not: + repeat-logging, prediction-card, add-more, strength.
+  { label: 'Solution', id: 'today-screen' },
+  { label: 'Testing', id: 'testing' }, // + if-shipped
   { label: 'Learnings', id: 'learnings' },
 ]
 
@@ -152,7 +152,7 @@ export default function CaseStudyProgressNav() {
             ))}
           </motion.div>
 
-          {/* Expanded: the seven parts, named. */}
+          {/* Expanded: the five parts, named. */}
           <motion.nav
             aria-label="Case study progress"
             aria-hidden={!collapsed}
@@ -173,7 +173,6 @@ export default function CaseStudyProgressNav() {
                   type="button"
                   tabIndex={collapsed ? 0 : -1}
                   onClick={() => goTo(group.id)}
-                  data-cursor={group.label}
                   aria-current={isActive ? 'true' : undefined}
                   className={`relative shrink-0 rounded-full px-3.5 py-2.5 text-body-sm transition-colors duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
                     isActive
@@ -182,7 +181,7 @@ export default function CaseStudyProgressNav() {
                         ? 'font-normal text-text-muted/80 hover:text-text'
                         : 'font-normal text-text-muted/45 hover:text-text'
                   } ${
-                    // Under 720px there is no room for seven labels beside
+                    // Under 720px there is no room for every label beside
                     // each other, so the rail keeps only the one you are in.
                     isActive ? 'inline-flex' : 'hidden min-[720px]:inline-flex'
                   }`}

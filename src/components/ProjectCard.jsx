@@ -62,11 +62,14 @@ export default function ProjectCard({ project, delay = 0 }) {
     )
   }
 
-  // Name sits below the thumb in the same body size/family as the
-  // description — semibold heading ink only, then the muted copy continues.
+  // Name sits below the thumb in the same size/family as the description —
+  // semibold heading ink, a hairline pipe, then the muted copy continues. One
+  // step up the scale (`lead`) from the rest of the page's body copy: these
+  // two lines are the only thing naming the work on the home page.
   const body = (
-    <p className="mt-4 max-w-xl text-body font-normal text-text-muted">
-      <span className="font-semibold text-text">{project.name}</span>{' '}
+    <p className="mt-4 max-w-xl text-lead font-normal text-text-muted">
+      <span className="font-semibold text-text">{project.name}</span>
+      {' | '}
       {project.description}
     </p>
   )

@@ -1,5 +1,6 @@
 import { useTheme } from '../lib/theme'
 import { tapHaptic } from '../lib/haptics'
+import { FLOAT_SHELL } from '../lib/interactions'
 import { hero } from '../data/portfolio'
 
 // The hero artwork: one room, painted twice — daylight and lamplight. Both
@@ -61,9 +62,26 @@ export default function HeroScene({ className = '' }) {
         priority={isDark}
       />
 
-      {/* The lamp. An invisible hotspot over the lamp head — no halo, no ring,
-          no tooltip. The only light in the picture is the light the artwork
-          paints, and the cursor label is what says the lamp is a control. */}
+      {/* Lamplight. At night the lamp is on, so a soft amber bloom sits on the
+          shade — `--lamp` is that light's own colour. Opacity only, and faint:
+          it reads as the bulb being lit, not as a glow effect applied to the
+          picture. */}
+      <div
+        aria-hidden="true"
+        style={{
+          left: `${LAMP.x}%`,
+          top: `${LAMP.y}%`,
+          background:
+            'radial-gradient(circle, rgb(var(--lamp) / 0.28) 0%, rgb(var(--lamp) / 0.10) 45%, transparent 72%)',
+        }}
+        className={`pointer-events-none absolute aspect-square w-[24%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl transition-opacity duration-500 motion-reduce:transition-none ${
+          isDark ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+
+      {/* The lamp. An invisible hotspot over the lamp head — no halo, no ring.
+          The cursor label says it is a control on a fine pointer; the small
+          glass hint above it is what says so everywhere else. */}
       <button
         type="button"
         onClick={() => {
@@ -75,7 +93,21 @@ export default function HeroScene({ className = '' }) {
         data-cursor={isDark ? 'Day mode' : 'Night mode'}
         style={{ left: `${LAMP.x}%`, top: `${LAMP.y}%` }}
         className="absolute z-10 h-[9%] min-h-[44px] w-[9%] min-w-[44px] -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
-      />
+      >
+        {/* Rides with the hotspot, so it cannot drift off the lamp at any
+            width, and clears the shade so it never covers it. Decorative —
+            the button's aria-label already carries it — and pointer-
+            transparent, so the lamp keeps the whole target. Same frosted
+            shell as the floating nav, forced round for the caption pill. */}
+        {hero.scene.hint && (
+          <span
+            aria-hidden="true"
+            className={`pointer-events-none absolute bottom-full left-1/2 mb-3 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 text-caption font-normal text-text-muted ${FLOAT_SHELL} !rounded-full`}
+          >
+            {hero.scene.hint}
+          </span>
+        )}
+      </button>
     </div>
   )
 }

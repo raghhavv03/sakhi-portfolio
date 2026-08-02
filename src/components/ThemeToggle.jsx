@@ -4,7 +4,9 @@ import { CTA_HOVER, CTA_HOVER_FILL, CTA_ICON } from '../lib/interactions'
 
 // Header theme control — the same switch the hero lamp throws, so the two are
 // always showing the same state. Icon shows the theme you would get, which is
-// what the label says too.
+// what the aria-label says too. No `data-cursor`: a sun/moon glyph in the nav
+// needs no pill repeating it — the cursor label is spent on the lamp, where
+// the control is hidden in the artwork.
 export default function ThemeToggle({ className = '' }) {
   const { theme, toggleTheme } = useTheme()
   const toDark = theme === 'light'
@@ -18,7 +20,6 @@ export default function ThemeToggle({ className = '' }) {
       }}
       aria-label={toDark ? 'Switch to dark mode' : 'Switch to light mode'}
       aria-pressed={!toDark}
-      data-cursor={toDark ? 'Night mode' : 'Day mode'}
       className={`${CTA_ICON} border border-border text-text ${CTA_HOVER} ${CTA_HOVER_FILL} ${className}`}
     >
       {toDark ? <MoonIcon /> : <SunIcon />}

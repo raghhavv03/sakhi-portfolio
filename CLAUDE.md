@@ -104,9 +104,14 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   (140px threshold, 6px jitter floor). Both the header and the case-study rail
   read it; never fork the direction logic. Keyboard focus inside the header
   overrides the hide.
-- **`lamp`** is for the journey trail glow only (on `journey-branch`) — never
-  type, never a surface. Nothing is painted over the hero lamp (no halo, ring,
-  or caption).
+- **`lamp`** is the hero lamp's own light: the dark-mode bloom on the lamp head
+  (`HeroScene`) and the journey trail glow (on `journey-branch`) — never type,
+  never a surface. The bloom is opacity-only and faint; it says the bulb is on,
+  it is not a glow effect on the artwork. Above the lamp sits one small glass
+  hint pill (`hero.scene.hint`), rendered inside the lamp button so it tracks
+  the hotspot and clearing the shade. It wears the same frosted shell as the
+  floating nav (`FLOAT_SHELL`, forced `rounded-full`) so day and night match
+  the header glass. Nothing else is painted over the lamp — no halo, no ring.
 - **No hero wash.** Artwork edge to edge; copy on a solid card (`bg-bg`, full
   opacity — not the nav's `bg-bg/70` frost), `border`, `rounded-2xl`. Home uses
   `h1` + `body` (case-study banner keeps `display` + `lead`). Do not
@@ -115,18 +120,18 @@ Home is hero → work. The Journey section (trail + chapters) lives on
 - **Header** keeps its frosted shell even over the hero — it floats above the
   artwork, it never goes transparent.
 - **Case-study progress** — `CaseStudyProgressNav` maps the fourteen sections
-  into seven groups (Overview · Problem · Research · Process · Solution ·
-  Results · Learnings), each anchored to the id of the section that opens it.
-  Groups stay **contiguous in document order** — a non-contiguous group makes
-  the rail run backwards. Rail expanded when the nav is hidden, dots when it is
-  back; the sliding indicator is a `layoutId`, and the rail keeps only the
-  active label below 720px.
+  into five groups (Overview · Research · Solution · Testing · Learnings), each
+  anchored to the id of the section that opens it. Groups stay **contiguous in
+  document order** — a non-contiguous group makes the rail run backwards. Rail
+  expanded when the nav is hidden, dots when it is back; the sliding indicator
+  is a `layoutId`, and the rail keeps only the active label below 720px. The
+  rail's buttons carry **no `data-cursor`** — the label is already the word.
 - **Cursor pill** is `bg-text` / `text-bg`. Labels follow `data-cursor` via
-  `MutationObserver` (not click) so theme flips update immediately. The two
-  theme switches (hero lamp, `ThemeToggle`) draw a 44px glyph disc — the
-  toggle's own `SunIcon` / `MoonIcon`, exported from `ThemeToggle.jsx` — not a
-  word. Nothing else in the header carries a `data-cursor`: a label repeating
-  the link text next to it is noise.
+  `MutationObserver` (not click) so theme flips update immediately. The hero
+  lamp draws a 44px glyph disc — the toggle's own `SunIcon` / `MoonIcon`,
+  exported from `ThemeToggle.jsx` — not a word. `ThemeToggle` itself carries no
+  `data-cursor`, and nothing else in the header does either: a label repeating
+  the glyph or link text next to it is noise.
 - **Never pair** a `text-*` size with `leading-*` or `tracking-*`.
 - **One vertical rhythm** — `py-section-sm md:py-section-md lg:py-section`
   between sections; `gap-6` inside; `p-6` in cards.
@@ -143,8 +148,9 @@ Home is hero → work. The Journey section (trail + chapters) lives on
 - **Lightbox** pans by transform (`translate3d` + scale), never by
   `overflow-auto` scroll. One pointer pans, two pinch; frame is `touch-none`.
 - **Project card names** sit below the thumbnail as `font-semibold text-text`
-  in the same `text-body` size/family as the description, continued in the
-  same paragraph. No name overlay on the thumb; no bottom scrim.
+  in the same `text-lead` size/family as the description, separated from it by
+  ` | ` and continued in the same paragraph. No name overlay on the thumb; no
+  bottom scrim.
 - Images need explicit `width` / `height` and `alt`; below-fold lazy-load.
 - **PhotoStack** — lifted card keeps its `x` (no slide-to-centre flicker);
   pile opens on the group’s `pointerenter`, not a buried card’s.

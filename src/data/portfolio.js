@@ -71,13 +71,15 @@ export const nav = [
 export const hero = {
   name: "Hey, I'm Sakhi!",
   opening:
-    'I design products that are useful, intuitive and built around people.',
+    'I design products that are useful, intuitive, and built around people.',
   // The hero artwork is the same desk in two lights, and the lamp in it is
   // the site's theme switch. Both frames need their own alt text, because
-  // which one you are looking at is itself the state of the control. There is
-  // no hint copy: the lamp is left to be found, which is what the cursor
-  // label is for.
+  // which one you are looking at is itself the state of the control.
+  // `hint` is the small glass pill above the lamp — the cursor label only
+  // exists on a fine pointer, so this is what makes the switch findable on a
+  // phone. Empty hides the pill.
   scene: {
+    hint: 'Try me!',
     altLight:
       'Illustration of a designer at a sunlit desk — laptop, sketchbook of wireframes, coffee and plants, with a park and city skyline through the window.',
     altDark:
@@ -734,12 +736,12 @@ export const about = {
       {
         src: '/images/about/trip-aquarium.webp',
         alt: 'Standing in front of a floor-to-ceiling aquarium tank',
-        caption: '',
+        caption: 'Seattle aquarium',
       },
       {
         src: '/images/about/trip-sunset.webp',
         alt: 'Palm trees against a pink and purple sunset',
-        caption: '',
+        caption: 'Goa',
       },
       {
         src: '/images/about/trip-rainier.webp',
