@@ -1,8 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -16.5 86 86">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-26 -41 135 135">
   <!-- The site's monogram, the same paths as src/components/Logo.jsx. A tab
        icon cannot inherit currentColor, so it carries the two ink values
        itself and follows the OS theme — the same signal the browser chrome
-       around it follows. Values are --text from src/index.css; keep in sync. -->
+       around it follows. Ink matches the site text token in src/index.css.
+       viewBox pads the glyph so SR does not clip at small tab sizes. -->
   <style>
     path { fill: #1B1C1A; stroke: #1B1C1A; stroke-linecap: round; }
     @media (prefers-color-scheme: dark) {

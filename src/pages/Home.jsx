@@ -2,12 +2,11 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { hero, projects, work } from '../data/portfolio'
 import HeroScene from '../components/HeroScene'
-import Journey from '../components/Journey'
 import SectionHeader from '../components/SectionHeader'
 import ProjectCard from '../components/ProjectCard'
 import { useReducedMotion } from '../lib/hooks'
 
-// Home: hero → journey → work. Nothing else.
+// Home: hero → work. Journey lives on journey-branch until it's ready.
 export default function Home() {
   const location = useLocation()
   const reducedMotion = useReducedMotion()
@@ -75,10 +74,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. Journey — the trail from crochet to product design. */}
-      <Journey />
-
-      {/* 3. Portfolio grid. id="work" is the scroll target for the header's
+      {/* Portfolio grid. id="work" is the scroll target for the header's
           "Work" nav item; scroll-mt-20 keeps it clear of the fixed header. */}
       <section
         id="work"
