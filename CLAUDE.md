@@ -55,11 +55,14 @@ Favicon master is `assets/favicon.svg` (Frame 17); served copies are
   UI-only with honest confirmation. Failed POST keeps the message and offers
   mailto.
 - **Footer** — centred sign-off + icon row, not a sitemap. Résumé is header-
-  only. Uses `py-10 md:py-12`, not `py-section*`.
+  only. Uses `py-10 md:py-12`, not `py-section*`. The connect buttons are a
+  48px box around an 18px glyph — their own size, not `CTA_ICON`'s 44px, and
+  each glyph carries the viewBox its path actually fills so it sits centred.
 
 ```
 src/
   App.jsx                 ThemeProvider + Router + Header/Footer/Cursor
+                          + the 404 (`NotFound`)
   pages/                  Home · About · Contact · CaseStudy
   components/
     Header Footer Cursor Button Badge SectionHeader ProjectCard
@@ -94,7 +97,9 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   `FLOAT_SHELL` and parked at `FLOAT_Y.nav`. Labels drop below 860px and the
   pill goes glyph-only — that is what replaces the hamburger, so every
   destination stays on screen at 360px. LinkedIn is not in this row; the
-  footer's connect row carries it.
+  footer's connect row carries it. Contact's glyph is a speech bubble, not an
+  envelope — the envelope is the footer's "email me", and the same mark for
+  two different things reads as a duplicate.
 - **The page runs under the nav** — `main` has no top padding. A section that
   opens with artwork (home hero, case-study banner) starts at 0 and lets the
   glass float over it; a section that opens with type takes `pt-nav-clear`
@@ -109,9 +114,16 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   never a surface. The bloom is opacity-only and faint; it says the bulb is on,
   it is not a glow effect on the artwork. Above the lamp sits one small glass
   hint pill (`hero.scene.hint`), rendered inside the lamp button so it tracks
-  the hotspot and clearing the shade. It wears the same frosted shell as the
+  the hotspot and clears the shade. It wears the same frosted shell as the
   floating nav (`FLOAT_SHELL`, forced `rounded-full`) so day and night match
   the header glass. Nothing else is painted over the lamp — no halo, no ring.
+- **The lamp hotspot is measured, never a percentage of its box.** The artwork
+  is `object-cover object-right`, so every viewport narrower than 1672 × 941
+  crops the left of it and `LAMP` — a point on the *artwork* — lands somewhere
+  else entirely on the box (~17% off on a phone). `useLampSpot` observes the
+  frame and positions the hotspot, the bloom and the hint in px against the
+  drawn rect, so the switch is on the shade at every width and the lamp is
+  tappable on a phone. Both scale with the artwork, with a 44px floor.
 - **No hero wash.** Artwork edge to edge; copy on a solid card (`bg-bg`, full
   opacity — not the nav's `bg-bg/70` frost), `border`, `rounded-2xl`. Home uses
   `h1` + `body` (case-study banner keeps `display` + `lead`). Do not
@@ -142,7 +154,8 @@ Home is hero → work. The Journey section (trail + chapters) lives on
 - **`Trail` in Journey** (`journey-branch`) — never key measurement off
   `trackRef` (ancestor, still null on first layout). Observe the rail;
   `useScroll` with `layoutEffect: false`. Curve constants: `BEND_MAX`,
-  `BEND_RATIO`, `BELLY`, `MAX_SPAN` — all in `Journey.jsx`.- **Charts** — bar lengths are the Figma frame’s drawn lengths, not value ×
+  `BEND_RATIO`, `BELLY`, `MAX_SPAN` — all in `Journey.jsx`.
+- **Charts** — bar lengths are the Figma frame’s drawn lengths, not value ×
   scale. Grow via `useInViewOnce` + CSS; friction chart uses `scaleX`.
 - **Prototype screens** — show as-designed; do not restyle.
 - **Lightbox** pans by transform (`translate3d` + scale), never by
@@ -152,8 +165,23 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   ` | ` and continued in the same paragraph. No name overlay on the thumb; no
   bottom scrim.
 - Images need explicit `width` / `height` and `alt`; below-fold lazy-load.
-- **PhotoStack** — lifted card keeps its `x` (no slide-to-centre flicker);
-  pile opens on the group’s `pointerenter`, not a buried card’s.
+- **PhotoStack is two components behind one name**, split on `useLargeScreen`.
+  `Spread` (`lg`+) is the hover layout: the lifted card keeps its `x` (no
+  slide-to-centre flicker) and a pile opens on the group’s `pointerenter`, not
+  a buried card’s. `Deck` (below `lg`) is a swipe deck: drag the top card past
+  `SWIPE_DISTANCE`/`SWIPE_VELOCITY` and it throws off screen, the next is
+  already under it, and tapping the **last** card deals the whole group back in
+  along the arc each card left on — so the direction of every throw is
+  remembered. Never give the deck a horizontal scroller instead; the page must
+  not scroll sideways at 360px.
+- **The caption pill is one component** (`Caption`) and is coloured at every
+  width — the frame’s highlighter hue, `caption-ink`, no hairline. It names the
+  card being looked at: the lifted one on a pointer, the top of the deck on a
+  phone. An empty `caption` renders nothing.
+- **About is written in the phone frame’s order** — intro, background, makes,
+  off-duty copy, trips, cats — and re-ordered at `lg` (makes before background,
+  cats before trips) with `order-*` on a `flex-col`. `lg` because that is where
+  the decks become the hover spread; keep the two in step.
 - **Colour exceptions only:** `on-brand` on brand bands, `cs-quote` /
   chart hues, About caption pills (`caption-ink` on `caption-1..5`).
 

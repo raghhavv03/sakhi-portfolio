@@ -158,17 +158,6 @@ export default {
         // study banner) start at 0 and let the nav float over them.
         'nav-clear': '7rem', // 112px
       },
-      keyframes: {
-        // Seamless marquee: the row holds two copies of the list, so a -50%
-        // translate lands exactly on the start of the second copy.
-        marquee: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' },
-        },
-      },
-      animation: {
-        marquee: 'marquee 28s linear infinite',
-      },
     },
   },
   plugins: [],

@@ -165,13 +165,13 @@ export const projects = [
         meta: [
           {
             label: 'My Role',
-            items: ['Product designer', 'UX Research ', 'Prototyping & Testing'],
+            items: ['Product designer', 'UX Research', 'Prototyping & Testing'],
           },
           { label: 'Status', items: ['Concept', 'Hi-Fi prototype'] },
           { label: 'Type', items: ['Mobile App', 'B2C', 'Tracking'] },
           {
             label: 'Tools Used',
-            items: ['Figma', 'Figma Make', 'Notebook LM', 'Lyssna', 'Sunbeam CX'],
+            items: ['Figma', 'Figma Make', 'NotebookLM', 'Lyssna', 'Sunbeam CX'],
           },
         ],
         body: [
@@ -187,7 +187,7 @@ export const projects = [
         heading: 'Logging got harder, in two different ways',
         body: [
           "Problem 1: **The redesign took the working things away**. MyFitnessPal's April 2026 redesign stripped the shortcuts that made logging fast and pushed the day out of sight, a navigational and cognitive regression on its most-used flow.",
-          'Problem 2: **Even fixed, logging stays repetitive**.** **People eat the same foods every day, yet the only thing the app offers back is a verbatim copy of one past day. Every other repeat is a trip into the logger to re-pick the same items by hand.',
+          'Problem 2: **Even fixed, logging stays repetitive**. People eat the same foods every day, yet the only thing the app offers back is a verbatim copy of one past day. Every other repeat is a trip into the logger to re-pick the same items by hand.',
         ],
       },
 
@@ -199,7 +199,7 @@ export const projects = [
           'Both problems are the same problem at two depths: **logging costs more than it should**. So I set myself one question and solved them together, on a single surface:',
         ],
         question:
-          'How might we take the effort back out, the effort the redesign added, and the effort the product never removed without a new screen and without touching the paywall.',
+          'How might we take the effort back out, the effort the redesign added, and the effort the product never removed, without a new screen and without touching the paywall?',
       },
 
       // 4 — Solution preview
@@ -207,15 +207,15 @@ export const projects = [
         badge: 'Solution',
         heading: 'I took the effort back out of logging',
         body: [
-          'Solution 1:** I put the fast back in**. I brought back the stripped shortcuts and rebuilt the Today page so a logged day is visible and loggable at a glance, with nothing behind Premium and no new screens.',
-          "Solution 2: **I stopped making people repeat themselves. **Re-logging a familiar meal is now near-instant. Why that repetition is the app's to carry, not the user's, and how it does now, is where the research picks up.",
+          'Solution 1: **I put the fast back in**. I brought back the stripped shortcuts and rebuilt the Today page so a logged day is visible and loggable at a glance, with nothing behind Premium and no new screens.',
+          "Solution 2: **I stopped making people repeat themselves.** Re-logging a familiar meal is now near-instant. Why that repetition is the app's to carry, not the user's, and how it does now, is where the research picks up.",
         ],
       },
 
       // 5 — Discovery
       discovery: {
         badge: 'Discovery',
-        heading: 'I mapped every friction point before redesigning.',
+        heading: 'I mapped every friction point before redesigning',
         body: [
           'I documented the current experience screen by screen, annotating both where the interface creates friction and where the app makes me re-enter foods it already has on record.',
         ],
@@ -241,7 +241,7 @@ export const projects = [
       research: {
         badge: 'Research',
         heading:
-          'The reviews diagnose the redesign, the literature diagnoses the product',
+          'The reviews diagnose the redesign; the literature diagnoses the product',
         intro: [
           'My diagnosis was secondary-led: thematic and sentiment analysis of roughly 2,000 App Store and Trustpilot reviews via Sunbeam CX, triangulated against the official MyFitnessPal community thread, plus a literature review to ground the response.',
         ],
@@ -253,11 +253,11 @@ export const projects = [
         sentiment: {
           title: 'The redesign moved sentiment sharply negative',
           source:
-            'Sunbeam CX 〜 2,000 App Store & Trustpilot reviews • Apr-Jun 2026  ',
+            'Sunbeam CX ~ 2,000 App Store & Trustpilot reviews • Apr-Jun 2026',
           splitLabel: 'Sentiment split',
           // Widths are the frame's own, not a recomputation of the percentages.
           segments: [
-            { label: '55% ', width: 301.063, tone: 'negative' },
+            { label: '55%', width: 301.063, tone: 'negative' },
             { label: '4%', width: 40.341, tone: 'neutral' },
             { label: '41%', width: 213.284, tone: 'positive' },
           ],
@@ -272,7 +272,7 @@ export const projects = [
             {
               label: 'Asking for the old UI',
               value: '63',
-              note: '+40 cite not revert option',
+              note: '+40 cite no revert option',
             },
           ],
         },
@@ -289,15 +289,15 @@ export const projects = [
           '**Harder navigation and broken habits**: removed gestures, disrupted muscle memory.',
         ],
         frictionConclusion: [
-          '**Navigation** **and** **visibility** **dominate**. The redesign didn’t make the app do less; it made the day** harder to see, reach, and control**. That is the exact ease-of-use I set out to restore. ',
+          '**Navigation** **and** **visibility** **dominate**. The redesign didn’t make the app do less; it made the day **harder to see, reach, and control**. That is the exact ease-of-use I set out to restore.',
         ],
         chart: {
           title: 'What the users say redesign broke',
           source:
-            'The bars show how many reviews raised each issue - thematic analysis via Sunbream CX, 〜 2000 App Store & Trustpilot reviews, Apr-Jun 2026',
+            'The bars show how many reviews raised each issue - thematic analysis via Sunbeam CX, ~ 2,000 App Store & Trustpilot reviews, Apr-Jun 2026',
           callout: {
             title:
-              '586 reviews dislike the redesign overall - the single largest theme',
+              '586 reviews dislike the redesign overall, the single largest theme',
             body: 'Grouped below are the specific frictions inside that dislike, sorted into four types.',
           },
           // `width` is the bar's drawn length in the frame, not value × scale —
@@ -313,14 +313,14 @@ export const projects = [
                   value: '78',
                 },
                 {
-                  label: 'Increase complexity & steps in food logging',
+                  label: 'Increased complexity & steps in food logging',
                   width: 149.838,
                   value: '52',
                 },
               ],
             },
             {
-              label: 'Removed / buries features',
+              label: 'Removed / buried features',
               tone: 'removed',
               rows: [
                 {
@@ -338,7 +338,7 @@ export const projects = [
                   width: 61.267,
                   value: '29',
                 },
-                { label: 'Loss of copy day', width: 47.282, value: '25' },
+                { label: 'Loss of copy-day', width: 47.282, value: '25' },
               ],
             },
             {
@@ -372,17 +372,17 @@ export const projects = [
                   value: '41',
                 },
                 {
-                  label: 'Difficult navigating the new interface',
+                  label: 'Difficulty navigating the new interface',
                   width: 65.263,
                   value: '31',
                 },
                 {
-                  label: 'More click; features now hidden',
+                  label: 'More clicks; features now hidden',
                   width: 58.603,
                   value: '29',
                 },
                 {
-                  label: 'More click; features now hidden',
+                  label: 'More clicks; features now hidden',
                   width: 9.989,
                   value: '3',
                 },
@@ -416,7 +416,7 @@ export const projects = [
           'Together these name the deeper problem the reviews only hinted at',
         synthesis: [
           "MyFitnessPal holds every user's logging history, the exact record that makes their next meal predictable. It does use it, but every **fast path it offers bills the user first**, in setup or in navigation or both, and the only one that asks nothing is the one that **simply replays a past day verbatim**. The signal is sitting right there, and the **app never surfaces the likely food**. **Repeat logging isn't a habit users should have to accept**. It is the mark of a product that **holds the pattern and leaves the work to the user**.",
-          "**No tracker closes the gap**. YAZIO, Cronometer and Lose It! offer the same kind of help, copy-to-day, favourites, recent and frequent lists, saved meals and recipes, and all of it is manual reuse you either build or navigate to. The closest thing to time-awareness anywhere is Cronometer's Repeat Items, a paid feature, and even that is a fixed schedule you define by hand, not a prediction.",
+          "**No tracker closes the gap**. YAZIO, Cronometer, and Lose It! offer the same kind of help, copy-to-day, favourites, recent and frequent lists, saved meals and recipes, and all of it is manual reuse you either build or navigate to. The closest thing to time-awareness anywhere is Cronometer's Repeat Items, a paid feature, and even that is a fixed schedule you define by hand, not a prediction.",
         ],
       },
 
@@ -429,7 +429,7 @@ export const projects = [
         // follows a figure rather than another step.
         steps: [
           {
-            body: '**Reclaimed the top of the screen**.  The weekly date strip was removed to open space and lift all four meal cards into view, so a logged day is visible and loggable without scrolling. Its streak duplicated the counter already in the top-right, and its only other role, moving between days within the current week, was folded into the redesign’s day navigation.',
+            body: '**Reclaimed the top of the screen**. The weekly date strip was removed to open space and lift all four meal cards into view, so a logged day is visible and loggable without scrolling. Its streak duplicated the counter already in the top-right, and its only other role, moving between days within the current week, was folded into the redesign’s day navigation.',
           },
           {
             body: '**Merged the calorie and macro cards, and brought the day’s nutrition onto Today**. The two stacked cards became one combined strip, freeing more vertical space. That strip also gained a "Nutrition facts" toggle that opens the day’s full nutrient breakdown in a sheet, so the fuller view sits with the calories and macros it belongs to, rather than two screens away under Progress.',
@@ -462,10 +462,10 @@ export const projects = [
           },
           {
             spaced: true,
-            body: '**Moved the diary inline**. The diary now expands in place on Today screen with a "View all / View less" toggle, removing the separate screen that repeated the strip and ended in a "Log more" button leading to the same search the add button already opens. That screen held one thing worth keeping, the meal’s macro split, so it now sits inline on each expanded meal card beside the calorie total. The breakdown of a meal is readable in the diary itself, and no information was lost with the screen that carried it. A food goes straight to its edit screen without the extra stop.',
+            body: '**Moved the diary inline**. The diary now expands in place on the Today screen with a "View all / View less" toggle, removing the separate screen that repeated the strip and ended in a "Log more" button leading to the same search the add button already opens. That screen held one thing worth keeping, the meal’s macro split, so it now sits inline on each expanded meal card beside the calorie total. The breakdown of a meal is readable in the diary itself, and no information was lost with the screen that carried it. A food goes straight to its edit screen without the extra stop.',
           },
           {
-            body: '**Rebuilt Edit Entry around the number being changed**. The calorie total and its macro split moved to the top, above the fields and laid out in one line to create some white space and consistency. Servings gained a plus and minus stepper, making the most common edit on this screen a tap rather than a keyboard entry. Per food nutrition facts keep their expand toggle, now sitting directly under the fields instead of below a full-width ad and a Premium block, where the control was easy to miss. Collapsed stays the default because this screen exists to set an amount, not to read a table, and a single food’s breakdown is an occasional lookup rather than the reason you opened it.',
+            body: '**Rebuilt Edit Entry around the number being changed**. The calorie total and its macro split moved to the top, above the fields and laid out in one line to create some white space and consistency. Servings gained a plus and minus stepper, making the most common edit on this screen a tap rather than a keyboard entry. Per-food nutrition facts keep their expand toggle, now sitting directly under the fields instead of below a full-width ad and a Premium block, where the control was easy to miss. Collapsed stays the default because this screen exists to set an amount, not to read a table, and a single food’s breakdown is an occasional lookup rather than the reason you opened it.',
             figure: {
               src: '/images/myfitnesspal/inline-diary-edit.webp',
               width: 1000,
@@ -478,10 +478,10 @@ export const projects = [
 
       // 8 — Solution 2: repeat logging
       repeatLogging: {
-        label: 'Solution 2: The Repeat Logging',
-        heading: 'The Hero: The App should carry the repetition, not the user',
+        label: 'Solution 2: Repeat Logging',
+        heading: 'The Hero: The app should carry the repetition, not the user',
         body: [
-          'The redesigned diary surfaces the foods a consistent user is most likely to log, predicted from their own history by day, time, and recency, on the meal card itself rather than behind a search. Logging shifts from recall to recognition, and from a search task to a confirmation. ',
+          'The redesigned diary surfaces the foods a consistent user is most likely to log, predicted from their own history by day, time, and recency, on the meal card itself rather than behind a search. Logging shifts from recall to recognition, and from a search task to a confirmation.',
           'It targets users with existing logging history, since prediction needs a pattern to learn from. Two of those three signals already exist in MyFitnessPal, split across a filter and a sort you have to set yourself. What no tracker does is weigh them together, add the day of the week, and put the answer where you already are without being asked.',
         ],
         signals: [
@@ -527,7 +527,7 @@ export const projects = [
       // 10 — What Done does
       addMore: {
         body: [
-          '**Done collapses the carousel into a single Add more button**, clearing the meal card back to the uninterrupted diary view. The prediction is assembly-time scaffolding, once the meal is built, keeping it on screen would compete with the diary for the user’s attention.',
+          '**Done collapses the carousel into a single Add more button**, clearing the meal card back to the uninterrupted diary view. The prediction is assembly-time scaffolding; once the meal is built, keeping it on screen would compete with the diary for the user’s attention.',
           'Add more holds the return path: the carousel is one tap away, so a food recalled after the fact is added in place rather than through search. The card commits without locking.',
         ],
         figure: {
@@ -545,8 +545,8 @@ export const projects = [
           {
             label: 'Strong',
             body: [
-              'It runs on repetition, so it works best for the most consistent loggers. Day earns its place for people whose weekdays and weekends differ, where it keeps recency from offering a Monday lunch on a Sunday. ',
-              'Its value concentrates on people who log by habit but never build a saved meal or recipe, the users for whom every repeat is still a search. ',
+              'It runs on repetition, so it works best for the most consistent loggers. Day earns its place for people whose weekdays and weekends differ, where it keeps recency from offering a Monday lunch on a Sunday.',
+              'Its value concentrates on people who log by habit but never build a saved meal or recipe, the users for whom every repeat is still a search.',
             ],
           },
           {
@@ -580,7 +580,7 @@ export const projects = [
           {
             value: 'A third',
             label:
-              'never consciously noticed the "Frequent at breakfast" label and still logged through the card, so it works even when the user is not reading it.',
+              'A third never consciously noticed the "Frequent at breakfast" label and still logged through the card, so it works even when the user is not reading it.',
           },
         ],
         body: [
@@ -589,7 +589,7 @@ export const projects = [
         ],
         caveat: [
           'What this does not prove',
-          'This validates delivery, not accuracy. The test proves a surfaced food is found and understood with no learned path to lean on.  It does not test whether the prediction is right,  because a static prototype with no logging history has no real signal to predict from. Delivery is proven. Accuracy sits outside what a prototype can show, and would need a live build with real history to measure.',
+          'This validates delivery, not accuracy. The test proves a surfaced food is found and understood with no learned path to lean on. It does not test whether the prediction is right, because a static prototype with no logging history has no real signal to predict from. Delivery is proven. Accuracy sits outside what a prototype can show, and would need a live build with real history to measure.',
         ],
       },
 
@@ -619,7 +619,7 @@ export const projects = [
         heading:
           'The interface was doing what it was told. The product was telling users to repeat themselves.',
         body: [
-          'The redesign was the visible problem, but not the deep one. Underneath it, the app already held the pattern and still handed the work of repeat logging back to the user every day. The interface was not failing. It was faithfully carrying a product decision',
+          'The redesign was the visible problem, but not the deep one. Underneath it, the app already held the pattern and still handed the work of repeat logging back to the user every day. The interface was not failing. It was faithfully carrying a product decision.',
           'Once I saw it that way, the design followed. The fast paths did not need more polish, they needed the app to stop asking for work it already had the answer to. Both problems turned out to be the same one at two depths.',
           'That is the lesson I am carrying forward: before smoothing a flow, check what the product is quietly making users do for it, because the heaviest friction is often a decision, not a screen.',
         ],
@@ -665,7 +665,7 @@ export const about = {
   makes: [
     {
       src: '/images/about/make-coasters.webp',
-      alt: 'Crocheted flower coasters in red, blue, orange and yellow',
+      alt: 'Crocheted flower coasters in red, blue, orange, and yellow',
       caption: 'Tea & coffee coasters',
     },
     {
@@ -693,7 +693,7 @@ export const about = {
   background: {
     heading: 'Background',
     paragraphs: [
-      'I have a habit of diving headfirst into things that spark my curiosity. Crochet was one of them. What began as learning a few stitches eventually turned into a small online business where I designed and sold handmade accessories and clothing through (@crochetcurioo). It taught me that the most rewarding projects usually start with simply being willing to learn.',
+      'I have a habit of diving headfirst into things that spark my curiosity. Crochet was one of them. What began as learning a few stitches eventually turned into a small online business where I designed and sold handmade accessories and clothing through @crochetcurioo. It taught me that the most rewarding projects usually start with simply being willing to learn.',
       "I approach product design with that same curiosity. I'm always exploring new ideas, refining my thinking, and paying attention to the details that make experiences feel effortless. Outside of design, that curiosity finds its way into other parts of my life too. Right now, I'm learning German, working on my pickleball game, and probably adding another unexpected skill to the list.",
     ],
     // The shop's own page — the Instagram the copy already names. Empty would
@@ -736,7 +736,7 @@ export const about = {
       {
         src: '/images/about/trip-aquarium.webp',
         alt: 'Standing in front of a floor-to-ceiling aquarium tank',
-        caption: 'Seattle aquarium',
+        caption: 'Seattle Aquarium',
       },
       {
         src: '/images/about/trip-sunset.webp',
@@ -746,7 +746,7 @@ export const about = {
       {
         src: '/images/about/trip-rainier.webp',
         alt: 'A forest trail through tall trees on Mount Rainier',
-        caption: 'Trekking mount rainier',
+        caption: 'Trekking Mount Rainier',
       },
     ],
   },

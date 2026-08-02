@@ -5,6 +5,8 @@ import Header from './components/Header'
 import ThemeProvider from './components/ThemeProvider'
 import Footer from './components/Footer'
 import Cursor from './components/Cursor'
+import Badge from './components/Badge'
+import Button from './components/Button'
 import Home from './pages/Home'
 import About from './pages/About'
 import Contact from './pages/Contact'
@@ -12,18 +14,20 @@ import CaseStudy from './pages/CaseStudy'
 import { useReducedMotion } from './lib/hooks'
 import { EASE, DUR } from './lib/animations'
 
-// Blank placeholder pages — the shell, tokens, and cursor are what we're
-// confirming here. Real pages come next.
-function Placeholder({ name }) {
+// Anything that isn't a route. It opens with type, so it clears the floating
+// nav the same way About and Contact do.
+function NotFound() {
   return (
-    <section className="mx-auto flex min-h-[60vh] max-w-content flex-col items-start justify-center px-6 py-section-sm md:py-section-md lg:py-section">
-      <p className="text-body-sm font-normal text-text-muted">Placeholder</p>
-      <h1 className="mt-2 text-h1 font-semibold text-text">{name}</h1>
+    <section className="mx-auto flex min-h-[60vh] max-w-content flex-col items-start justify-center px-6 pb-section-sm pt-nav-clear md:pb-section-md lg:pb-section">
+      <Badge>404</Badge>
+      <h1 className="mt-5 text-h1 font-semibold text-text">Page not found</h1>
       <p className="mt-4 max-w-md text-body font-normal text-text-muted">
-        This page is intentionally blank. We're confirming the shell, design
-        tokens, header, footer, and custom cursor before building the page
-        content.
+        That page doesn't exist. The work, the story behind it, and a way to
+        reach me are all still here.
       </p>
+      <Button to="/" className="mt-8">
+        Back to home
+      </Button>
     </section>
   )
 }
@@ -58,7 +62,7 @@ function AnimatedRoutes() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/work/:slug" element={<CaseStudy />} />
-        <Route path="*" element={<Placeholder name="Not found" />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </motion.div>
   )

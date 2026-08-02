@@ -84,7 +84,7 @@ export default function Header() {
   const glyphs = {
     '/': <HomeIcon />,
     '/about': <AboutIcon />,
-    '/contact': <MailIcon />,
+    '/contact': <MessageIcon />,
   }
   const items = [
     ...nav.flatMap((item) =>
@@ -319,23 +319,16 @@ function DocIcon() {
   )
 }
 
-function MailIcon() {
+// Contact is a conversation, not an inbox — a speech bubble, matching the
+// footer's own "say hello" glyph rather than repeating the mail envelope that
+// sits next to it down there.
+function MessageIcon() {
   return (
     <Glyph>
-      <rect
-        x="3.2"
-        y="5.4"
-        width="17.6"
-        height="13.2"
-        rx="2.4"
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
       <path
-        d="m4.4 7.6 7.6 5.4 7.6-5.4"
+        d="M6.6 4.2h10.8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8.6l-4 3.6V6.2a2 2 0 0 1 2-2Z"
         stroke="currentColor"
         strokeWidth="1.6"
-        strokeLinecap="round"
         strokeLinejoin="round"
       />
     </Glyph>

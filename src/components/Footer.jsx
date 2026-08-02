@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { site, contact, links, footer as footerCopy } from '../data/portfolio'
 import { useReducedMotion } from '../lib/hooks'
 import { tapHaptic } from '../lib/haptics'
-import { CTA_HOVER, CTA_HOVER_FILL, CTA_ICON } from '../lib/interactions'
+import { CTA_HOVER, CTA_HOVER_FILL } from '../lib/interactions'
 
 // Global footer — the centred sign-off band from the Figma frame: a hairline,
 // the sign-off, a row of round connect buttons, the copyright. Back to top is
@@ -99,9 +99,13 @@ export default function Footer() {
   )
 }
 
-// A round hairline button carrying one glyph — the same 44px box, the same
-// ink fill and the same small zoom as every other CTA on the site.
-const connectClass = `${CTA_ICON} border border-border text-text ${CTA_HOVER} ${CTA_HOVER_FILL}`
+// A round hairline button carrying one glyph — the same ink fill as every
+// other CTA on the site, in a 48px box rather than the shared 44px one. The
+// glyphs inside are 18px, so the ring reads as a button holding a mark rather
+// than a mark with a ring drawn tight around it.
+const connectClass =
+  'inline-flex size-12 shrink-0 items-center justify-center rounded-full ' +
+  `border border-border text-text ${CTA_HOVER} ${CTA_HOVER_FILL}`
 
 function ConnectButton({ label, href, to, external, cursorLabel, icon, onClick }) {
   const shared = {
@@ -145,17 +149,20 @@ function ConnectButton({ label, href, to, external, cursorLabel, icon, onClick }
 // honest thing to ship — it is a wordmark we are not licensed to redraw.
 function LinkedInGlyph() {
   return (
-    <span aria-hidden="true" className="text-h4 font-semibold">
+    <span aria-hidden="true" className="text-body-sm font-semibold">
       in
     </span>
   )
 }
 
 // Mail and chat are the frame's own glyphs, re-pointed at currentColor so they
-// take the theme's ink instead of the frame's #333.
+// take the theme's ink instead of the frame's #333. Each carries the viewBox
+// its own path actually fills — the envelope is wider than it is tall, and a
+// square box around it parked the mark high in the button rather than in its
+// middle.
 function MailIcon() {
   return (
-    <GlyphSvg>
+    <GlyphSvg viewBox="30 30 33.34 26.67">
       <path d="M32.7779 56.6667C32.0279 56.6667 31.3774 56.3913 30.8263 55.8404C30.2754 55.2893 30 54.6388 30 53.8888V32.7779C30 32.0279 30.2754 31.3774 30.8263 30.8263C31.3774 30.2754 32.0279 30 32.7779 30H60.5554C61.3054 30 61.956 30.2754 62.5071 30.8263C63.0579 31.3774 63.3333 32.0279 63.3333 32.7779V53.8888C63.3333 54.6388 63.0579 55.2893 62.5071 55.8404C61.956 56.3913 61.3054 56.6667 60.5554 56.6667H32.7779ZM46.6667 44.3887L32.7779 35.4167V53.8888H60.5554V35.4167L46.6667 44.3887ZM46.6667 41.6112L60.4446 32.7779H32.9167L46.6667 41.6112ZM32.7779 35.4167V32.7779V53.8888V35.4167Z" />
     </GlyphSvg>
   )
@@ -163,19 +170,19 @@ function MailIcon() {
 
 function ChatIcon() {
   return (
-    <GlyphSvg>
+    <GlyphSvg viewBox="30 30 33.34 33.34">
       <path d="M30 63.3333V32.7779C30 32.0279 30.2754 31.3774 30.8263 30.8263C31.3774 30.2754 32.0279 30 32.7779 30H60.5554C61.3054 30 61.956 30.2754 62.5071 30.8263C63.0579 31.3774 63.3333 32.0279 63.3333 32.7779V53.8888C63.3333 54.6388 63.0579 55.2893 62.5071 55.8404C61.956 56.3913 61.3054 56.6667 60.5554 56.6667H36.6667L30 63.3333ZM35.4721 53.8888H60.5554V32.7779H32.7779V56.7363L35.4721 53.8888Z" />
     </GlyphSvg>
   )
 }
 
-function GlyphSvg({ children }) {
+function GlyphSvg({ viewBox, children }) {
   return (
     <svg
       aria-hidden="true"
-      width="24"
-      height="24"
-      viewBox="30 30 33.34 33.34"
+      width="18"
+      height="18"
+      viewBox={viewBox}
       fill="currentColor"
       className="block shrink-0"
     >
