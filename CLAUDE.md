@@ -58,6 +58,8 @@ Favicon master is `assets/favicon.svg` (Frame 17); served copies are
   only. Uses `py-10 md:py-12`, not `py-section*`. The connect buttons are a
   48px box around an 18px glyph — their own size, not `CTA_ICON`'s 44px, and
   each glyph carries the viewBox its path actually fills so it sits centred.
+  They carry **no `data-cursor`** — three marks under the words "reach out"
+  need no pill naming each one, same rule as the header's nav row.
 
 ```
 src/
@@ -109,6 +111,16 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   (140px threshold, 6px jitter floor). Both the header and the case-study rail
   read it; never fork the direction logic. Keyboard focus inside the header
   overrides the hide.
+- **A hidden nav is `pointer-events: none`, so hiding it at the wrong moment
+  eats a tap** rather than dimming one — that is the "I had to tap twice" bug
+  on a phone. Two guards in `useNavCollapsed` prevent it, and both only ever
+  keep the nav on screen: iOS overscroll (`y <= 0` / `y >= max`) is a dead
+  zone, because the rubber-band spring is a downward move the reader never
+  made; and a touch that has not moved yet is a tap, so `collapsed` is frozen
+  from `touchstart` until the first `touchmove` — which means drag-scrolling
+  still hides the nav normally. Every control in the row also carries
+  `touch-manipulation`, so a tap fires immediately instead of waiting out
+  double-tap-to-zoom.
 - **`lamp`** is the hero lamp's own light: the dark-mode bloom on the lamp head
   (`HeroScene`) and the journey trail glow (on `journey-branch`) — never type,
   never a surface. The bloom is opacity-only and faint; it says the bulb is on,
@@ -170,10 +182,21 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   slide-to-centre flicker) and a pile opens on the group’s `pointerenter`, not
   a buried card’s. `Deck` (below `lg`) is a swipe deck: drag the top card past
   `SWIPE_DISTANCE`/`SWIPE_VELOCITY` and it throws off screen, the next is
-  already under it, and tapping the **last** card deals the whole group back in
-  along the arc each card left on — so the direction of every throw is
-  remembered. Never give the deck a horizontal scroller instead; the page must
-  not scroll sideways at 360px.
+  already under it, and the **last** card deals the whole group back in along
+  the arc each card left on — so the direction of every throw is remembered.
+  Never give the deck a horizontal scroller instead; the page must not scroll
+  sideways at 360px.
+- **The deck fans, and a tap does what a swipe does.** Resting cards step down,
+  across and further out of true (`DECK_STEP_X/Y/SCALE/TILT`) so the ones
+  underneath read as more photographs — that visible corner is the only thing
+  inviting the gesture. A tap on the top card therefore throws it too, and a
+  tap on the last one deals back. Framer reports a drag that ends over the card
+  as a click, so `draggingRef` must stay: without it a throw fires the tap
+  handler and takes the next card with it.
+- **A pile deals first card on top** at both widths (`layout === 'pile'`
+  reverses `zIndex` in `Spread`), so the photograph that names the group — the
+  "pspspsps" cat — is the one you see. A fan keeps its left-to-right shingle;
+  every card there is already showing.
 - **The caption pill is one component** (`Caption`) and is coloured at every
   width — the frame’s highlighter hue, `caption-ink`, no hairline. It names the
   card being looked at: the lifted one on a pointer, the top of the deck on a

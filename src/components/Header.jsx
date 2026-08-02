@@ -133,7 +133,7 @@ export default function Header() {
           to="/"
           onClick={goHome}
           aria-label="Sakhi Rana — home"
-          className={`${FLOAT_SHELL} ${CTA_HOVER} inline-flex size-11 shrink-0 items-center justify-center !rounded-full text-text hover:border-text/40 md:size-[52px]`}
+          className={`${FLOAT_SHELL} ${CTA_HOVER} inline-flex size-11 shrink-0 touch-manipulation items-center justify-center !rounded-full text-text hover:border-text/40 md:size-[52px]`}
         >
           <Logo className="h-4 w-auto md:h-[18px]" />
         </Link>
@@ -196,7 +196,7 @@ export default function Header() {
             it keeps its `data-cursor`: it is the one control in the row whose
             glyph names a state rather than a destination. */}
         <ThemeToggle
-          className={`${FLOAT_SHELL} !rounded-full md:size-[52px]`}
+          className={`${FLOAT_SHELL} touch-manipulation !rounded-full md:size-[52px]`}
         />
       </motion.div>
     </div>
@@ -206,9 +206,14 @@ export default function Header() {
 // One destination inside the pill. 42px tall, glyph always, label from 860px
 // up — the width the four labels stop fitting beside the logo, toggle and
 // contact button.
+//
+// `touch-action: manipulation` opts each control out of double-tap-to-zoom, so
+// a tap fires on the first one instead of waiting to find out whether a second
+// is coming. These sit inside a bar the thumb reaches for constantly; a
+// several-hundred-millisecond wait there reads as the tap not registering.
 const pillClass =
   'relative inline-flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-full px-2.5 ' +
-  'text-body-sm font-normal text-text-muted transition-colors duration-200 ease-out ' +
+  'touch-manipulation text-body-sm font-normal text-text-muted transition-colors duration-200 ease-out ' +
   'hover:bg-text/[0.06] hover:text-text ' +
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ' +
   'min-[860px]:px-4'

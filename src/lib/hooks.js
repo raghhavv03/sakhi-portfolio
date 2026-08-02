@@ -47,12 +47,19 @@ export function useLargeScreen() {
 // stream of one- and two-pixel scrolls, and a nav that flickers on those is
 // worse than no nav at all. Movement under the floor accumulates rather than
 // being thrown away — `lastY` only advances on a move that counted.
+//
+// Two touch guards sit on top of that, because a hidden nav is not just
+// invisible, it is `pointer-events: none` — so anything that hides it at the
+// wrong moment does not dim a tap, it eats one, and the reader has to tap
+// again. Both guards only ever keep the nav on screen.
 export function useNavCollapsed({ threshold = 140, delta = 6 } = {}) {
   const [collapsed, setCollapsed] = useState(false)
 
   useEffect(() => {
     let lastY = window.scrollY
     let queued = false
+    // A finger is down and has not moved yet, so this is still a tap.
+    let tapping = false
 
     const read = () => {
       queued = false
@@ -63,9 +70,23 @@ export function useNavCollapsed({ threshold = 140, delta = 6 } = {}) {
         setCollapsed(false)
         return
       }
+      // Guard 1 — overscroll. iOS runs the scroll position past both ends of
+      // the document and springs it back, and that spring is a downward move
+      // the reader never made. Acting on it hides the nav out from under a
+      // thumb already on its way to it.
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      if (y <= 0 || y >= max) {
+        lastY = y
+        return
+      }
       const dy = y - lastY
       if (Math.abs(dy) < delta) return
       lastY = y
+      // Guard 2 — a tap in progress. Momentum from the previous flick is still
+      // arriving under the finger; letting it hide the nav mid-tap is the same
+      // eaten tap. A touch that turns into a scroll clears the flag on its
+      // first move, so ordinary drag-scrolling still hides the nav.
+      if (tapping) return
       setCollapsed(dy > 0)
     }
 
@@ -75,9 +96,26 @@ export function useNavCollapsed({ threshold = 140, delta = 6 } = {}) {
       requestAnimationFrame(read)
     }
 
+    const onTouchStart = () => {
+      tapping = true
+    }
+    const endTap = () => {
+      tapping = false
+    }
+
     read()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchmove', endTap, { passive: true })
+    window.addEventListener('touchend', endTap, { passive: true })
+    window.addEventListener('touchcancel', endTap, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchmove', endTap)
+      window.removeEventListener('touchend', endTap)
+      window.removeEventListener('touchcancel', endTap)
+    }
   }, [threshold, delta])
 
   return collapsed

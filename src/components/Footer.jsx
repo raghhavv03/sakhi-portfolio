@@ -38,7 +38,6 @@ export default function Footer() {
       key: 'email',
       label: `Email ${site.name}`,
       href: `mailto:${contact.email}`,
-      cursorLabel: 'Email me',
       icon: <MailIcon />,
     },
     // On every other route this navigates to the contact form. On the contact
@@ -50,14 +49,12 @@ export default function Footer() {
           key: 'hello',
           label: `${footerCopy.sayHello} — back to the form`,
           onClick: scrollToTop,
-          cursorLabel: footerCopy.sayHello,
           icon: <ChatIcon />,
         }
       : {
           key: 'hello',
           label: footerCopy.sayHello,
           to: '/contact',
-          cursorLabel: footerCopy.sayHello,
           icon: <ChatIcon />,
         },
   ].filter(Boolean)
@@ -107,11 +104,13 @@ const connectClass =
   'inline-flex size-12 shrink-0 items-center justify-center rounded-full ' +
   `border border-border text-text ${CTA_HOVER} ${CTA_HOVER_FILL}`
 
-function ConnectButton({ label, href, to, external, cursorLabel, icon, onClick }) {
+// No `data-cursor` on any of them: three marks in a row under the words
+// "reach out" are already unambiguous, and a pill naming each one is the same
+// noise the header's nav row drops for the same reason.
+function ConnectButton({ label, href, to, external, icon, onClick }) {
   const shared = {
     className: connectClass,
     'aria-label': label,
-    'data-cursor': cursorLabel ?? label,
     onPointerDown: tapHaptic,
   }
 

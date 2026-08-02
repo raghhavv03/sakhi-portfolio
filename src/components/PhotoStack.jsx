@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLargeScreen, useReducedMotion, useReveal } from '../lib/hooks'
 import { EASE, DUR } from '../lib/animations'
@@ -55,12 +55,18 @@ const SPREAD = { cat: 52, trip: 30 }
 const SPLAY = 1.8
 
 // The deck, below `lg`. A thrown card clears the widest phone and takes a
-// little spin with it; the cards still in the deck sit a few pixels lower and
-// a little smaller each, so the pile reads as a pile.
+// little spin with it.
 const THROW_X = 520
 const THROW_SPIN = 18
-const DECK_STEP_Y = 7
-const DECK_STEP_SCALE = 0.04
+// The cards still in the deck step down, across and open a little further out
+// of true with each layer. A deck that sits perfectly square looks like one
+// photograph, and nobody swipes one photograph — the corners underneath are
+// the whole invitation, so they are deliberately wide enough to read as more
+// pictures rather than as a thick border.
+const DECK_STEP_X = 11
+const DECK_STEP_Y = 10
+const DECK_STEP_SCALE = 0.035
+const DECK_STEP_TILT = 0.45
 // Past this much drag, or this much flick, letting go throws the card.
 const SWIPE_DISTANCE = 70
 const SWIPE_VELOCITY = 450
@@ -191,7 +197,15 @@ function Spread({ items, shape, layout, label }) {
             transition={
               reducedMotion ? { duration: 0 } : { duration: DUR.reveal, ease: EASE }
             }
-            style={{ zIndex: lifted ? 30 : i }}
+            // A pile deals first card on top, the same way the deck does, so
+            // the photograph that names the group — the "pspspsps" cat — is the
+            // one you see at both widths instead of the one buried underneath.
+            // A fan keeps its left-to-right shingle: there every card is
+            // already showing, and reversing it would only flip which edge
+            // overlaps which.
+            style={{
+              zIndex: lifted ? 30 : layout === 'pile' ? items.length - i : i,
+            }}
             onPointerEnter={() => setActive(i)}
             className={`relative shrink-0 ${card} ${i > 0 ? overlap : ''}`}
           >
@@ -238,6 +252,25 @@ function Deck({ items, shape, label }) {
     setThrown(0)
   }
 
+  // A tap does what a swipe does. It has to, because the deck's whole
+  // invitation is visual — a reader who has understood "there are more of
+  // these under it" will try the shorter gesture first, and a card that
+  // ignores it reads as broken rather than as swipe-only.
+  //
+  // Framer still reports a drag that ended over the card as a click, so a
+  // throw that lands under the finger would immediately throw the next one
+  // too. The flag is what separates the two: set while a drag is live, and
+  // cleared a tick after it ends, which is after the click has been and gone.
+  const draggingRef = useRef(false)
+
+  const onCardClick = (index) => () => {
+    if (draggingRef.current) return
+    if (index === lastIndex) dealBack()
+    // Tapped cards leave the way they lean, so the deal-back arc still matches
+    // the way each card left.
+    else throwCard(index, TILT[index % TILT.length] < 0 ? -1 : 1)
+  }
+
   return (
     <motion.div
       {...reveal}
@@ -245,10 +278,11 @@ function Deck({ items, shape, label }) {
       aria-label={label}
       className="flex justify-center"
     >
-      {/* The pill sits above the deck, so the group reserves the room for it
-          rather than letting it overlap the copy above. */}
+      {/* The pill sits above the deck and the fan falls below and to the right
+          of the top card, so the group reserves the room for both rather than
+          letting either overlap the copy around it. */}
       <div
-        className={`relative mt-10 w-[68vw] max-w-[280px] md:max-w-[320px] ${aspect}`}
+        className={`relative mb-4 mt-10 w-[68vw] max-w-[280px] md:max-w-[320px] ${aspect}`}
       >
         {items.map((item, i) => {
           const gone = i < thrown
@@ -269,9 +303,11 @@ function Deck({ items, shape, label }) {
                       opacity: 0,
                     }
                   : {
-                      x: 0,
+                      x: depth * DECK_STEP_X,
                       y: depth * DECK_STEP_Y,
-                      rotate: isTop ? 0 : TILT[i % TILT.length] * 0.6,
+                      rotate: isTop
+                        ? 0
+                        : TILT[i % TILT.length] * (0.6 + depth * DECK_STEP_TILT),
                       scale: 1 - depth * DECK_STEP_SCALE,
                       opacity: 1,
                     }
@@ -289,14 +325,20 @@ function Deck({ items, shape, label }) {
               drag={isTop && i !== lastIndex ? 'x' : false}
               dragSnapToOrigin
               dragElastic={0.6}
+              onDragStart={() => {
+                draggingRef.current = true
+              }}
               onDragEnd={(event, info) => {
+                setTimeout(() => {
+                  draggingRef.current = false
+                }, 0)
                 const far = Math.abs(info.offset.x) > SWIPE_DISTANCE
                 const fast = Math.abs(info.velocity.x) > SWIPE_VELOCITY
                 if (!far && !fast) return
                 throwCard(i, info.offset.x < 0 ? -1 : 1)
               }}
-              onClick={i === lastIndex && isTop ? dealBack : undefined}
-              className="absolute inset-0"
+              onClick={isTop ? onCardClick(i) : undefined}
+              className="absolute inset-0 cursor-pointer"
             >
               <Photo item={item} shape={shape} />
               <Caption
