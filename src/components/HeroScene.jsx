@@ -102,7 +102,7 @@ export default function HeroScene({ className = '' }) {
         {hero.scene.hint && (
           <span
             aria-hidden="true"
-            className={`pointer-events-none absolute bottom-full left-1/2 mb-3 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 text-caption font-normal text-text-muted ${FLOAT_SHELL} !rounded-full`}
+            className={`pointer-events-none absolute bottom-full left-1/2 mb-10 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 text-caption font-normal text-text-muted ${FLOAT_SHELL} !rounded-full`}
           >
             {hero.scene.hint}
           </span>
