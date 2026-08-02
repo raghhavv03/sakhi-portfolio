@@ -1,53 +1,64 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { nav, links } from '../data/portfolio'
-import Button from './Button'
 import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
-import { useReducedMotion } from '../lib/hooks'
+import { useNavCollapsed, useReducedMotion } from '../lib/hooks'
 import { EASE, DUR } from '../lib/animations'
+import { CTA_HOVER, FLOAT_SHELL, FLOAT_Y } from '../lib/interactions'
 import { tapHaptic } from '../lib/haptics'
 
-// Global header. Transparent over the home hero; gains a subtle solid
-// background elsewhere and once the page is scrolled. Collapses to a hamburger
-// panel below 768px.
+// Global header — three objects floating in one band near the top of the
+// viewport rather than a bar pinned to its edge: a round logo capsule, the
+// frosted nav pill carrying every destination, and the theme toggle. All three
+// are cut from the same shell (`FLOAT_SHELL`), so they read as one row of
+// glass, and the page runs underneath them.
+//
+// Scrolling down lifts the whole group out; scrolling back up returns it. On a
+// case study the vacated spot is taken by the section rail — see
+// casestudy/CaseStudyProgressNav, which reads the same `useNavCollapsed`.
+//
+// Below 860px the labels drop and the pill is glyphs only, which is what
+// removes the need for a hamburger panel: every destination stays on screen at
+// 360px. LinkedIn is not in this row — the pill carries destinations, and the
+// footer's connect row already carries the profile.
+//
+// Only the theme toggle carries a `data-cursor`: every other control in the
+// row already says in words or in its own mark where it goes, and a label
+// pill repeating that is noise.
 export default function Header() {
   const location = useLocation()
   const navigate = useNavigate()
   const reducedMotion = useReducedMotion()
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const collapsed = useNavCollapsed()
+  // A collapsed nav is out of the way, not out of the document. Tabbing into
+  // it brings it straight back, so keyboard order still matches what is drawn.
+  const [focusWithin, setFocusWithin] = useState(false)
+  const hidden = collapsed && !focusWithin
 
   const isHome = location.pathname === '/'
-  const transparent = isHome && !scrolled
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' })
   }
 
-  const blurTarget = (e) => {
-    e.currentTarget.blur()
-  }
-
   const goToPage = (path) => (e) => {
     tapHaptic()
-    setMenuOpen(false)
     if (location.pathname === path) {
       e.preventDefault()
       scrollToTop()
     }
-    blurTarget(e)
+    e.currentTarget.blur()
   }
 
   const goHome = (e) => {
     tapHaptic()
-    setMenuOpen(false)
     if (isHome) {
       e.preventDefault()
       scrollToTop()
     }
-    blurTarget(e)
+    e.currentTarget.blur()
   }
 
   // "Work" isn't its own route — it scrolls to the #work section on the home
@@ -62,109 +73,117 @@ export default function Header() {
     } else {
       navigate('/#work')
     }
-    setMenuOpen(false)
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
   }
 
-  // Insert a "Work" item right after "Home" in the shared nav data, without
-  // mutating it (Footer reads the same array and must be unaffected).
-  const homeIndex = nav.findIndex((item) => item.to === '/')
-  const navWithWork = [
-    ...nav.slice(0, homeIndex + 1),
-    { label: 'Work', isWork: true },
-    ...nav.slice(homeIndex + 1),
+  // Every destination lives in the one pill, in the shared nav's own order
+  // with "Work" spliced in after "Home" and the CV added at the end. `nav`
+  // itself is never mutated — the footer reads the same array.
+  const glyphs = {
+    '/': <HomeIcon />,
+    '/about': <AboutIcon />,
+    '/contact': <MailIcon />,
+  }
+  const items = [
+    ...nav.flatMap((item) =>
+      item.to === '/'
+        ? [
+            { ...item, icon: glyphs['/'] },
+            { label: 'Work', isWork: true, icon: <WorkIcon /> },
+          ]
+        : [{ ...item, icon: glyphs[item.to] }]
+    ),
+    // Empty means don't render: no résumé link, no CV item.
+    ...(links.resume
+      ? [
+          {
+            label: 'CV',
+            href: links.resume,
+            external: true,
+            icon: <DocIcon />,
+          },
+        ]
+      : []),
   ]
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  // Close the mobile panel on route change.
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [location.pathname])
-
-  // Active nav item rises to the heading ink; everything else rests on the
-  // body ink. Same two colours as the rest of the site — the only difference
-  // between the desktop and mobile rows is the shape of their hit area.
-  const navLinkClass = ({ isActive }) =>
-    `relative rounded-full px-4 py-2 text-body-sm transition-colors duration-200 min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
-      isActive
-        ? 'font-semibold text-text'
-        : 'font-normal text-text-muted hover:text-text'
-    }`
-
-  const mobileNavLinkClass = ({ isActive }) =>
-    `flex min-h-[44px] items-center rounded-xl px-4 text-body transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ${
-      isActive
-        ? 'font-semibold text-text'
-        : 'font-normal text-text-muted hover:text-text'
-    }`
+  const transition = reducedMotion
+    ? { duration: 0 }
+    : { duration: DUR.page, ease: EASE }
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ${
-        transparent
-          ? 'border-transparent bg-bg/70 backdrop-blur-md'
-          : 'border-border bg-bg/80 backdrop-blur-md'
-      }`}
-    >
-      <div className="mx-auto flex max-w-content items-center justify-between px-6 py-4">
-        {/* Logo — accessible name lives on the link itself; the mark is
-            decorative (aria-hidden) so it isn't announced a second time. */}
+    <div className="pointer-events-none fixed left-1/2 top-0 z-50 -translate-x-1/2">
+      <motion.div
+        animate={{
+          y: hidden ? FLOAT_Y.navHidden : FLOAT_Y.nav,
+          opacity: hidden ? 0 : 1,
+        }}
+        initial={false}
+        transition={transition}
+        style={{ pointerEvents: hidden ? 'none' : 'auto' }}
+        onFocusCapture={() => setFocusWithin(true)}
+        onBlurCapture={() => setFocusWithin(false)}
+        className="flex max-w-[calc(100vw-16px)] items-center gap-2 md:gap-2.5"
+      >
+        {/* Logo capsule — its own object, not the first item of the pill.
+            Accessible name lives on the link; the mark is decorative. No
+            `data-cursor`: the mark already says where it goes. */}
         <Link
           to="/"
           onClick={goHome}
-          className="inline-flex min-h-[44px] items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
           aria-label="Sakhi Rana — home"
+          className={`${FLOAT_SHELL} ${CTA_HOVER} inline-flex size-11 shrink-0 items-center justify-center !rounded-full text-text hover:border-text/40 md:size-[52px]`}
         >
-          {/* Inline SVG on `currentColor`, so the mark is the same ink as the
-              nav links next to it and changes with the theme on its own. */}
-          <Logo className="h-10 w-auto text-text" />
+          <Logo className="h-4 w-auto md:h-[18px]" />
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
-          {navWithWork.map((item) =>
+        <nav
+          aria-label="Primary"
+          className={`${FLOAT_SHELL} flex min-w-0 items-center gap-0.5 overflow-hidden p-1.5`}
+        >
+          {items.map((item) =>
             item.isWork ? (
-              <button
+              <PillItem
                 key="work"
+                as="button"
                 type="button"
                 onClick={goToWork}
-                className={navLinkClass({ isActive: false })}
-              >
-                {item.label}
-              </button>
+                icon={item.icon}
+                label={item.label}
+              />
+            ) : item.href ? (
+              <PillItem
+                key={item.label}
+                as="a"
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                icon={item.icon}
+                label={item.label}
+              />
             ) : (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end
-                className={navLinkClass}
                 onClick={goToPage(item.to)}
+                className={pillClass}
+                aria-label={item.label}
               >
                 {({ isActive }) => (
                   <>
-                    {item.label}
                     {/* Active-page indicator — one shared layoutId, so the
-                        underline slides between items on route change. */}
+                        wash slides between items on route change. */}
                     {isActive && (
                       <motion.span
-                        layoutId="nav-active-underline"
+                        layoutId="nav-active-pill"
                         aria-hidden="true"
-                        className="absolute inset-x-4 bottom-1.5 h-0.5 rounded-full bg-text"
-                        transition={
-                          reducedMotion
-                            ? { duration: 0 }
-                            : { duration: DUR.page, ease: EASE }
-                        }
+                        className="absolute inset-0 rounded-full bg-text/[0.07]"
+                        transition={transition}
                       />
                     )}
+                    <PillFace icon={item.icon} label={item.label} />
                   </>
                 )}
               </NavLink>
@@ -172,126 +191,153 @@ export default function Header() {
           )}
         </nav>
 
-        {/* Desktop right-side actions — the toggle and both buttons carry the
-            one shared CTA hover, so the three read as one row. */}
-        <div className="hidden items-center gap-2 md:flex">
-          {/* Same switch the hero lamp is — one shared state, so the two can
-              never show different things. */}
-          <ThemeToggle />
-          {links.resume && (
-            <Button
-              variant="secondary"
-              href={links.resume}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Resume
-            </Button>
-          )}
-          {links.linkedin && (
-            <Button
-              variant="secondary"
-              href={links.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              LinkedIn
-            </Button>
-          )}
-        </div>
+        {/* The same switch the hero lamp is — one shared state, so the two can
+            never show different things. Only its surface is restyled here, and
+            it keeps its `data-cursor`: it is the one control in the row whose
+            glyph names a state rather than a destination. */}
+        <ThemeToggle
+          className={`${FLOAT_SHELL} !rounded-full md:size-[52px]`}
+        />
+      </motion.div>
+    </div>
+  )
+}
 
-        {/* Mobile actions — the theme toggle stays out of the panel so it is
-            reachable without opening the menu. */}
-        <div className="flex items-center gap-1 md:hidden">
-          <ThemeToggle />
-          <button
-            type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2"
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((v) => !v)}
-          >
-            <span className="relative block h-4 w-5">
-              <span
-                className={`absolute left-0 top-0 h-0.5 w-5 bg-text transition-transform duration-200 ${
-                  menuOpen ? 'translate-y-[7px] rotate-45' : ''
-                }`}
-              />
-              <span
-                className={`absolute left-0 top-[7px] h-0.5 w-5 bg-text transition-opacity duration-200 ${
-                  menuOpen ? 'opacity-0' : 'opacity-100'
-                }`}
-              />
-              <span
-                className={`absolute left-0 top-[14px] h-0.5 w-5 bg-text transition-transform duration-200 ${
-                  menuOpen ? '-translate-y-[7px] -rotate-45' : ''
-                }`}
-              />
-            </span>
-          </button>
-        </div>
-      </div>
+// One destination inside the pill. 42px tall, glyph always, label from 860px
+// up — the width the four labels stop fitting beside the logo, toggle and
+// contact button.
+const pillClass =
+  'relative inline-flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-full px-2.5 ' +
+  'text-body-sm font-normal text-text-muted transition-colors duration-200 ease-out ' +
+  'hover:bg-text/[0.06] hover:text-text ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text/25 focus-visible:ring-offset-2 ' +
+  'min-[860px]:px-4'
 
-      {/* Mobile full-width panel */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: reducedMotion ? 0 : 0.2 }}
-            className="border-b border-border bg-bg md:hidden"
-          >
-            <nav
-              className="mx-auto flex max-w-content flex-col gap-1 px-6 py-4"
-              aria-label="Mobile"
-            >
-              {navWithWork.map((item) =>
-                item.isWork ? (
-                  <button
-                    key="work"
-                    type="button"
-                    onClick={goToWork}
-                    className={mobileNavLinkClass({ isActive: false })}
-                  >
-                    {item.label}
-                  </button>
-                ) : (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end
-                    className={mobileNavLinkClass}
-                    onClick={goToPage(item.to)}
-                  >
-                    {item.label}
-                  </NavLink>
-                )
-              )}
-              {links.resume && (
-                <a
-                  href={links.resume}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={mobileNavLinkClass({ isActive: false })}
-                >
-                  Resume
-                </a>
-              )}
-              {links.linkedin && (
-                <a
-                  href={links.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={mobileNavLinkClass({ isActive: false })}
-                >
-                  LinkedIn
-                </a>
-              )}
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+function PillFace({ icon, label }) {
+  return (
+    <span className="relative z-10 inline-flex items-center gap-2">
+      {icon}
+      <span className="hidden whitespace-nowrap min-[860px]:inline">
+        {label}
+      </span>
+    </span>
+  )
+}
+
+function PillItem({ as: As, icon, label, ...rest }) {
+  return (
+    <As
+      className={pillClass}
+      aria-label={label}
+      onPointerDown={tapHaptic}
+      {...rest}
+    >
+      <PillFace icon={icon} label={label} />
+    </As>
+  )
+}
+
+// Glyphs — one 24 grid, 1.6 stroke on currentColor, so they take the pill's
+// ink and the theme with it.
+function Glyph({ children }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      className="block shrink-0"
+    >
+      {children}
+    </svg>
+  )
+}
+
+function HomeIcon() {
+  return (
+    <Glyph>
+      <path
+        d="M3.6 10.4 12 3.8l8.4 6.6V20a1 1 0 0 1-1 1h-4.6v-6H9.2v6H4.6a1 1 0 0 1-1-1v-9.6Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </Glyph>
+  )
+}
+
+function WorkIcon() {
+  return (
+    <Glyph>
+      <path
+        d="M3.5 7.2a1.7 1.7 0 0 1 1.7-1.7h3.4l2 2.4h8.2a1.7 1.7 0 0 1 1.7 1.7v8.9a1.7 1.7 0 0 1-1.7 1.7H5.2a1.7 1.7 0 0 1-1.7-1.7V7.2Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </Glyph>
+  )
+}
+
+function AboutIcon() {
+  return (
+    <Glyph>
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M8.6 13.6a4 4 0 0 0 6.8 0"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M9.4 9.6h.01M14.6 9.6h.01"
+        stroke="currentColor"
+        strokeWidth="1.9"
+        strokeLinecap="round"
+      />
+    </Glyph>
+  )
+}
+
+function DocIcon() {
+  return (
+    <Glyph>
+      <path
+        d="M6.2 3.8h7l4.6 4.6v11.8a1 1 0 0 1-1 1H6.2a1 1 0 0 1-1-1V4.8a1 1 0 0 1 1-1Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13 3.9v4.6h4.7M8.4 13h7.2M8.4 16.4h4.8"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </Glyph>
+  )
+}
+
+function MailIcon() {
+  return (
+    <Glyph>
+      <rect
+        x="3.2"
+        y="5.4"
+        width="17.6"
+        height="13.2"
+        rx="2.4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="m4.4 7.6 7.6 5.4 7.6-5.4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Glyph>
   )
 }

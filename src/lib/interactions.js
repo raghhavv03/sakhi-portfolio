@@ -39,3 +39,26 @@ export const CTA_HOVER_FILL =
 // stays `bg`. Works in both themes because the fill is still `text`.
 export const ACTION_HOVER_GLASS =
   'hover:border-text/50 hover:bg-text/70 hover:text-bg hover:backdrop-blur-md'
+
+// ── The floating shell. The header and the case study's progress rail are two
+// separate components that have to read as one object floating in the same
+// band, so the surface they are cut from lives here rather than in either of
+// them. Frosted `surface`, the site's own hairline, a large radius, and a
+// shadow built on the `--shadow` token so it lands correctly on both canvases.
+//
+// The shadow is a resting elevation, not a hover move — the colour-only hover
+// rule above still holds for every control inside the shell.
+export const FLOAT_SHELL =
+  'rounded-[32px] border border-border bg-surface/70 backdrop-blur-md ' +
+  'shadow-[0_1px_2px_rgb(var(--shadow)/0.05),0_10px_28px_-14px_rgb(var(--shadow)/0.28)]'
+
+// Where the two floating layers sit, in px from the top of the viewport. The
+// nav rests at `nav`; scrolling down lifts it to `navHidden` and drops the
+// section rail into the spot it left. The dots ride just above the nav while
+// it is visible. `main`'s top padding in App.jsx clears `nav` + the shell.
+export const FLOAT_Y = {
+  nav: 34,
+  navHidden: -30,
+  rail: 34,
+  dots: 6,
+}

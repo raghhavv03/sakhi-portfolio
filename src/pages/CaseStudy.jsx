@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
-import { motion, useScroll } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { projects } from '../data/portfolio'
 import { useReveal } from '../lib/hooks'
 import Figure from '../components/Figure'
 import Lightbox from '../components/Lightbox'
 import ScaleToFit from '../components/casestudy/ScaleToFit'
+import CaseStudyProgressNav from '../components/casestudy/CaseStudyProgressNav'
 import SentimentPanel, { SENTIMENT_WIDTH } from '../components/charts/SentimentPanel'
 import FrictionChart, { FRICTION_WIDTH } from '../components/charts/FrictionChart'
 import {
@@ -46,7 +47,7 @@ export default function CaseStudy() {
 
   return (
     <>
-      <ReadingProgress />
+      <CaseStudyProgressNav />
       <CaseStudyHero hero={cs.hero} title={cs.title} tagline={cs.tagline} />
 
       <article className="w-full px-6 py-section-sm md:py-section-md lg:py-section">
@@ -292,7 +293,9 @@ function Step({ index, body }) {
 
 // Full-bleed band that opens the case study — the frame's own hero: the App
 // Store screenshot pinned to the left on the product's brand blue, with the
-// title and tagline centred over it. Hides itself without an image so an
+// title and tagline centred over it. It starts at the top of the viewport and
+// the floating nav sits on the blue; below `lg` the copy takes `pt-nav-clear`
+// so it never lands behind the glass. Hides itself without an image so an
 // unfinished project never ships a bare colour band.
 //
 // **Colour exception**: type on a coloured band inverts to `on-brand`.
@@ -303,7 +306,7 @@ function CaseStudyHero({ hero, title, tagline }) {
   if (!hero?.image?.src) return null
   return (
     <section className="relative w-full overflow-hidden bg-mfp-blue">
-      <div className="relative mx-auto flex min-h-[380px] w-full max-w-[1440px] flex-col items-center justify-center gap-6 px-6 py-section-sm text-center sm:min-h-[420px] md:py-section-md lg:h-[514px] lg:min-h-0 lg:py-0">
+      <div className="relative mx-auto flex min-h-[380px] w-full max-w-[1440px] flex-col items-center justify-center gap-6 px-6 pb-section-sm pt-nav-clear text-center sm:min-h-[420px] md:pb-section-md lg:h-[514px] lg:min-h-0 lg:py-0">
         <img
           src={hero.image.src}
           alt={hero.image.alt}
@@ -362,17 +365,4 @@ function BackgroundMeta({ items }) {
   )
 }
 
-// Thin reading-progress bar pinned above the header. Case studies are the
-// only long-form pages, so this is the one place a progress indicator earns
-// its keep. Scroll-linked scaleX — no animation loop, no layout work.
-function ReadingProgress() {
-  const { scrollYProgress } = useScroll()
-  return (
-    <motion.div
-      aria-hidden="true"
-      className="fixed inset-x-0 top-0 z-[60] h-0.5 origin-left bg-text"
-      style={{ scaleX: scrollYProgress }}
-    />
-  )
-}
 

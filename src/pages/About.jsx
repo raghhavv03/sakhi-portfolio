@@ -11,8 +11,10 @@ import PhotoStack from '../components/PhotoStack'
 // what happens when the designing stops. Education sits where a CV would put
 // it and hides itself until there are entries.
 export default function About() {
+  // Opens with type, so it starts below the floating nav band rather than
+  // under it — see `nav-clear` in tailwind.config.js.
   return (
-    <div className="mx-auto max-w-content px-6 py-section-sm md:py-section-md lg:py-section">
+    <div className="mx-auto max-w-content px-6 pb-section-sm pt-nav-clear md:pb-section-md lg:pb-section">
       <Intro />
       <Makes />
       <Background />

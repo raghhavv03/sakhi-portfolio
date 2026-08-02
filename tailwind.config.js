@@ -150,6 +150,13 @@ export default {
         section: '6rem', // desktop (≥1024px)
         'section-md': '5rem', // tablet (768–1023px)
         'section-sm': '3.5rem', // mobile
+
+        // The floating nav band is ~90px tall and the page runs underneath it.
+        // A section that opens with type rather than artwork starts here
+        // instead of at the section rhythm, so the first line clears the glass
+        // with air to spare. Artwork-led sections (the home hero, the case
+        // study banner) start at 0 and let the nav float over them.
+        'nav-clear': '7rem', // 112px
       },
       keyframes: {
         // Seamless marquee: the row holds two copies of the list, so a -50%

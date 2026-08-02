@@ -46,7 +46,8 @@ Favicon master is `assets/favicon.svg` (Frame 17); served copies are
 - **Motion** — `src/lib/animations.js` (`EASE`, `DUR`). **CTAs** —
   `src/lib/interactions.js` (`CTA_SHAPE`, `CTA_ICON`, `CTA_HOVER`,
   `CTA_HOVER_FILL`). **Contact submit** uses `ACTION_HOVER_GLASS` (action
-  button, not a nav CTA).
+  button, not a nav CTA). **Floating nav** uses `FLOAT_SHELL` (frosted
+  surface) + `FLOAT_Y` (band positions), same file.
 - **Empty means don't render** — empty string/array hides the affordance.
   `PREVIEW_UNPUBLISHED` in `portfolio.js` is a temporary exception for dead
   `#` hrefs; **off before launch** (see PRD).
@@ -65,11 +66,11 @@ src/
     Logo ThemeProvider ThemeToggle HeroScene PhotoStack
     Figure Lightbox
     casestudy/            Blocks.jsx (section primitives + CSRich),
-                          ScaleToFit.jsx
+                          ScaleToFit.jsx, CaseStudyProgressNav.jsx
     charts/               SentimentPanel, FrictionChart
   lib/
     hooks.js              useFinePointer useReducedMotion useReveal
-                          useInViewOnce useLargeScreen
+                          useInViewOnce useLargeScreen useNavCollapsed
     theme.js animations.js interactions.js haptics.js
   data/portfolio.js       every string on the site
 ```
@@ -88,8 +89,21 @@ Home is hero → work. The Journey section (trail + chapters) lives on
 - **Contact submit** is an action button (`ACTION_HOVER_GLASS`) — it rests
   filled and softens to a glassy `text/70` wash on hover (not an outline
   unfill).
-- **Header LinkedIn + Resume** are both `Button` (outlined). Do not split their
-  visual weight.
+- **Header is a floating pill group**, not a bar: logo capsule · nav pill
+  (Home / Work / About / Contact / CV) · `ThemeToggle`, all three cut from
+  `FLOAT_SHELL` and parked at `FLOAT_Y.nav`. Labels drop below 860px and the
+  pill goes glyph-only — that is what replaces the hamburger, so every
+  destination stays on screen at 360px. LinkedIn is not in this row; the
+  footer's connect row carries it.
+- **The page runs under the nav** — `main` has no top padding. A section that
+  opens with artwork (home hero, case-study banner) starts at 0 and lets the
+  glass float over it; a section that opens with type takes `pt-nav-clear`
+  (112px) instead of its top section padding. Anchors use
+  `scroll-mt-nav-clear`. Never reintroduce a header-height offset.
+- **The nav hides on real downward scroll** — one shared `useNavCollapsed`
+  (140px threshold, 6px jitter floor). Both the header and the case-study rail
+  read it; never fork the direction logic. Keyboard focus inside the header
+  overrides the hide.
 - **`lamp`** is for the journey trail glow only (on `journey-branch`) — never
   type, never a surface. Nothing is painted over the hero lamp (no halo, ring,
   or caption).
@@ -98,9 +112,21 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   `h1` + `body` (case-study banner keeps `display` + `lead`). Do not
   reintroduce a gradient over the artwork. Mobile scene stays `h-[62svh]`,
   not full-bleed cover.
-- **Header** keeps the frosted bar even over the hero.
+- **Header** keeps its frosted shell even over the hero — it floats above the
+  artwork, it never goes transparent.
+- **Case-study progress** — `CaseStudyProgressNav` maps the fourteen sections
+  into seven groups (Overview · Problem · Research · Process · Solution ·
+  Results · Learnings), each anchored to the id of the section that opens it.
+  Groups stay **contiguous in document order** — a non-contiguous group makes
+  the rail run backwards. Rail expanded when the nav is hidden, dots when it is
+  back; the sliding indicator is a `layoutId`, and the rail keeps only the
+  active label below 720px.
 - **Cursor pill** is `bg-text` / `text-bg`. Labels follow `data-cursor` via
-  `MutationObserver` (not click) so theme flips update immediately.
+  `MutationObserver` (not click) so theme flips update immediately. The two
+  theme switches (hero lamp, `ThemeToggle`) draw a 44px glyph disc — the
+  toggle's own `SunIcon` / `MoonIcon`, exported from `ThemeToggle.jsx` — not a
+  word. Nothing else in the header carries a `data-cursor`: a label repeating
+  the link text next to it is noise.
 - **Never pair** a `text-*` size with `leading-*` or `tracking-*`.
 - **One vertical rhythm** — `py-section-sm md:py-section-md lg:py-section`
   between sections; `gap-6` inside; `p-6` in cards.

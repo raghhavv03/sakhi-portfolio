@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useFinePointer, useReducedMotion } from '../lib/hooks'
+import { MoonIcon, SunIcon } from './ThemeToggle'
 
 const ICON_SIZE = 18
 
@@ -47,6 +48,11 @@ function CursorIcon({ type }) {
 // Labels that describe a state rather than a destination take no arrow —
 // nothing is being navigated to.
 const NO_ICON = new Set(['Coming soon', 'Night mode', 'Day mode'])
+
+// The theme switches — the hero lamp and the header toggle — say what they do
+// with the same glyph the toggle wears, not with a word. The cursor becomes
+// the button: a `bg-text` disc the size of the toggle, glyph in `text-bg`.
+const THEME_GLYPH = { 'Night mode': MoonIcon, 'Day mode': SunIcon }
 
 function parseCursorLabel(label) {
   if (!label) return { text: '', icon: null }
@@ -178,6 +184,7 @@ export default function Cursor() {
 
   const expanded = Boolean(label)
   const { text, icon } = parseCursorLabel(label)
+  const ThemeGlyph = THEME_GLYPH[label]
 
   return (
     <div
@@ -209,10 +216,20 @@ export default function Cursor() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: reducedMotion ? 0 : 0.15 }}
-            className="flex items-center gap-1.5 whitespace-nowrap px-5 py-2.5 text-body font-normal leading-none text-bg"
+            className={
+              ThemeGlyph
+                ? 'flex size-11 items-center justify-center text-bg'
+                : 'flex items-center gap-1.5 whitespace-nowrap px-5 py-2.5 text-body font-normal leading-none text-bg'
+            }
           >
-            {text}
-            <CursorIcon type={icon} />
+            {ThemeGlyph ? (
+              <ThemeGlyph size={20} />
+            ) : (
+              <>
+                {text}
+                <CursorIcon type={icon} />
+              </>
+            )}
           </motion.span>
         </motion.div>
       </motion.div>

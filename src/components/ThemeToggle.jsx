@@ -26,12 +26,15 @@ export default function ThemeToggle({ className = '' }) {
   )
 }
 
-function MoonIcon() {
+// Exported: the custom cursor draws the same two glyphs, so that hovering the
+// hero lamp shows the switch it is rather than a word for it. One definition —
+// the cursor can never fall out of step with the button.
+export function MoonIcon({ size = 18 }) {
   return (
     <svg
       aria-hidden="true"
-      width="18"
-      height="18"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       className="block"
@@ -47,12 +50,12 @@ function MoonIcon() {
   )
 }
 
-function SunIcon() {
+export function SunIcon({ size = 18 }) {
   return (
     <svg
       aria-hidden="true"
-      width="18"
-      height="18"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       className="block"

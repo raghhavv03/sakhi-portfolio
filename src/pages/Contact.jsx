@@ -73,7 +73,7 @@ export default function Contact() {
   }
 
   return (
-    <section className="mx-auto max-w-content px-6 py-section-sm md:py-section-md lg:py-section">
+    <section className="mx-auto max-w-content px-6 pb-section-sm pt-nav-clear md:pb-section-md lg:pb-section">
       <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:items-start md:gap-14 lg:gap-16">
         {/* Left: headline, invite, direct details */}
         <motion.div {...reveal}>

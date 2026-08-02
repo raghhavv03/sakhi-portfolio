@@ -25,14 +25,13 @@ export default function Home() {
 
   return (
     <>
-      {/* 1. Hero — the room, edge to edge, with the copy sitting in its light.
-          `-mt-20` pulls the artwork up under the (transparent) header; the
-          copy column adds that space back so it never hides behind it.
+      {/* 1. Hero — the room, edge to edge, starting at the top of the viewport
+          with the floating nav over it. The copy sits in its light.
           The whole area carries the "Scroll ↓" cursor hint, except the lamp,
           which sets its own label. */}
       <section
         data-cursor="Scroll ↓"
-        className="relative -mt-20 overflow-hidden md:min-h-[100svh]"
+        className="relative overflow-hidden md:min-h-[100svh]"
       >
         {/* No wash. The artwork is shown as painted, edge to edge — the copy
             sits on the same frosted `bg` the header uses over this scene. */}
@@ -44,7 +43,7 @@ export default function Home() {
             one step under display/lead (`h1` + `body`) so the room stays the
             hero. On desktop it floats over the wall; on mobile it lifts over
             the bottom of the frame. */}
-        <div className="relative mx-auto -mt-20 flex max-w-content items-center px-6 pb-section-sm pt-0 md:mt-0 md:min-h-[100svh] md:pb-0 md:pt-20">
+        <div className="relative mx-auto -mt-20 flex max-w-content items-center px-6 pb-section-sm pt-0 md:mt-0 md:min-h-[100svh] md:pb-0 md:pt-0">
           <div className="md:w-[40%] lg:w-[36%]">
             <div className="max-w-[26rem] rounded-2xl border border-border bg-bg p-5 sm:p-6">
               <h1 className="text-h1 font-semibold text-text">
@@ -75,10 +74,10 @@ export default function Home() {
       </section>
 
       {/* Portfolio grid. id="work" is the scroll target for the header's
-          "Work" nav item; scroll-mt-20 keeps it clear of the fixed header. */}
+          "Work" nav item; scroll-mt-nav-clear keeps it clear of the band. */}
       <section
         id="work"
-        className="mx-auto max-w-content scroll-mt-20 px-6 py-section-sm md:py-section-md lg:py-section"
+        className="mx-auto max-w-content scroll-mt-nav-clear px-6 py-section-sm md:py-section-md lg:py-section"
       >
         <SectionHeader badge={work.badge} heading={work.heading} />
         {/* Two projects, so two per row at every width above mobile — the

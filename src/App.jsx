@@ -71,7 +71,10 @@ export default function App() {
         <Cursor />
         <ScrollToTop />
         <Header />
-        <main className="flex-1 pt-20">
+        {/* No top padding: the nav floats, so the page starts at the top of
+            the viewport and runs under it. Sections that open with type carry
+            their own `pt-nav-clear`. */}
+        <main className="flex-1">
           <AnimatedRoutes />
         </main>
         <Footer />
