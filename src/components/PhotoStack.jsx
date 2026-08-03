@@ -14,10 +14,10 @@ import { tapHaptic } from '../lib/haptics'
 // other cards slide aside and fan wider. A `fan` (the makes) is already open,
 // so it only lifts.
 //
-// Below `lg` it is a deck you swipe: the top card follows the thumb, throws off
-// screen, and the next one is already underneath. The last card has nothing
-// behind it, so tapping it deals the whole group back in — every card returns
-// along the arc it left on.
+// Below `lg` it is a deck you swipe: the top card follows the thumb, swings
+// aside, turns away and drops in at the back of the pile, and the next one is
+// already underneath. The deck is a loop — it never empties and never needs
+// dealing back, so a reader can keep going round it for as long as they like.
 //
 // The cards are decorative and are not focus stops: each caption is a real
 // `<figcaption>` and each photo a real `alt`, so the whole group is already
@@ -54,10 +54,28 @@ const LIFT_SCALE = 1.06
 const SPREAD = { cat: 52, trip: 30 }
 const SPLAY = 1.8
 
-// The deck, below `lg`. A thrown card clears the widest phone and takes a
-// little spin with it.
-const THROW_X = 520
-const THROW_SPIN = 18
+// The deck, below `lg`. A swiped card is never thrown away — it swings aside,
+// turns away from the reader and comes back in at the back of the pile, so the
+// group is a loop with no end to reach. TUCK_* is the far point of that arc.
+//
+// The card has to change z-order somewhere on that arc, and the turn is what
+// hides it: `TUCK_TURN` is a quarter turn, so at the far point the card is
+// exactly edge-on and draws nothing at all. There is no frame in which a card
+// is seen to jump from the front of the pile to the back. That is also why the
+// arc can stay narrow enough never to reach the edge of a 360px screen —
+// nothing here needs the card to be clear of the deck to hide the swap.
+const TUCK_X = 88
+const TUCK_Y = 18
+const TUCK_SPIN = 12
+const TUCK_TURN = 90
+const TUCK_SCALE = 0.8
+const TUCK_FADE = 0.35
+const TUCK_DURATION = 0.34
+// Without a perspective the turn is a flat squash rather than a card turning
+// away. It is a long one because a short one throws the near edge of a turning
+// card a long way out — far enough, on a phone, to reach past the screen and
+// give the page a horizontal scroll for as long as the arc lasts.
+const TUCK_PERSPECTIVE = 1600
 // The cards still in the deck step down, across and open a little further out
 // of true with each layer. A deck that sits perfectly square looks like one
 // photograph, and nobody swipes one photograph — the corners underneath are
@@ -227,29 +245,36 @@ function Deck({ items, shape, label }) {
   const reveal = useReveal()
   const reducedMotion = useReducedMotion()
   const { aspect, hue } = SHAPES[shape]
-  // How many have been thrown, and which way each one went — the direction is
-  // remembered so a card returns along the arc it left on.
-  const [thrown, setThrown] = useState(0)
-  const [directions, setDirections] = useState([])
+  const count = items.length
+  // How many cards have gone round. Every card's depth is measured off it —
+  // card `i` sits at `(i - turns) mod count` — so the pile reorders itself
+  // without the array ever moving and the deck never runs out.
+  const [turns, setTurns] = useState(0)
+  // The cards mid-tuck and which way each one swung. More than one can be in
+  // the air at once, because a reader can swipe faster than the arc lands.
+  const [tucking, setTucking] = useState({})
 
-  // The last card has nothing behind it to reveal, so it is the one that deals
-  // the group back in rather than another card to throw.
-  const lastIndex = items.length - 1
-
+  // Under `prefers-reduced-motion` there is no arc to travel, so the card is
+  // never marked as tucking — it simply reappears at the back of the pile.
   const throwCard = (index, direction) => {
     tapHaptic()
-    setDirections((previous) => {
-      const next = [...previous]
-      next[index] = direction
-      return next
-    })
-    setThrown(index + 1)
+    if (!reducedMotion) {
+      setTucking((previous) => ({ ...previous, [index]: direction }))
+    }
+    setTurns((previous) => previous + 1)
   }
 
-  const dealBack = () => {
-    if (!thrown) return
-    tapHaptic()
-    setThrown(0)
+  // The out leg has landed: the card is now at the far point of the arc, clear
+  // of the deck, so dropping it to the back of the z-order here is unseen. What
+  // it animates next is its ordinary resting position — the way in is the
+  // normal deck transition, so the card slides home behind the others.
+  const landCard = (index) => {
+    setTucking((previous) => {
+      if (!(index in previous)) return previous
+      const next = { ...previous }
+      delete next[index]
+      return next
+    })
   }
 
   // A tap does what a swipe does. It has to, because the deck's whole
@@ -263,12 +288,10 @@ function Deck({ items, shape, label }) {
   // cleared a tick after it ends, which is after the click has been and gone.
   const draggingRef = useRef(false)
 
+  // Tapped cards leave the way they lean, so a tap still has a direction.
   const onCardClick = (index) => () => {
     if (draggingRef.current) return
-    if (index === lastIndex) dealBack()
-    // Tapped cards leave the way they lean, so the deal-back arc still matches
-    // the way each card left.
-    else throwCard(index, TILT[index % TILT.length] < 0 ? -1 : 1)
+    throwCard(index, TILT[index % TILT.length] < 0 ? -1 : 1)
   }
 
   return (
@@ -285,22 +308,24 @@ function Deck({ items, shape, label }) {
         className={`relative mb-4 mt-10 w-[68vw] max-w-[280px] md:max-w-[320px] ${aspect}`}
       >
         {items.map((item, i) => {
-          const gone = i < thrown
-          const isTop = i === thrown
-          const depth = i - thrown
+          const depth = (((i - turns) % count) + count) % count
+          const isTop = depth === 0
+          const direction = tucking[i]
+          const tucked = direction !== undefined
 
           return (
             <motion.figure
               key={item.src}
               initial={false}
               animate={
-                gone
+                tucked
                   ? {
-                      x: (directions[i] ?? 1) * THROW_X,
-                      rotate: (directions[i] ?? 1) * THROW_SPIN,
-                      y: 0,
-                      scale: 1,
-                      opacity: 0,
+                      x: direction * TUCK_X,
+                      y: TUCK_Y,
+                      rotate: direction * TUCK_SPIN,
+                      rotateY: direction * TUCK_TURN,
+                      scale: TUCK_SCALE,
+                      opacity: TUCK_FADE,
                     }
                   : {
                       x: depth * DECK_STEP_X,
@@ -308,6 +333,7 @@ function Deck({ items, shape, label }) {
                       rotate: isTop
                         ? 0
                         : TILT[i % TILT.length] * (0.6 + depth * DECK_STEP_TILT),
+                      rotateY: 0,
                       scale: 1 - depth * DECK_STEP_SCALE,
                       opacity: 1,
                     }
@@ -315,14 +341,21 @@ function Deck({ items, shape, label }) {
               transition={
                 reducedMotion
                   ? { duration: 0 }
-                  : { duration: DUR.reveal, ease: EASE }
+                  : {
+                      duration: tucked ? TUCK_DURATION : DUR.reveal,
+                      ease: EASE,
+                    }
               }
+              onAnimationComplete={tucked ? () => landCard(i) : undefined}
               style={{
-                zIndex: gone ? 40 : items.length - depth,
-                pointerEvents: gone ? 'none' : 'auto',
-                touchAction: isTop && i !== lastIndex ? 'pan-y' : undefined,
+                zIndex: tucked ? count + 1 : count - depth,
+                // A card on its way round passes over the deck. It is not the
+                // one being read, so it must not swallow the next swipe.
+                pointerEvents: tucked ? 'none' : 'auto',
+                transformPerspective: TUCK_PERSPECTIVE,
+                touchAction: isTop ? 'pan-y' : undefined,
               }}
-              drag={isTop && i !== lastIndex ? 'x' : false}
+              drag={isTop ? 'x' : false}
               dragSnapToOrigin
               dragElastic={0.6}
               onDragStart={() => {

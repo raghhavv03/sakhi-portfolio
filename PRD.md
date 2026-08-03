@@ -78,8 +78,10 @@ Journey (scroll-drawn trail + chapters) is parked on git branch
 - **Journey** — parked on `journey-branch` (not on the shipped Home). Trail +
   four chapters return when that branch merges.
 - **Work cards** — live projects link to case studies; coming-soon projects
-  are non-clickable with clear state.- **About PhotoStack** — fan / pile on large screens; horizontal strip below
-  `lg`.
+  are non-clickable with clear state.
+- **About PhotoStack** — fan / pile on large screens; below `lg` a looping
+  swipe deck — a swiped card turns away and goes round to the back, so the
+  group never empties.
 - **Case study** — structured sections, figures with lightbox (transform pan /
   pinch), research charts.
 - **Contact form** — client-side validation; posts to Formspree when

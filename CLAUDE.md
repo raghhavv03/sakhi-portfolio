@@ -181,18 +181,32 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   `Spread` (`lg`+) is the hover layout: the lifted card keeps its `x` (no
   slide-to-centre flicker) and a pile opens on the group’s `pointerenter`, not
   a buried card’s. `Deck` (below `lg`) is a swipe deck: drag the top card past
-  `SWIPE_DISTANCE`/`SWIPE_VELOCITY` and it throws off screen, the next is
-  already under it, and the **last** card deals the whole group back in along
-  the arc each card left on — so the direction of every throw is remembered.
-  Never give the deck a horizontal scroller instead; the page must not scroll
-  sideways at 360px.
+  `SWIPE_DISTANCE`/`SWIPE_VELOCITY` and it goes round to the back of the pile,
+  the next is already under it, and the group is a **loop** — no card ever
+  leaves and there is nothing to deal back. Order is held as one counter,
+  `turns`: card `i` sits at depth `(i - turns) mod count`, so the array never
+  moves. Never give the deck a horizontal scroller instead; the page must not
+  scroll sideways at 360px — and the tuck arc must not either, which is why
+  `TUCK_X` is short and `TUCK_PERSPECTIVE` is long (a near perspective throws
+  the near edge of a turning card off screen).
+- **The tuck hides the z-swap in the turn.** A card going round has to move
+  from the front of the z-order to the back, and `TUCK_TURN` is a quarter turn,
+  so at the far point of the arc it is exactly edge-on and draws nothing — the
+  swap happens in a frame where there is nothing to see. Keep it at 90°: any
+  less and the card is caught changing places. The card animates out on
+  `TUCK_DURATION`, and `onAnimationComplete` clears it from `tucking`, which is
+  what drops its `zIndex` and sends it home on the ordinary deck transition.
+  `tucking` is a map, not one index, because a reader can swipe faster than the
+  arc lands; a card on the arc is `pointer-events: none` so it cannot swallow
+  the next swipe. Under `prefers-reduced-motion` there is no arc at all — the
+  card is never marked tucking and simply reappears at the back.
 - **The deck fans, and a tap does what a swipe does.** Resting cards step down,
   across and further out of true (`DECK_STEP_X/Y/SCALE/TILT`) so the ones
   underneath read as more photographs — that visible corner is the only thing
-  inviting the gesture. A tap on the top card therefore throws it too, and a
-  tap on the last one deals back. Framer reports a drag that ends over the card
-  as a click, so `draggingRef` must stay: without it a throw fires the tap
-  handler and takes the next card with it.
+  inviting the gesture. A tap on the top card therefore sends it round too.
+  Framer reports a drag that ends over the card as a click, so `draggingRef`
+  must stay: without it a throw fires the tap handler and takes the next card
+  with it.
 - **A pile deals first card on top** at both widths (`layout === 'pile'`
   reverses `zIndex` in `Spread`), so the photograph that names the group — the
   "pspspsps" cat — is the one you see. A fan keeps its left-to-right shingle;
