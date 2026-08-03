@@ -1,6 +1,6 @@
 # Product Requirements — Sakhi Rana Portfolio
 
-Personal portfolio site for Sakhi Rana, a UI/UX and product designer. The site
+Personal portfolio site for Sakhi Rana, a product designer. The site
 itself is a work sample: craft, restraint, and one signature interaction are
 part of the pitch.
 

@@ -1,6 +1,6 @@
 # Sakhi Rana — portfolio
 
-Personal portfolio site for a UI/UX & product designer. Built with React,
+Personal portfolio site for a product designer. Built with React,
 Vite, Tailwind, and Framer Motion. Static — no backend.
 
 ## Quick start

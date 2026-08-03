@@ -30,8 +30,8 @@ const preview = (real, stand_in = '#') =>
 
 export const site = {
   name: 'Sakhi Rana',
-  role: 'UI/UX & Product Designer',
-  bio: 'UI/UX designer working on product problems — research first, then the interface that answers it.',
+  role: 'Product Designer',
+  bio: 'Product designer working on product problems — research first, then the interface that answers it.',
   copyright: '© 2026 Sakhi Rana · Built with love',
 }
 

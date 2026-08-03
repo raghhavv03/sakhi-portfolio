@@ -1,6 +1,6 @@
 # Sakhi Rana — portfolio site
 
-Personal portfolio for a UI/UX & product designer. The site is a work sample:
+Personal portfolio for a product designer. The site is a work sample:
 minimal, calm, confident, with one signature interaction (the custom label
 cursor). Mobile is the primary case.
 
