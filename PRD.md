@@ -129,16 +129,17 @@ Components do not hardcode marketing strings.
 |---|---|
 | About body + footer + About photos | Sakhi’s (from Figma) |
 | Email, LinkedIn, Crochet Curio Instagram | Real |
+| CV PDF (`public/Sakhi-Rana-CV.pdf`) | Real — header CV item |
 | Case study (MyFitnessPal) | Authored against Figma frame |
 | Formspree endpoint | Wired (`contact.formEndpoint`) |
 | `site.bio`, `hero.opening`, `contact.invite`, `journey` | First draft — needs Sakhi’s confirmation (`site.bio` not yet on-page) |
-| Resume PDF, Behance URL, education institution | Missing — see launch checklist |
+| Behance URL, education institution | Missing — see launch checklist |
 | Project two | `coming-soon` placeholder |
 
-**Temporary layout flag:** `PREVIEW_UNPUBLISHED` in `portfolio.js` feeds dead
-`#` hrefs for Resume / Behance so placement can be reviewed. Behance has no UI
-consumer yet (footer builds its own connect row). **Must be `false`
-(or replaced with real URLs) before launch.**
+**No preview stand-ins remain.** Every link in `portfolio.js` is either real or
+empty, and empty hides its affordance — so nothing dead can ship. `links.behance`
+is empty and has no UI consumer either way (the footer builds its own connect
+row).
 
 ---
 
@@ -151,6 +152,7 @@ consumer yet (footer builds its own connect row). **Must be `false`
 | Contact delivery | Formspree (`contact.formEndpoint`); public endpoint id by design |
 | Theming | Class on `<html>`; pre-paint script in `index.html` must stay in sync with `src/lib/theme.js` |
 | Assets | Masters in `assets/` (incl. `favicon.svg`); optimized outputs in `public/` via `npm run optimize:scene` / `optimize:about` |
+| CV | `public/Sakhi-Rana-CV.pdf`, served as a static file; the SPA rewrite in `vercel.json` only catches extensionless paths, so it is untouched |
 | Deploy | Static `dist/`; `vercel.json` present |
 
 ---
@@ -159,9 +161,10 @@ consumer yet (footer builds its own connect row). **Must be `false`
 
 ### Must before go-live
 
-- [ ] Set `PREVIEW_UNPUBLISHED` to `false`, **or** supply real Resume + Behance URLs
-- [ ] Add `public/resume.pdf` and set `links.resume = '/resume.pdf'`
-- [ ] Set `links.behance` to the real profile URL
+- [x] Remove the `PREVIEW_UNPUBLISHED` stand-ins — no `#` hrefs left
+- [x] Add the CV PDF to `public/` and point `links.resume` at it
+      (`/Sakhi-Rana-CV.pdf`)
+- [ ] Set `links.behance` to the real profile URL (empty = hidden, safe to ship)
 - [x] Create Formspree form for `sakhirana03@gmail.com`, confirm email, paste
       `https://formspree.io/f/<id>` into `contact.formEndpoint`
 - [ ] Confirm draft copy with Sakhi (`hero.opening`, `journey`, `site.bio`,

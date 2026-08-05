@@ -27,6 +27,9 @@ into `public/images/about/*.webp`, cover-cropped to `make` / `cat` / `trip` /
 
 Favicon master is `assets/favicon.svg` (Frame 17); served copies are
 `public/favicon.svg` + `public/favicon.ico`.
+
+The CV is `public/Sakhi-Rana-CV.pdf` — a plain static file, no build step. To
+replace it, overwrite that file; the path in `links.resume` stays put.
 ---
 
 ## Architecture
@@ -48,9 +51,9 @@ Favicon master is `assets/favicon.svg` (Frame 17); served copies are
   `CTA_HOVER_FILL`). **Contact submit** uses `ACTION_HOVER_GLASS` (action
   button, not a nav CTA). **Floating nav** uses `FLOAT_SHELL` (frosted
   surface) + `FLOAT_Y` (band positions), same file.
-- **Empty means don't render** — empty string/array hides the affordance.
-  `PREVIEW_UNPUBLISHED` in `portfolio.js` is a temporary exception for dead
-  `#` hrefs; **off before launch** (see PRD).
+- **Empty means don't render** — empty string/array hides the affordance. Every
+  link in `portfolio.js` is real or empty; there are no stand-in `#` hrefs left,
+  and none should come back.
 - **Contact** — Formspree when `contact.formEndpoint` is set; otherwise
   UI-only with honest confirmation. Failed POST keeps the message and offers
   mailto.
@@ -102,6 +105,11 @@ Home is hero → work. The Journey section (trail + chapters) lives on
   footer's connect row carries it. Contact's glyph is a speech bubble, not an
   envelope — the envelope is the footer's "email me", and the same mark for
   two different things reads as a duplicate.
+- **CV is the header's only résumé affordance**, and it is a plain link to
+  `links.resume` in a new tab — **never a `download` attribute**. Clicking it
+  opens the browser's PDF viewer, which already carries download and print; a
+  forced download drops a file on someone who only wanted to read it. Empty
+  `links.resume` removes the item entirely.
 - **The page runs under the nav** — `main` has no top padding. A section that
   opens with artwork (home hero, case-study banner) starts at 0 and lets the
   glass float over it; a section that opens with type takes `pt-nav-clear`

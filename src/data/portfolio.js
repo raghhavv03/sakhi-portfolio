@@ -8,26 +8,6 @@
 // placeholder string, which would render as visible filler.
 // ---------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
-// PREVIEW SWITCH — layout review only. DO NOT SHIP WITH THIS ON.
-//
-// Because the site hides an affordance until its fact is real, none of the
-// Resume / Behance / shop controls can be *seen* while those facts are
-// outstanding — which makes their placement impossible to review. This fills
-// them with deliberately fake stand-ins so every button renders. The `#` hrefs
-// go nowhere on purpose: a plausible-looking invented URL is worse than an
-// obviously fake one, because it might belong to somebody.
-//
-// Email and LinkedIn are real now, so they no longer pass through this.
-//
-// Set to `false` and every one of them disappears again — the hiding logic
-// itself is untouched. Replace the real values below as they arrive, then
-// delete this block.
-// ---------------------------------------------------------------------------
-const PREVIEW_UNPUBLISHED = true
-const preview = (real, stand_in = '#') =>
-  real || (PREVIEW_UNPUBLISHED ? stand_in : '')
-
 export const site = {
   name: 'Sakhi Rana',
   role: 'Product Designer',
@@ -57,9 +37,13 @@ export const contact = {
 }
 
 export const links = {
-  resume: preview(''), // path to a PDF in /public — opens in a new tab for viewing
+  // A file in /public, opened in a new tab: the browser's own PDF viewer shows
+  // it — with download and print in that viewer — instead of dropping a file
+  // into someone's Downloads folder uninvited. The filename is the one they
+  // keep if they do save it, so it is her name, not `resume.pdf`.
+  resume: '/Sakhi-Rana-CV.pdf',
   linkedin: 'https://www.linkedin.com/in/sakhi-rana-717548212',
-  behance: preview(''),
+  behance: '',
 }
 
 export const nav = [
